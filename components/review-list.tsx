@@ -1,35 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import type { Danh_gia } from "@/lib/mock-data"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ThumbsUp } from "lucide-react"
+import { useState } from "react";
+import type { Review } from "@/lib/mock-data";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ThumbsUp } from "lucide-react";
 
 interface ReviewListProps {
-  reviews: Danh_gia[]
-  onAddReview?: () => void
+  reviews: Review[];
+  onAddReview?: () => void;
 }
 
 export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
-  const [sortBy, setSortBy] = useState<"newest" | "helpful" | "highest">("newest")
-  const [filterRating, setFilterRating] = useState<number | null>(null)
+  const [sortBy, setSortBy] = useState<"newest" | "helpful" | "highest">(
+    "newest"
+  );
+  const [filterRating, setFilterRating] = useState<number | null>(null);
 
   const filteredReviews = reviews
-    .filter((r) => (filterRating ? r.Diem >= filterRating : true))
+    .filter((r) => (filterRating ? r.rating >= filterRating : true))
     .sort((a, b) => {
       switch (sortBy) {
         case "newest":
-          return new Date(b.Ngay_tao).getTime() - new Date(a.Ngay_tao).getTime()
+          return (
+            new Date(b.createdDate).getTime() -
+            new Date(a.createdDate).getTime()
+          );
         case "helpful":
-          return b.So_tim_thich - a.So_tim_thich
+          return b.likeCount - a.likeCount;
         case "highest":
-          return b.Diem - a.Diem
+          return b.rating - a.rating;
         default:
-          return 0
+          return 0;
       }
     })
-    .slice(0, 10)
+    .slice(0, 10);
 
   return (
     <div className="space-y-6">
@@ -70,25 +75,37 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
       <div className="space-y-4">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => (
-            <div key={review.Id_danh_gia} className="rounded-lg border border-border bg-card p-4">
+            <div
+              key={review.reviewId}
+              className="rounded-lg border border-border bg-card p-4"
+            >
               <div className="mb-2 flex items-start justify-between">
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} className={`text-lg ${i < review.Diem / 2 ? "text-yellow-400" : "text-gray-300"}`}>
+                    <span
+                      key={i}
+                      className={`text-lg ${
+                        i < review.rating / 2
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    >
                       ★
                     </span>
                   ))}
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(review.Ngay_tao).toLocaleDateString("vi-VN")}
+                  {new Date(review.createdDate).toLocaleDateString("vi-VN")}
                 </span>
               </div>
 
-              <h4 className="mb-2 font-semibold">{review.Tieu_de}</h4>
-              <p className="mb-3 text-sm text-muted-foreground">{review.Noi_dung}</p>
+              <h4 className="mb-2 font-semibold">{review.title}</h4>
+              <p className="mb-3 text-sm text-muted-foreground">
+                {review.content}
+              </p>
 
               <div className="mb-3 flex flex-wrap gap-2">
-                {review.Tags.map((tag) => (
+                {review.tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="text-xs">
                     {tag}
                   </Badge>
@@ -97,12 +114,14 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
 
               <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <ThumbsUp className="h-4 w-4" />
-                <span>{review.So_tim_thich} người hữu ích</span>
+                <span>{review.likeCount} người hữu ích</span>
               </button>
             </div>
           ))
         ) : (
-          <p className="text-center py-8 text-muted-foreground">Chưa có đánh giá nào</p>
+          <p className="text-center py-8 text-muted-foreground">
+            Chưa có đánh giá nào
+          </p>
         )}
       </div>
 
@@ -113,5 +132,5 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
         </Button>
       )}
     </div>
-  )
+  );
 }

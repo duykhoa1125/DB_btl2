@@ -1,58 +1,57 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
-import { mockGhe } from "@/lib/mock-data"
-import type { Ghe } from "@/lib/mock-data"
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { mockSeats } from "@/lib/mock-data";
+import type { Seat } from "@/lib/mock-data";
 
 interface SeatSelectionProps {
-  onSeatsChange: (seats: Ghe[]) => void
+  onSeatsChange: (seats: Seat[]) => void;
 }
 
 export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
-  const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set())
+  const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set());
 
   // Group seats by row
-  const seatsByRow = mockGhe.reduce(
-    (acc, seat) => {
-      if (!acc[seat.Hang]) {
-        acc[seat.Hang] = []
-      }
-      acc[seat.Hang].push(seat)
-      return acc
-    },
-    {} as Record<string, Ghe[]>,
-  )
+  const seatsByRow = mockSeats.reduce((acc, seat) => {
+    if (!acc[seat.row]) {
+      acc[seat.row] = [];
+    }
+    acc[seat.row].push(seat);
+    return acc;
+  }, {} as Record<string, Seat[]>);
 
-  const handleSeatClick = (seat: Ghe) => {
-    const newSelected = new Set(selectedSeats)
-    if (newSelected.has(seat.Id_ghe)) {
-      newSelected.delete(seat.Id_ghe)
+  const handleSeatClick = (seat: Seat) => {
+    const newSelected = new Set(selectedSeats);
+    if (newSelected.has(seat.seatId)) {
+      newSelected.delete(seat.seatId);
     } else {
-      newSelected.add(seat.Id_ghe)
+      newSelected.add(seat.seatId);
     }
-    setSelectedSeats(newSelected)
-    const selectedSeatObjects = mockGhe.filter((s) => newSelected.has(s.Id_ghe))
-    onSeatsChange(selectedSeatObjects)
-  }
+    setSelectedSeats(newSelected);
+    const selectedSeatObjects = mockSeats.filter((s) =>
+      newSelected.has(s.seatId)
+    );
+    onSeatsChange(selectedSeatObjects);
+  };
 
-  const getSeatColor = (seat: Ghe) => {
-    if (selectedSeats.has(seat.Id_ghe)) {
-      return "bg-red-600 border-red-700"
+  const getSeatColor = (seat: Seat) => {
+    if (selectedSeats.has(seat.seatId)) {
+      return "bg-red-600 border-red-700";
     }
-    switch (seat.Loai_ghe) {
+    switch (seat.seatType) {
       case "VIP":
-        return "bg-yellow-500 border-yellow-600 hover:bg-yellow-600"
+        return "bg-yellow-500 border-yellow-600 hover:bg-yellow-600";
       case "Couple":
-        return "bg-pink-500 border-pink-600 hover:bg-pink-600"
-      case "Khuyat_tac":
-        return "bg-blue-500 border-blue-600 hover:bg-blue-600"
+        return "bg-pink-500 border-pink-600 hover:bg-pink-600";
+      case "Accessible":
+        return "bg-blue-500 border-blue-600 hover:bg-blue-600";
       default:
-        return "bg-gray-400 border-gray-500 hover:bg-gray-500"
+        return "bg-gray-400 border-gray-500 hover:bg-gray-500";
     }
-  }
+  };
 
-  const rows = Object.keys(seatsByRow).sort()
+  const rows = Object.keys(seatsByRow).sort();
 
   return (
     <div className="space-y-6">
@@ -98,11 +97,13 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
               <div className="flex gap-1">
                 {seatsByRow[row].map((seat) => (
                   <button
-                    key={seat.Id_ghe}
+                    key={seat.seatId}
                     onClick={() => handleSeatClick(seat)}
-                    className={`h-8 w-8 rounded border-2 transition-all ${getSeatColor(seat)}`}
-                    title={`${seat.Ten_ghe} - ${seat.Loai_ghe}`}
-                    aria-label={`Seat ${seat.Ten_ghe}`}
+                    className={`h-8 w-8 rounded border-2 transition-all ${getSeatColor(
+                      seat
+                    )}`}
+                    title={`${seat.seatName} - ${seat.seatType}`}
+                    aria-label={`Seat ${seat.seatName}`}
                   />
                 ))}
               </div>
@@ -118,16 +119,16 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
           <p className="mb-2 font-semibold">Ghế đã chọn:</p>
           <div className="flex flex-wrap gap-2">
             {Array.from(selectedSeats).map((seatId) => {
-              const seat = mockGhe.find((s) => s.Id_ghe === seatId)
+              const seat = mockSeats.find((s) => s.seatId === seatId);
               return (
                 <Badge key={seatId} variant="secondary">
-                  {seat?.Ten_ghe}
+                  {seat?.seatName}
                 </Badge>
-              )
+              );
             })}
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

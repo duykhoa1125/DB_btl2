@@ -1,5 +1,5 @@
 import type React from "react"
-export default function PhimLayout({
+export default function MovieLayout({
   children,
 }: {
   children: React.ReactNode

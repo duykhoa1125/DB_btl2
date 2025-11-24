@@ -1,0 +1,31 @@
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+
+export default function Loading() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4 mb-8">
+        <Spinner className="h-8 w-8" />
+        <p className="text-muted-foreground">Đang tải lịch sử đơn hàng...</p>
+      </div>
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-64" />
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="border rounded-lg p-4 space-y-3">
+              <div className="flex justify-between">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-5 w-20" />
+              </div>
+              <Skeleton className="h-4 w-48" />
+              <div className="flex gap-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

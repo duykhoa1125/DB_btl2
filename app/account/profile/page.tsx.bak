@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { useToast } from "@/hooks/use-toast"
-import { Header } from "@/components/header"
 import Link from "next/link"
 
 export default function ProfilePage() {
@@ -18,9 +17,9 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState({
-    hoTen: "",
-    soDienThoai: "",
-    ngaySinh: "",
+    fullName: "",
+    phoneNumber: "",
+    birthDate: "",
     avatar: "",
   })
 
@@ -29,10 +28,10 @@ export default function ProfilePage() {
       router.push("/tai-khoan/dang-nhap")
     } else if (currentUser) {
       setFormData({
-        hoTen: currentUser.Ho_ten,
-        soDienThoai: currentUser.So_dien_thoai,
-        ngaySinh: currentUser.Ngay_sinh,
-        avatar: currentUser.Avatar,
+        fullName: currentUser.fullName,
+        phoneNumber: currentUser.phoneNumber,
+        birthDate: currentUser.birthDate,
+        avatar: currentUser.avatar,
       })
     }
   }, [currentUser, authLoading, router])
@@ -41,10 +40,10 @@ export default function ProfilePage() {
     setIsSaving(true)
     try {
       updateProfile({
-        Ho_ten: formData.hoTen,
-        So_dien_thoai: formData.soDienThoai,
-        Ngay_sinh: formData.ngaySinh,
-        Avatar: formData.avatar,
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
+        birthDate: formData.birthDate,
+        avatar: formData.avatar,
       })
       setIsEditing(false)
       toast({
@@ -58,20 +57,15 @@ export default function ProfilePage() {
 
   if (authLoading || !currentUser) {
     return (
-      <>
-        <Header />
-        <div className="flex items-center justify-center min-h-screen">
-          <p>Đang tải...</p>
-        </div>
-      </>
+      <div className="flex items-center justify-center py-12">
+        <p>Đang tải...</p>
+      </div>
     )
   }
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen px-4 py-12 bg-background">
-        <div className="mx-auto max-w-2xl">
+    <div className="px-4 py-12 bg-background">
+      <div className="mx-auto max-w-2xl">
           <div className="mb-6">
             <Link href="/" className="text-sm text-red-600 hover:underline">
               ← Quay lại trang chủ
@@ -86,12 +80,12 @@ export default function ProfilePage() {
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={formData.avatar || "/placeholder.svg"} alt={formData.hoTen} />
-                  <AvatarFallback>{formData.hoTen.substring(0, 2)}</AvatarFallback>
+                  <AvatarImage src={formData.avatar || "/placeholder.svg"} alt={formData.fullName} />
+                  <AvatarFallback>{formData.fullName.substring(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">{currentUser.Email}</p>
+                  <p className="font-medium">{currentUser.email}</p>
                 </div>
               </div>
 
@@ -99,8 +93,8 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Họ tên</label>
                   <Input
-                    value={formData.hoTen}
-                    onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     disabled={!isEditing}
                   />
                 </div>
@@ -109,8 +103,8 @@ export default function ProfilePage() {
                   <label className="text-sm font-medium">Số điện thoại</label>
                   <Input
                     type="tel"
-                    value={formData.soDienThoai}
-                    onChange={(e) => setFormData({ ...formData, soDienThoai: e.target.value })}
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                     placeholder="0912345678"
                     disabled={!isEditing}
                   />
@@ -120,8 +114,8 @@ export default function ProfilePage() {
                   <label className="text-sm font-medium">Ngày sinh</label>
                   <Input
                     type="date"
-                    value={formData.ngaySinh}
-                    onChange={(e) => setFormData({ ...formData, ngaySinh: e.target.value })}
+                    value={formData.birthDate}
+                    onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
                     disabled={!isEditing}
                   />
                 </div>
@@ -159,7 +153,7 @@ export default function ProfilePage() {
               <CardTitle className="text-base">Quản lý tài khoản</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Link href="/tai-khoan/lich-su-don">
+              <Link href="/account/order-history">
                 <Button variant="outline" className="w-full justify-start bg-transparent">
                   Xem lịch sử đơn hàng
                 </Button>
@@ -168,6 +162,6 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
-    </>
-  )
+    </div>
+  );
 }

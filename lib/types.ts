@@ -1,59 +1,64 @@
 // Data types for cinema booking app
-export interface Phim {
-  Id_phim: number
-  Ten_phim: string
-  Noi_dung: string
-  Thoi_luong: number // in minutes
-  Trailer: string // YouTube URL
-  Ngay_khoi_chieu: string // YYYY-MM-DD
-  Trang_thai: "Đang chiếu" | "Sắp chiếu"
-  Ten_dao_dien: string[]
-  Ten_dien_vien: string[]
-  Poster: string
+export interface Movie {
+  movieId: number;
+  title: string;
+  description: string;
+  duration: number; // in minutes
+  trailer: string; // YouTube URL
+  releaseDate: string; // YYYY-MM-DD
+  status: "Now Showing" | "Coming Soon";
+  directorName: string[];
+  actorName: string[];
+  poster: string;
 }
 
-export interface Rap {
-  Id_rap: number
-  Ten_rap: string
-  Dia_chi: string
-  Phong: Phong[]
+export interface Cinema {
+  cinemaId: number;
+  cinemaName: string;
+  address: string;
+  rooms: Room[];
 }
 
-export interface Phong {
-  Id_phong: number
-  Ten_phong: string
+export interface Room {
+  roomId: number;
+  roomName: string;
 }
 
-export interface CaChieu {
-  Id_ca_chieu: number
-  Id_phim: number
-  Id_phong: number
-  Ngay_chieu: string // YYYY-MM-DD
-  Thoi_gian_bat_dau: string // HH:mm
-  Gia_tien: number
+export interface Showtime {
+  showtimeId: number;
+  movieId: number;
+  roomId: number;
+  showDate: string; // YYYY-MM-DD
+  startTime: string; // HH:mm
+  price: number;
 }
 
-export interface Ghe {
-  Id_phong: number
-  So_hang: string
-  So_cot: number
-  Loai_ghe: "Thường" | "VIP"
-  Trang_thai: "Trống" | "Đã đặt"
+export interface Seat {
+  roomId: number;
+  rowNumber: string;
+  columnNumber: number;
+  seatType: "Standard" | "VIP";
+  status: "Available" | "Booked";
 }
 
-export interface DoAn {
-  Id_do_an: number
-  Ten_do_an: string
-  Mo_ta: string
-  Gia_tien: number
-  Hinh_anh: string
+export interface Food {
+  foodId: number;
+  foodName: string;
+  description: string;
+  price: number;
+  image: string;
 }
 
 export interface BookingState {
-  phim: Phim | null
-  caChieu: CaChieu | null
-  phong: Phong | null
-  gheDaChon: Array<{ So_hang: string; So_cot: number }>
-  doAnDaChon: Array<{ id: number; tenDoAn: string; soLuong: number; gia: number }>
-  tongTien: number
+  movie: Movie | null;
+  showtime: Showtime | null;
+  room: Room | null;
+  selectedSeats: Array<{ rowNumber: string; columnNumber: number }>;
+  selectedFoods: Array<{
+    id: number;
+    foodName: string;
+    quantity: number;
+    price: number;
+  }>;
+  totalPrice: number;
 }

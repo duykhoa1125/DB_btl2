@@ -1,5 +1,5 @@
 import type React from "react"
-export default function DatVeLayout({
+export default function BookTicketLayout({
   children,
 }: {
   children: React.ReactNode
