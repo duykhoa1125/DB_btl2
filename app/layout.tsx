@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Be_Vietnam_Pro } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
@@ -8,8 +8,17 @@ import { AuthProvider } from "@/lib/auth-context";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const montserrat = Montserrat({
+  subsets: ["latin", "vietnamese"],
+  weight: ["700", "800"],
+  variable: "--font-heading",
+});
+
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "CinemaHub - Đặt vé phim trực tuyến",
@@ -25,7 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`font-sans antialiased flex flex-col min-h-screen`}>
+      <body
+        className={`${montserrat.variable} ${beVietnamPro.variable} font-sans antialiased flex flex-col min-h-screen`}
+      >
         <AuthProvider>
           <Header />
           <main className="flex-1">{children}</main>

@@ -7,10 +7,10 @@ import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 import type { Seat, Food, Voucher } from "@/lib/mock-data";
 import { mockShowtimes, mockMovies } from "@/lib/mock-data";
 import { useSearchParams } from "next/navigation";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 interface BookingPageProps {
   params: Promise<{
@@ -45,11 +45,20 @@ export default function BookingPage({ params }: BookingPageProps) {
 
   if (!showtime || !movie) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        <h1 className="text-2xl font-bold mb-4">Lịch chiếu không tìm thấy</h1>
-        <Link href="/">
-          <Button>Quay lại trang chủ</Button>
-        </Link>
+      <div className="min-h-screen bg-background">
+        <div className="border-b border-border/40 bg-card/50">
+          <div className="mx-auto max-w-7xl px-6 py-4">
+            <Breadcrumb 
+              items={[
+                { label: "Đặt vé", href: "/" }
+              ]} 
+            />
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center py-20">
+          <h1 className="text-2xl font-bold mb-4">Lịch chiếu không tìm thấy</h1>
+          <p className="text-muted-foreground">Không tìm thấy thông tin lịch chiếu bạn đang tìm kiếm</p>
+        </div>
       </div>
     );
   }
@@ -84,23 +93,36 @@ export default function BookingPage({ params }: BookingPageProps) {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card shadow-sm sticky top-0 z-50">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-4">
-          <Link href={`/movie/${movie.movieId}`}>
-            <Button variant="ghost" size="icon">
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <h1 className="text-2xl font-bold text-red-600">CinemaHub</h1>
+      {/* Breadcrumb */}
+      <div className="border-b border-border/40 bg-card/50">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <Breadcrumb 
+            items={[
+              { label: "Phim", href: "/" },
+              { label: movie.title, href: `/movie/${movie.movieId}` },
+              { label: "Đặt vé" }
+            ]} 
+          />
         </div>
-      </header>
+      </div>
 
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8 rounded-lg bg-card border border-border p-6">
-          <h2 className="text-2xl font-bold mb-2">{movie.title}</h2>
-          <p className="text-muted-foreground mb-4">
-            {showtime.room} • {formatDateTime(showtime.startTime)}
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">{movie.title}</h2>
+              <p className="text-muted-foreground mb-4">
+                {showtime.room} • {formatDateTime(showtime.startTime)}
+              </p>
+            </div>
+            <div className="relative h-32 w-24 shrink-0 overflow-hidden rounded-md shadow-md">
+              <img
+                src={movie.image}
+                alt={movie.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="mb-8 grid grid-cols-3 gap-4">
@@ -136,7 +158,7 @@ export default function BookingPage({ params }: BookingPageProps) {
             {bookingStep === "seats" && (
               <div>
                 <SeatSelection onSeatsChange={setSelectedSeats} />
-                <div className="mt-6 flex gap-4">
+                <div className="mt-6 flex justify-end">
                   <Button
                     onClick={() => {
                       if (selectedSeats.length > 0) {
@@ -144,7 +166,8 @@ export default function BookingPage({ params }: BookingPageProps) {
                       }
                     }}
                     disabled={selectedSeats.length === 0}
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="min-w-[200px] bg-primary hover:bg-primary/90"
+                    size="lg"
                   >
                     Tiếp tục ({selectedSeats.length} ghế)
                   </Button>
@@ -155,17 +178,18 @@ export default function BookingPage({ params }: BookingPageProps) {
             {bookingStep === "food" && (
               <div>
                 <FoodSelection onFoodChange={setSelectedFoods} />
-                <div className="mt-6 flex gap-4">
+                <div className="mt-6 flex justify-end gap-3">
                   <Button
                     onClick={() => setBookingStep("seats")}
                     variant="outline"
-                    className="flex-1"
+                    size="lg"
                   >
                     Quay lại
                   </Button>
                   <Button
                     onClick={() => setBookingStep("payment")}
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="min-w-[200px] bg-primary hover:bg-primary/90"
+                    size="lg"
                   >
                     Tiếp tục
                   </Button>
@@ -185,21 +209,27 @@ export default function BookingPage({ params }: BookingPageProps) {
                 </div>
 
                 <div>
-                  <h3 className="mb-4 text-lg font-bold">
-                    Phương thức thanh toán
-                  </h3>
-                  <div className="space-y-3">
+                  <h3 className="mb-6 text-xl font-bold">Phương thức thanh toán</h3>
+                  <div className="grid gap-4 sm:grid-cols-2">
                     {[
-                      { id: "card", label: "Thẻ tín dụng/ghi nợ", icon: "💳" },
-                      { id: "cash", label: "Tiền mặt", icon: "💵" },
-                      { id: "wallet", label: "Ví điện tử", icon: "📱" },
+                      { id: "card", label: "Thẻ tín dụng/ghi nợ", icon: "💳", desc: "Visa, Mastercard" },
+                      { id: "cash", label: "Tiền mặt", icon: "💵", desc: "Thanh toán tại quầy" },
+                      { id: "wallet", label: "Ví điện tử", icon: "📱", desc: "Momo, ZaloPay" },
+                      { id: "banking", label: "Chuyển khoản", icon: "🏦", desc: "Ngân hàng" },
                     ].map((method) => (
                       <button
                         key={method.id}
-                        className="flex w-full items-center gap-3 rounded-lg border-2 border-border p-4 transition-all hover:border-red-600"
+                        className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-border bg-card p-5 text-left transition-all hover:border-primary hover:shadow-lg"
                       >
-                        <span className="text-2xl">{method.icon}</span>
-                        <span className="font-medium">{method.label}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl transition-all group-hover:bg-primary/20">
+                            {method.icon}
+                          </div>
+                          <div>
+                            <p className="font-semibold">{method.label}</p>
+                            <p className="text-sm text-muted-foreground">{method.desc}</p>
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -207,11 +237,11 @@ export default function BookingPage({ params }: BookingPageProps) {
 
                 <Separator />
 
-                <div className="flex gap-4">
+                <div className="flex justify-end gap-3">
                   <Button
                     onClick={() => setBookingStep("food")}
                     variant="outline"
-                    className="flex-1"
+                    size="lg"
                   >
                     Quay lại
                   </Button>
@@ -219,7 +249,8 @@ export default function BookingPage({ params }: BookingPageProps) {
                     onClick={() => {
                       window.location.href = `/confirmation?seats=${selectedSeats.length}&total=${finalTotal}&discount=${discountAmount}`;
                     }}
-                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    className="min-w-[200px] bg-primary hover:bg-primary/90"
+                    size="lg"
                   >
                     Hoàn thành đặt vé
                   </Button>

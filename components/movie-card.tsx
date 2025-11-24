@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { Movie } from "@/lib/mock-data";
@@ -10,11 +11,12 @@ export function MovieCard({ movie }: MovieCardProps) {
   return (
     <Link href={`/movie/${movie.movieId}`}>
       <div className="group relative overflow-hidden rounded-lg bg-card transition-all duration-300 hover:shadow-2xl">
-        <div className="aspect-[2/3] overflow-hidden bg-muted">
-          <img
+        <div className="aspect-[2/3] overflow-hidden bg-muted relative">
+          <Image
             src={movie.image || "/placeholder.svg"}
             alt={movie.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

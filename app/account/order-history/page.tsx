@@ -68,14 +68,6 @@ export default function OrderHistoryPage() {
   return (
     <div className="px-4 py-12 bg-background">
       <div className="mx-auto max-w-4xl">
-        <div className="mb-6">
-          <Link
-            href="/account/profile"
-            className="text-sm text-red-600 hover:underline"
-          >
-            ← Quay lại hồ sơ
-          </Link>
-        </div>
 
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Lịch sử đơn hàng</h1>
