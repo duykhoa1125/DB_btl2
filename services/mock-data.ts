@@ -3,7 +3,8 @@ import {
     MovieStatus, SeatType, SeatPhysicalState, EntityState,
     MemberLevel, Gender, MovieLanguage, Director, Actor,
     Voucher, Event, Promotional, MovieReview, Food,
-    SeatLayoutItem, BookingSeatState, MovieDetail
+    SeatLayoutItem, BookingSeatState, MovieDetail,
+    Discount, Gift
 } from './types';
 
 // --- HELPERS ---
@@ -499,6 +500,62 @@ export const MOCK_EVENTS: Event[] = [
     }
 ];
 
+// --- 10. PROMOTIONALS, DISCOUNTS, GIFTS ---
+
+export const MOCK_PROMOTIONALS: Promotional[] = [
+    {
+        promotional_id: 'PROMO001',
+        event_id: 'EVT002',
+        description: 'Giảm giá chào mừng thành viên mới',
+        start_date: '2024-01-01',
+        end_date: '2024-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO002',
+        event_id: 'EVT001',
+        description: 'Giảm giá mùa hè',
+        start_date: '2024-06-01',
+        end_date: '2024-08-31',
+        level: 'copper'
+    }
+];
+
+export const MOCK_DISCOUNTS: Discount[] = [
+    {
+        promotional_id: 'PROMO001',
+        percent_reduce: 50,
+        max_price_can_reduce: 100000
+    },
+    {
+        promotional_id: 'PROMO002',
+        percent_reduce: 20,
+        max_price_can_reduce: 50000
+    }
+];
+
+export const MOCK_GIFTS: Gift[] = [];
+
+export interface VoucherDetail extends Voucher {
+    promotional?: Promotional;
+    discount?: Discount;
+    gift?: Gift;
+}
+
+/**
+ * Get voucher with details (promotional, discount, gift)
+ */
+export function getVoucherDetail(code: string): VoucherDetail | undefined {
+    const voucher = MOCK_VOUCHERS.find(v => v.code === code);
+    if (!voucher) return undefined;
+
+    const promotional = MOCK_PROMOTIONALS.find(p => p.promotional_id === voucher.promotional_id);
+    const discount = MOCK_DISCOUNTS.find(d => d.promotional_id === voucher.promotional_id);
+    const gift = MOCK_GIFTS.find(g => g.promotional_id === voucher.promotional_id);
+
+    return { ...voucher, promotional, discount, gift };
+}
+
 // --- HELPER FUNCTIONS ---
 
 /**
@@ -550,3 +607,39 @@ export function calculateAverageRating(movieId: string): number {
     return sum / reviews.length;
 }
 
+
+/**
+ * Get user by email
+ */
+export function getUserByEmail(email: string): Account | undefined {
+    return MOCK_ACCOUNTS.find(a => a.email === email);
+}
+
+/**
+ * Get user by phone number
+ */
+export function getUserByPhone(phone: string): Account | undefined {
+    return MOCK_ACCOUNTS.find(a => a.phone_number === phone);
+}
+
+/**
+ * Get voucher by code
+ */
+export function getVoucherByCode(code: string): Voucher | undefined {
+    return MOCK_VOUCHERS.find(v => v.code === code);
+}
+
+/**
+ * Get all active events
+ */
+export function getActiveEvents(): Event[] {
+    const today = new Date().toISOString().split('T')[0];
+    return MOCK_EVENTS.filter(e => e.end_date >= today);
+}
+
+/**
+ * Get reviews by movie ID
+ */
+export function getReviewsByMovie(movieId: string): MovieReview[] {
+    return MOCK_REVIEWS.filter(r => r.movie_id === movieId);
+}

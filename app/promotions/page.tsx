@@ -16,25 +16,39 @@ import {
   Sparkles,
 } from "lucide-react";
 import {
-  type VoucherWithDetails,
-  getUserVouchers,
-  getActiveEvents,
-  getPromotionalsByEvent,
-  mockUsers,
-} from "@/lib/mock-data";
+  MOCK_VOUCHERS,
+  getVoucherDetail,
+  VoucherDetail,
+} from "@/services/mock-data";
+import { useAuth } from "@/lib/auth-context";
 
 export default function PromotionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState<"all" | "gift" | "discount">("all");
+  const { currentUser } = useAuth();
 
-  // Mock: Giả sử user hiện tại là user_001 (Gold tier - 1560 points)
-  const currentUser = mockUsers[0]; // John Doe
-  const userLevel = currentUser.membershipPoints >= 5000 ? "vip" :
-                   currentUser.membershipPoints >= 2500 ? "diamond" :
-                   currentUser.membershipPoints >= 1000 ? "gold" : "copper";
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Vui lòng đăng nhập</h1>
+          <Button asChild>
+            <Link href="/login">Đăng nhập</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
-  // Lấy vouchers của user theo level
-  const userVouchers = getUserVouchers(currentUser.phoneNumber, userLevel);
+  const userLevel = currentUser.membership_points >= 5000 ? "vip" :
+                   currentUser.membership_points >= 2500 ? "diamond" :
+                   currentUser.membership_points >= 1000 ? "gold" : "copper";
+
+  // Get user vouchers and enrich with details
+  const userVouchers = MOCK_VOUCHERS
+    .filter(v => v.phone_number === currentUser.phone_number)
+    .map(v => getVoucherDetail(v.code))
+    .filter((v): v is VoucherDetail => v !== undefined);
   
   // Filter vouchers
   const activeVouchers = userVouchers.filter((v) => v.state === "active");
@@ -42,14 +56,18 @@ export default function PromotionsPage() {
   const expiredVouchers = userVouchers.filter((v) => v.state === "expired");
 
   const filteredVouchers = activeVouchers.filter((voucher) => {
+    const eventName = voucher.promotional?.event_id || ""; // TODO: Get event name
+    const promoDesc = voucher.promotional?.description || "";
+    
     const matchesSearch =
-      voucher.event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.promotional.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      promoDesc.toLowerCase().includes(searchTerm.toLowerCase()) ||
       voucher.code.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesType =
       selectedType === "all" ||
-      voucher.type === selectedType;
+      (selectedType === "discount" && !!voucher.discount) ||
+      (selectedType === "gift" && !!voucher.gift);
 
     return matchesSearch && matchesType;
   });
@@ -63,9 +81,9 @@ export default function PromotionsPage() {
     return days;
   };
 
-  const formatDiscount = (voucher: VoucherWithDetails) => {
-    if (voucher.type === "discount" && voucher.discountInfo) {
-      return `${voucher.discountInfo.percent_reduce}% OFF`;
+  const formatDiscount = (voucher: VoucherDetail) => {
+    if (voucher.discount) {
+      return `${voucher.discount.percent_reduce}% OFF`;
     }
     return "QUÀ TẶNG";
   };
@@ -85,10 +103,10 @@ export default function PromotionsPage() {
     );
   };
 
-  const VoucherCard = ({ voucher }: { voucher: VoucherWithDetails }) => {
+  const VoucherCard = ({ voucher }: { voucher: VoucherDetail }) => {
     const daysLeft = getDaysUntilExpiry(voucher.end_date);
     const isExpiringSoon = daysLeft <= 3 && daysLeft > 0;
-    const isGift = voucher.type === "gift";
+    const isGift = !!voucher.gift;
 
     return (
       <Card
@@ -128,10 +146,10 @@ export default function PromotionsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-xs text-primary font-semibold">
                 <Sparkles className="w-4 h-4" />
-                {voucher.event.name}
+                {voucher.promotional?.event_id}
               </div>
               <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
-                {voucher.promotional.description}
+                {voucher.promotional?.description}
               </h3>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Tag className="w-3 h-3" />
@@ -143,17 +161,17 @@ export default function PromotionsPage() {
 
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
-              {getMemberLevelBadge(voucher.promotional.level)}
+              {voucher.promotional && getMemberLevelBadge(voucher.promotional.level)}
 
-              {isGift && voucher.giftInfo && (
+              {isGift && voucher.gift && (
                 <Badge variant="secondary" className="bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-none">
-                  🎁 {voucher.giftInfo.name}
+                  🎁 {voucher.gift.name}
                 </Badge>
               )}
 
-              {!isGift && voucher.discountInfo && (
+              {!isGift && voucher.discount && (
                 <Badge variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-none">
-                  💰 Tối đa ₫{voucher.discountInfo.max_price_can_reduce.toLocaleString("vi-VN")}
+                  💰 Tối đa ₫{voucher.discount.max_price_can_reduce.toLocaleString("vi-VN")}
                 </Badge>
               )}
 
@@ -179,9 +197,6 @@ export default function PromotionsPage() {
                 <span className="font-medium text-foreground">
                   {new Date(voucher.end_date).toLocaleDateString("vi-VN")}
                 </span>
-              </p>
-              <p className="text-muted-foreground/80 italic">
-                {voucher.event.description}
               </p>
             </div>
           </div>
@@ -235,7 +250,7 @@ export default function PromotionsPage() {
             </p>
             {getMemberLevelBadge(userLevel)}
             <p className="text-xl text-muted-foreground">
-              với {currentUser.membershipPoints} điểm
+              với {currentUser.membership_points} điểm
             </p>
           </div>
         </div>
@@ -342,7 +357,7 @@ export default function PromotionsPage() {
                 className="bg-white text-primary hover:bg-white/90 font-bold shadow-lg h-12 px-8"
                 asChild
               >
-                <Link href="/profile">Xem Hồ Sơ</Link>
+                <Link href="/account/profile">Xem Hồ Sơ</Link>
               </Button>
               <Button
                 size="lg"
@@ -350,7 +365,7 @@ export default function PromotionsPage() {
                 className="border-white/30 text-white font-bold shadow-lg hover:bg-white/10 h-12 px-8"
                 asChild
               >
-                <Link href="/movies">Đặt Vé Ngay</Link>
+                <Link href="/">Đặt Vé Ngay</Link>
               </Button>
             </div>
           </div>

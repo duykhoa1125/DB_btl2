@@ -1255,20 +1255,20 @@ export interface User {
   birthDate: string; // ISO date
   createdDate: string; // ISO date
   gender: "male" | "female" | "unknown";
-  membershipPoints: number; // Tích lũy điểm
-  registrationDate: string; // ISO datetime
+  membershipPoints: number;
+  registrationDate: string;
 }
 
 export interface Booking {
   booking_id: string;
-  user_id: string | null; // null for guest bookings
+  phone_number: string;
   showtime_id: string;
-  seatList: string[]; // Array of seat_id
+  seatList: string[];
   foodList: Array<{ food_id: string; quantity: number }>;
   totalAmount: number;
   status: "Pending_Confirmation" | "Confirmed" | "Cancelled";
   paymentMethod: "Credit_Card" | "Cash" | "E_Wallet";
-  bookingDate: string; // ISO datetime
+  bookingDate: string;
   ticketCode: string;
 }
 
@@ -1304,7 +1304,7 @@ export const mockUsers: User[] = [
 export const mockBookings: Booking[] = [
   {
     booking_id: "booking_001",
-    user_id: "user_001",
+    phone_number: "0912345678",
     showtime_id: "st_001",
     seatList: ["seat_A1", "seat_A2"],
     foodList: [
@@ -1319,7 +1319,7 @@ export const mockBookings: Booking[] = [
   },
   {
     booking_id: "booking_002",
-    user_id: "user_001",
+    phone_number: "0912345678",
     showtime_id: "st_003",
     seatList: ["seat_C5", "seat_C6"],
     foodList: [
@@ -1334,7 +1334,7 @@ export const mockBookings: Booking[] = [
   },
   {
     booking_id: "booking_003",
-    user_id: "user_002",
+    phone_number: "0901234567",
     showtime_id: "st_002",
     seatList: ["seat_B5", "seat_B6"],
     foodList: [{ food_id: "food_009", quantity: 1 }],
@@ -1346,7 +1346,7 @@ export const mockBookings: Booking[] = [
   },
   {
     booking_id: "booking_004",
-    user_id: "user_001",
+    phone_number: "0912345678",
     showtime_id: "st_005",
     seatList: ["seat_A3"],
     foodList: [],

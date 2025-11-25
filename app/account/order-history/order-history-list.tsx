@@ -32,7 +32,7 @@ export function OrderHistoryList() {
   }
 
   const userOrders = mockBookings.filter(
-    (order) => order.user_id === currentUser.user_id
+    (order) => order.phone_number === currentUser.phone_number
   );
 
   const filteredOrders = userOrders.filter((order) => {

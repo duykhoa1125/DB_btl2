@@ -6,9 +6,9 @@ import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
-import type { Seat, Food, Voucher, VoucherWithDetails } from "@/lib/mock-data";
+import type { Seat, Food } from "@/lib/mock-data";
 import type { Showtime, MovieDetail } from "@/services/types";
-import { MOCK_ROOMS } from "@/services/mock-data";
+import { MOCK_ROOMS, VoucherDetail } from "@/services/mock-data";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -28,7 +28,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const [bookingStep, setBookingStep] = useState<"seats" | "food" | "payment">(
     "seats"
   );
-  const [appliedVoucher, setAppliedVoucher] = useState<VoucherWithDetails | null>(null);
+  const [appliedVoucher, setAppliedVoucher] = useState<VoucherDetail | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
 
@@ -65,12 +65,22 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const subtotal = ticketTotal + foodTotal;
   const finalTotal = Math.max(0, subtotal - discountAmount);
 
-  const handleVoucherApply = (voucher: VoucherWithDetails | null, discount: number) => {
+  const handleVoucherApply = (voucher: VoucherDetail | null, discount: number) => {
     setAppliedVoucher(voucher);
     if (voucher === null) {
       setDiscountAmount(0);
     } else {
-      setDiscountAmount(discount);
+      // Calculate discount amount based on percentage
+      if (voucher.discount) {
+          const calculatedDiscount = (subtotal * discount) / 100;
+          // Apply max reduction cap if exists
+          const finalDiscount = voucher.discount.max_price_can_reduce 
+              ? Math.min(calculatedDiscount, voucher.discount.max_price_can_reduce)
+              : calculatedDiscount;
+          setDiscountAmount(finalDiscount);
+      } else {
+          setDiscountAmount(0);
+      }
     }
   };
 

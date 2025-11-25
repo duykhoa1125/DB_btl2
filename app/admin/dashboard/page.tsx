@@ -1,6 +1,7 @@
 "use client";
 
 import { mockMovies, mockCinemas, mockBookings } from "@/lib/mock-data";
+import { getMovieWithDetails } from "@/services/mock-data";
 import {
   calculateMonthlyRevenue,
   getTotalBookingsThisMonth,
@@ -23,7 +24,13 @@ export default function AdminDashboard() {
     monthlyRevenue: calculateMonthlyRevenue(currentYear, currentMonth),
   };
 
-  const topMovies = getTopMoviesByRevenue(5);
+  const topMovies = getTopMoviesByRevenue(5).map(item => {
+    const detail = getMovieWithDetails(item.movie.movie_id);
+    return {
+      ...item,
+      movie: detail || item.movie // Fallback to basic movie if detail not found (though detail has directors)
+    };
+  });
 
   return (
     <div className="space-y-8">
@@ -135,13 +142,13 @@ export default function AdminDashboard() {
                   </div>
                   <img
                     src={item.movie.image}
-                    alt={item.movie.title}
+                    alt={item.movie.name}
                     className="h-16 w-12 rounded object-cover"
                   />
                   <div className="flex-1">
-                    <h3 className="font-semibold">{item.movie.title}</h3>
+                    <h3 className="font-semibold">{item.movie.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {item.movie.director} • {item.movie.releaseYear}
+                      {(item.movie as any).directors?.join(", ")} • {new Date(item.movie.release_date).getFullYear()}
                     </p>
                   </div>
                   <div className="text-right">

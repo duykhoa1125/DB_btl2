@@ -1,13 +1,14 @@
 "use client";
 
-import { mockReviews } from "@/lib/mock-data";
+import { MOCK_REVIEWS } from "@/services/mock-data";
+import { MovieReview } from "@/services/types";
 import { useState } from "react";
 import { ReviewList } from "@/components/review-list";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { X, Star, Send, MessageSquarePlus } from "lucide-react";
+import { MessageSquarePlus, Star, Send } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/hooks/use-toast";
 
 interface ReviewsProps {
   movie_id: string;
@@ -15,59 +16,46 @@ interface ReviewsProps {
 }
 
 export function Reviews({ movie_id, movieTitle }: ReviewsProps) {
-  const [reviews, setReviews] = useState(
-    mockReviews.filter((r) => r.movie_id === movie_id)
+  const { currentUser } = useAuth();
+  const { toast } = useToast();
+  const [reviews, setReviews] = useState<MovieReview[]>(
+    MOCK_REVIEWS.filter((r) => r.movie_id === movie_id)
   );
   
-  const [rating, setRating] = useState(5);
-  const [title, setTitle] = useState("");
+  const [rating, setRating] = useState(10); // Default 10/10
   const [content, setContent] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const availableTags = [
-    "Hay",
-    "Tuyệt vời",
-    "Kém",
-    "Cảm động",
-    "Hài hước",
-    "Hư cấu",
-    "Thực tế",
-    "Tác động",
-  ];
-
-  const handleAddTag = (tag: string) => {
-    if (!selectedTags.includes(tag) && selectedTags.length < 3) {
-      setSelectedTags([...selectedTags, tag]);
-    }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setSelectedTags(selectedTags.filter((t) => t !== tag));
-  };
 
   const handleSubmit = () => {
-    const review = {
-      review_id: `review_${Date.now()}`,
+    if (!currentUser) {
+      toast({
+        title: "Vui lòng đăng nhập",
+        description: "Bạn cần đăng nhập để viết đánh giá.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const review: MovieReview = {
+      phone_number: currentUser.phone_number,
       movie_id: movie_id,
-      user_id: "current_user",
-      rating: rating,
-      title: title,
-      content: content,
-      tags: selectedTags,
-      likeCount: 0,
-      createdDate: new Date().toISOString(),
+      date_written: new Date().toISOString(),
+      star_rating: rating,
+      review_content: content,
     };
 
     setReviews([review, ...reviews]);
 
     // Reset form
-    setTitle("");
     setContent("");
-    setRating(5);
-    setSelectedTags([]);
+    setRating(10);
+    
+    toast({
+      title: "Đánh giá thành công",
+      description: "Cảm ơn bạn đã chia sẻ đánh giá!",
+    });
   };
 
-  const isComplete = title.trim() && content.trim() && selectedTags.length > 0;
+  const isComplete = content.trim().length > 0;
 
   return (
     <div className="space-y-8">
@@ -114,23 +102,6 @@ export function Reviews({ movie_id, movieTitle }: ReviewsProps) {
                 <p className="mt-2 text-center text-sm font-bold text-primary">{rating}/10 điểm</p>
               </div>
 
-              {/* Title */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Tiêu đề
-                </label>
-                <Input
-                  placeholder="Bộ phim tuyệt vời!"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  maxLength={50}
-                  className="bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20"
-                />
-                <p className="text-xs text-right text-muted-foreground">
-                  {title.length}/50
-                </p>
-              </div>
-
               {/* Content */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">
@@ -149,54 +120,15 @@ export function Reviews({ movie_id, movieTitle }: ReviewsProps) {
                 </p>
               </div>
 
-              {/* Tags */}
-              <div className="space-y-3">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Thẻ (tối đa 3)
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {availableTags.map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => handleAddTag(tag)}
-                      disabled={selectedTags.includes(tag)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-300 border ${
-                        selectedTags.includes(tag)
-                          ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
-                          : "bg-muted/30 text-muted-foreground border-transparent hover:bg-muted hover:border-border"
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-                
-                {selectedTags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3 p-3 bg-muted/30 rounded-xl border border-border/50">
-                    {selectedTags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="gap-1 bg-background border border-border/50 pl-2 pr-1 py-1">
-                        {tag}
-                        <button
-                          onClick={() => handleRemoveTag(tag)}
-                          className="hover:bg-destructive/10 hover:text-destructive rounded-full p-0.5 transition-colors"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-
               {/* Submit Button */}
               <Button
                 onClick={handleSubmit}
-                disabled={!isComplete}
+                disabled={!isComplete || !currentUser}
                 className="w-full gap-2 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg shadow-primary/20 font-bold h-11"
                 size="lg"
               >
                 <Send className="h-4 w-4" />
-                Gửi đánh giá
+                {currentUser ? "Gửi đánh giá" : "Đăng nhập để đánh giá"}
               </Button>
             </div>
           </div>

@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Film, Ticket, Gift, Phone, User, LogOut, Home, MapPin } from "lucide-react";
+import { Film, Ticket, Gift, Phone, User, LogOut, Home, MapPin, Calendar } from "lucide-react";
 
 export function Header() {
   const { currentUser, logout } = useAuth();
@@ -35,11 +35,11 @@ export function Header() {
         {/* Navigation */}
         <nav className="flex items-center gap-1">
           <Link
-            href="/"
+            href="/events"
             className="group relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground"
           >
-            <Home className="h-4 w-4" />
-            <span className="relative z-10">Trang chủ</span>
+            <Calendar className="h-4 w-4" />
+            <span className="relative z-10">Sự kiện</span>
             <div className="absolute inset-0 rounded-lg bg-primary/10 opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
 
@@ -88,22 +88,22 @@ export function Header() {
                     <Avatar className="h-7 w-7">
                       <AvatarImage
                         src={currentUser.avatar || "/placeholder.svg"}
-                        alt={currentUser.fullName || "User"}
+                        alt={currentUser.fullname || "User"}
                       />
                       <AvatarFallback className="text-xs">
-                        {currentUser.fullName?.substring(0, 2) ||
+                        {currentUser.fullname?.substring(0, 2) ||
                           currentUser.email?.substring(0, 2)?.toUpperCase() ||
                           "U"}
                       </AvatarFallback>
                     </Avatar>
                     <span className="hidden text-sm font-medium sm:inline">
-                      {currentUser.fullName?.split(" ").slice(-1)[0] || "User"}
+                      {currentUser.fullname?.split(" ").slice(-1)[0] || "User"}
                     </span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-2 py-2">
-                    <p className="text-sm font-medium">{currentUser.fullName}</p>
+                    <p className="text-sm font-medium">{currentUser.fullname}</p>
                     <p className="text-xs text-muted-foreground">{currentUser.email}</p>
                   </div>
                   <DropdownMenuSeparator />

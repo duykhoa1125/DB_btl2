@@ -152,7 +152,7 @@ export default function NewShowtimePage() {
                 <SelectContent>
                   {movies.map((movie) => (
                     <SelectItem key={movie.movie_id} value={movie.movie_id}>
-                      {movie.title}
+                      {movie.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -271,7 +271,7 @@ export default function NewShowtimePage() {
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <p>
-                <span className="font-medium">Movie:</span> {selectedMovie.title}
+                <span className="font-medium">Movie:</span> {selectedMovie.name}
               </p>
               <p>
                 <span className="font-medium">Room:</span> {selectedRoom.name}

@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Ticket, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { type Voucher, getVoucherWithDetails, type VoucherWithDetails } from "@/lib/mock-data";
+import { getVoucherDetail, VoucherDetail } from "@/services/mock-data";
 import { cn } from "@/lib/utils";
 
 interface VoucherInputProps {
-  onVoucherApply?: (voucher: VoucherWithDetails, discount: number) => void;
-  appliedVoucher?: VoucherWithDetails | null;
+  onVoucherApply?: (voucher: VoucherDetail, discount: number) => void;
+  appliedVoucher?: VoucherDetail | null;
   appliedDiscount?: number;
 }
 
@@ -29,7 +29,7 @@ export function VoucherInput({
       return;
     }
 
-    const voucher = getVoucherWithDetails(code.toUpperCase());
+    const voucher = getVoucherDetail(code.toUpperCase());
 
     if (!voucher) {
       setError("Mã khuyến mại không tồn tại");
@@ -42,10 +42,10 @@ export function VoucherInput({
     }
 
     if (voucher.state !== "active") {
-      setError("Mã khuyến mại đã hết hạn");
+      setError("Mã khuyến mại đã hết hạn hoặc đã được sử dụng");
       toast({
         title: "Lỗi",
-        description: "Mã khuyến mại đã hết hạn hoặc hết số lượng",
+        description: "Mã khuyến mại đã hết hạn hoặc đã được sử dụng",
         variant: "destructive",
       });
       return;
@@ -53,8 +53,8 @@ export function VoucherInput({
 
     setError("");
     let discount = 0;
-    if (voucher.type === 'discount' && voucher.discountInfo) {
-        discount = voucher.discountInfo.percent_reduce;
+    if (voucher.discount) {
+        discount = voucher.discount.percent_reduce;
     }
     
     onVoucherApply?.(voucher, discount);
@@ -81,9 +81,9 @@ export function VoucherInput({
                 <CheckCircle2 className="h-4 w-4" />
               </p>
               <p className="text-sm text-green-600/80 dark:text-green-400/80">
-                {appliedVoucher.type === "discount" && appliedVoucher.discountInfo
-                  ? `Giảm ${appliedVoucher.discountInfo.percent_reduce}%`
-                  : `Quà tặng: ${appliedVoucher.giftInfo?.name || 'Quà tặng đặc biệt'}`}
+                {appliedVoucher.discount
+                  ? `Giảm ${appliedVoucher.discount.percent_reduce}%`
+                  : `Quà tặng: ${appliedVoucher.gift?.name || 'Quà tặng đặc biệt'}`}
               </p>
             </div>
             <Button
@@ -101,14 +101,14 @@ export function VoucherInput({
           <div className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-background border border-green-500/30" />
         </div>
         
-        {appliedDiscount && (
+        {appliedDiscount ? (
           <div className="flex justify-between items-center px-2">
             <span className="text-sm text-muted-foreground">Tiết kiệm được:</span>
             <span className="text-sm font-bold text-green-600 dark:text-green-400">
-              -₫{appliedDiscount.toLocaleString("vi-VN")}
+              {appliedDiscount}%
             </span>
           </div>
-        )}
+        ) : null}
       </div>
     );
   }
