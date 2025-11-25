@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { mockCinemas } from "@/lib/mock-data";
+import { getAllCinemas } from "@/lib/admin-helpers";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Film, ArrowRight } from "lucide-react";
 
 export default function CinemasPage() {
+  const cinemas = getAllCinemas();
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
@@ -32,7 +34,7 @@ export default function CinemasPage() {
 
         {/* Cinema List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockCinemas.map((cinema) => (
+          {cinemas.map((cinema) => (
             <Card
               key={cinema.cinema_id}
               className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full"
@@ -44,7 +46,7 @@ export default function CinemasPage() {
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
-                    {cinema.cinemaName}
+                    {cinema.name}
                   </h3>
                 </div>
               </div>
@@ -71,7 +73,7 @@ export default function CinemasPage() {
           ))}
         </div>
 
-        {mockCinemas.length === 0 && (
+        {cinemas.length === 0 && (
           <div className="text-center py-20">
             <p className="text-muted-foreground text-lg">
               Không tìm thấy rạp nào.

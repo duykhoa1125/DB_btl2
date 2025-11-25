@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createCinema } from "@/lib/admin-helpers";
-import type { Cinema } from "@/lib/mock-data";
+import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +16,7 @@ export default function NewCinemaPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    cinemaName: "",
+    name: "",
     address: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -24,8 +24,8 @@ export default function NewCinemaPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.cinemaName.trim())
-      newErrors.cinemaName = "Cinema name is required";
+    if (!formData.name.trim())
+      newErrors.name = "Cinema name is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
 
     setErrors(newErrors);
@@ -48,8 +48,9 @@ export default function NewCinemaPage() {
 
     try {
       const cinemaData: Omit<Cinema, "cinema_id"> = {
-        cinemaName: formData.cinemaName,
+        name: formData.name,
         address: formData.address,
+        state: "active", // Default state
       };
 
       createCinema(cinemaData);
@@ -99,14 +100,14 @@ export default function NewCinemaPage() {
                 Cinema Name <span className="text-destructive">*</span>
               </label>
               <Input
-                value={formData.cinemaName}
+                value={formData.name}
                 onChange={(e) =>
-                  setFormData({ ...formData, cinemaName: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="CinemaHub - Quận 1"
               />
-              {errors.cinemaName && (
-                <p className="text-sm text-destructive">{errors.cinemaName}</p>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
               )}
             </div>
 

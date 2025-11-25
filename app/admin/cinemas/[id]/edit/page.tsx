@@ -3,9 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getCinemaById, updateCinema } from "@/lib/admin-helpers";
-import type { Cinema } from "@/lib/mock-data";
+import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -18,8 +25,9 @@ export default function EditCinemaPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    cinemaName: "",
+    name: "",
     address: "",
+    state: "active" as "active" | "inactive",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -38,8 +46,9 @@ export default function EditCinemaPage() {
     }
 
     setFormData({
-      cinemaName: cinema.cinemaName,
+      name: cinema.name,
       address: cinema.address,
+      state: cinema.state,
     });
     setIsLoading(false);
   }, [params.id, router, toast]);
@@ -47,8 +56,7 @@ export default function EditCinemaPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.cinemaName.trim())
-      newErrors.cinemaName = "Cinema name is required";
+    if (!formData.name.trim()) newErrors.name = "Cinema name is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
 
     setErrors(newErrors);
@@ -72,8 +80,9 @@ export default function EditCinemaPage() {
     try {
       const cinema_id = params.id as string;
       const updates: Partial<Omit<Cinema, "cinema_id">> = {
-        cinemaName: formData.cinemaName,
+        name: formData.name,
         address: formData.address,
+        state: formData.state,
       };
 
       updateCinema(cinema_id, updates);
@@ -125,21 +134,23 @@ export default function EditCinemaPage() {
             <CardTitle>Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Name */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 Cinema Name <span className="text-destructive">*</span>
               </label>
               <Input
-                value={formData.cinemaName}
+                value={formData.name}
                 onChange={(e) =>
-                  setFormData({ ...formData, cinemaName: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
               />
-              {errors.cinemaName && (
-                <p className="text-sm text-destructive">{errors.cinemaName}</p>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
               )}
             </div>
 
+            {/* Address */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 Address <span className="text-destructive">*</span>
@@ -154,9 +165,31 @@ export default function EditCinemaPage() {
                 <p className="text-sm text-destructive">{errors.address}</p>
               )}
             </div>
+
+            {/* State */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Status <span className="text-destructive">*</span>
+              </label>
+              <Select
+                value={formData.state}
+                onValueChange={(value: "active" | "inactive") =>
+                  setFormData({ ...formData, state: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
         </Card>
 
+        {/* Actions */}
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/cinemas">Cancel</Link>

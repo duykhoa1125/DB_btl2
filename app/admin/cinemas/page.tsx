@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { getAllCinemas, deleteCinema } from "@/lib/admin-helpers";
-import type { Cinema } from "@/lib/mock-data";
+import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,7 +29,7 @@ export default function CinemasPage() {
   // Filter cinemas
   const filteredCinemas = cinemas.filter((cinema) => {
     const matchesSearch =
-      cinema.cinemaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cinema.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cinema.address.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
@@ -46,7 +46,7 @@ export default function CinemasPage() {
         setCinemas(getAllCinemas());
         toast({
           title: "Cinema deleted",
-          description: `"${cinemaToDelete.cinemaName}" has been deleted successfully.`,
+          description: `"${cinemaToDelete.name}" has been deleted successfully.`,
         });
       } else {
         toast({
@@ -109,7 +109,7 @@ export default function CinemasPage() {
                   <Film className="w-12 h-12 text-primary/20" />
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="font-bold text-foreground">{cinema.cinemaName}</h3>
+                  <h3 className="font-bold text-foreground">{cinema.name}</h3>
                 </div>
               </div>
 
@@ -153,7 +153,7 @@ export default function CinemasPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete &quot;{cinemaToDelete?.cinemaName}&quot;.
+              This will permanently delete &quot;{cinemaToDelete?.name}&quot;.
               This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
