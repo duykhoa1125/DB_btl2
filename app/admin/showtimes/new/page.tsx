@@ -208,9 +208,7 @@ export default function NewShowtimePage() {
                     <SelectItem key={cinema.cinemaId} value={cinema.cinemaId}>
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4" />
-                        <span>
-                          {cinema.cinemaName} - {cinema.city}
-                        </span>
+                        <span>{cinema.cinemaName}</span>
                       </div>
                     </SelectItem>
                   ))}
@@ -223,8 +221,7 @@ export default function NewShowtimePage() {
                 <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
                   <p className="text-sm">
                     <span className="font-medium">Selected:</span>{" "}
-                    {selectedCinema.cinemaName} • {selectedCinema.address} •{" "}
-                    {selectedCinema.numberOfRooms} rooms
+                    {selectedCinema.cinemaName} • {selectedCinema.address}
                   </p>
                 </div>
               )}

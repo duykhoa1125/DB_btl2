@@ -63,12 +63,6 @@ export interface Cinema {
   cinemaId: string;
   cinemaName: string;
   address: string;
-  city: string;
-  numberOfRooms: number;
-  description: string;
-  imageUrl: string;
-  facilities: string[];
-  phone: string;
 }
 
 export const mockMovies: Movie[] = [
@@ -998,89 +992,41 @@ export const mockCinemas: Cinema[] = [
     cinemaId: "cinema_001",
     cinemaName: "CinemaHub - Tân Bình",
     address: "123 Nguyễn Hữu Cảnh, Quận Tân Bình",
-    city: "TP. Hồ Chí Minh",
-    numberOfRooms: 4,
-    description: "Rạp chiếu phim hiện đại với công nghệ âm thanh Dolby Atmos và màn hình cong kích thước lớn, mang lại trải nghiệm điện ảnh sống động nhất.",
-    imageUrl: "https://images.unsplash.com/photo-1517604931442-710c8ef5ad25?q=80&w=2069&auto=format&fit=crop",
-    facilities: ["Dolby Atmos", "Ghế đôi", "Bắp nước ngon", "Giữ xe miễn phí"],
-    phone: "028 3812 3456",
   },
   {
     cinemaId: "cinema_002",
     cinemaName: "CinemaHub - Bình Thạnh",
     address: "456 Nguyễn Văn Trỗi, Quận Bình Thạnh",
-    city: "TP. Hồ Chí Minh",
-    numberOfRooms: 3,
-    description: "Không gian sang trọng, ấm cúng, phù hợp cho các cặp đôi và gia đình. Hệ thống ghế ngồi êm ái, rộng rãi.",
-    imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop",
-    facilities: ["IMAX", "Ghế VIP", "Wifi miễn phí"],
-    phone: "028 3512 7890",
   },
   {
     cinemaId: "cinema_003",
     cinemaName: "CinemaHub - Quận 1",
     address: "789 Lê Lợi, Quận 1",
-    city: "TP. Hồ Chí Minh",
-    numberOfRooms: 5,
-    description: "Tọa lạc tại trung tâm thành phố, CinemaHub Quận 1 là điểm đến lý tưởng cho những tín đồ điện ảnh với các suất chiếu muộn.",
-    imageUrl: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?q=80&w=1779&auto=format&fit=crop",
-    facilities: ["4DX", "Dolby Atmos", "Nhà hàng", "Khu vui chơi trẻ em"],
-    phone: "028 3912 3456",
   },
   {
     cinemaId: "cinema_004",
     cinemaName: "CinemaHub - Hà Nội",
     address: "321 Tô Vĩ Tử, Quận Đống Đa",
-    city: "Hà Nội",
-    numberOfRooms: 3,
-    description: "Rạp chiếu phim tiêu chuẩn quốc tế đầu tiên tại khu vực, mang đến trải nghiệm xem phim đỉnh cao cho khán giả thủ đô.",
-    imageUrl: "https://images.unsplash.com/photo-1586899028174-e7098604235b?q=80&w=2071&auto=format&fit=crop",
-    facilities: ["Dolby 7.1", "Ghế Sweetbox", "Cà phê"],
-    phone: "024 3812 9876",
   },
   {
     cinemaId: "cinema_005",
     cinemaName: "CinemaHub - Cầu Giấy",
     address: "241 Xuân Thủy, Quận Cầu Giấy",
-    city: "Hà Nội",
-    numberOfRooms: 6,
-    description: "Tổ hợp giải trí cinema kết hợp với khu vui chơi, mua sắm. Hệ thống phòng chiếu hiện đại bậc nhất Hà Nội.",
-    imageUrl: "https://images.unsplash.com/photo-1513106580091-1d82408b8cd8?q=80&w=2076&auto=format&fit=crop",
-    facilities: ["IMAX Laser", "Dolby Atmos", "Ghế Massage", "Khu vui chơi"],
-    phone: "024 3754 1234",
   },
   {
     cinemaId: "cinema_006",
     cinemaName: "CinemaHub - Đà Nẵng",
     address: "910 Ngô Quyền, Quận Sơn Trà",
-    city: "Đà Nẵng",
-    numberOfRooms: 4,
-    description: "Điểm đến giải trí hàng đầu tại thành phố biển Đà Nẵng. Không gian thoáng đãng, view đẹp.",
-    imageUrl: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2025&auto=format&fit=crop",
-    facilities: ["4DX", "Ghế đôi", "View biển"],
-    phone: "0236 3987 654",
   },
   {
     cinemaId: "cinema_007",
     cinemaName: "CinemaHub - Cần Thơ",
     address: "209 Đường 30/4, Quận Ninh Kiều",
-    city: "Cần Thơ",
-    numberOfRooms: 3,
-    description: "Rạp chiếu phim hiện đại nhất khu vực Đồng bằng sông Cửu Long. Phục vụ khán giả miền Tây với chất lượng tốt nhất.",
-    imageUrl: "https://images.unsplash.com/photo-1524712245354-0c40c59b635f?q=80&w=2069&auto=format&fit=crop",
-    facilities: ["Dolby 7.1", "Bắp nước đặc biệt", "Wifi mạnh"],
-    phone: "0292 3812 345",
   },
   {
     cinemaId: "cinema_008",
     cinemaName: "CinemaHub - Thủ Đức",
     address: "216 Võ Văn Ngân, TP. Thủ Đức",
-    city: "TP. Hồ Chí Minh",
-    numberOfRooms: 5,
-    description: "Rạp chiếu phim dành cho giới trẻ năng động tại thành phố mới Thủ Đức. Thiết kế trẻ trung, hiện đại.",
-    imageUrl: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?q=80&w=1779&auto=format&fit=crop",
-    facilities: ["ScreenX", "Ghế Beanbag", "Trà sữa"],
-    phone: "028 3722 8888",
   },
 ];
 

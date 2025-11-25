@@ -7,13 +7,6 @@ import type { Cinema } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -23,29 +16,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Film } from "lucide-react";
 
 export default function CinemasPage() {
   const [cinemas, setCinemas] = useState<Cinema[]>(getAllCinemas());
   const [searchTerm, setSearchTerm] = useState("");
-  const [cityFilter, setCityFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [cinemaToDelete, setCinemaToDelete] = useState<Cinema | null>(null);
   const { toast } = useToast();
-
-  // Get unique cities
-  const cities = Array.from(new Set(cinemas.map((c) => c.city)));
 
   // Filter cinemas
   const filteredCinemas = cinemas.filter((cinema) => {
     const matchesSearch =
       cinema.cinemaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cinema.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cinema.city.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCity = cityFilter === "all" || cinema.city === cityFilter;
-    return matchesSearch && matchesCity;
+      cinema.address.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
   });
 
   const handleDeleteClick = (cinema: Cinema) => {
@@ -97,25 +83,12 @@ export default function CinemasPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by name, address, or city..."
+            placeholder="Search by name or address..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
           />
         </div>
-        <Select value={cityFilter} onValueChange={setCityFilter}>
-          <SelectTrigger className="w-full md:w-[200px]">
-            <SelectValue placeholder="Filter by city" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Cities</SelectItem>
-            {cities.map((city) => (
-              <SelectItem key={city} value={city}>
-                {city}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Cinemas Grid */}
@@ -130,17 +103,13 @@ export default function CinemasPage() {
               key={cinema.cinemaId}
               className="group overflow-hidden rounded-lg border border-border/50 bg-card transition-all hover:shadow-lg"
             >
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={cinema.imageUrl}
-                  alt={cinema.cinemaName}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              {/* Decorative Header */}
+              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10">
+                 <div className="absolute inset-0 flex items-center justify-center">
+                  <Film className="w-12 h-12 text-primary/20" />
+                </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="font-bold text-white">{cinema.cinemaName}</h3>
-                  <p className="text-sm text-white/80">{cinema.city}</p>
+                  <h3 className="font-bold text-foreground">{cinema.cinemaName}</h3>
                 </div>
               </div>
 
@@ -148,25 +117,6 @@ export default function CinemasPage() {
               <div className="space-y-4 p-4">
                 <div className="text-sm">
                   <p className="text-muted-foreground">{cinema.address}</p>
-                  <p className="mt-1 text-muted-foreground">{cinema.phone}</p>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-sm font-medium">
-                    {cinema.numberOfRooms} Rooms
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {cinema.facilities.slice(0, 3).map((facility) => (
-                      <Badge key={facility} variant="secondary" className="text-xs">
-                        {facility}
-                      </Badge>
-                    ))}
-                    {cinema.facilities.length > 3 && (
-                      <Badge variant="secondary" className="text-xs">
-                        +{cinema.facilities.length - 3}
-                      </Badge>
-                    )}
-                  </div>
                 </div>
 
                 {/* Actions */}

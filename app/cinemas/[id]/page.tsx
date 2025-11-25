@@ -10,18 +10,7 @@ import {
   type Showtime,
 } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  MapPin,
-  Phone,
-  CheckCircle2,
-  Calendar,
-  Clock,
-  Ticket,
-  ChevronRight,
-  Film,
-} from "lucide-react";
+import { MapPin, Calendar, Clock, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function CinemaDetailPage({
@@ -90,19 +79,14 @@ export default function CinemaDetailPage({
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative h-[400px] w-full overflow-hidden">
-        <img
-          src={cinema.imageUrl}
-          alt={cinema.cinemaName}
-          className="h-full w-full object-cover"
-        />
+      <div className="relative h-[300px] w-full overflow-hidden bg-gradient-to-br from-primary/20 via-background to-accent/20">
+        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+          <Film className="w-64 h-64" />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
           <div className="mx-auto max-w-7xl space-y-4">
-            <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
-              {cinema.city}
-            </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground">
               {cinema.cinemaName}
             </h1>
@@ -111,19 +95,15 @@ export default function CinemaDetailPage({
                 <MapPin className="h-5 w-5 text-primary" />
                 <span>{cinema.address}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-primary" />
-                <span>{cinema.phone}</span>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Left Column: Showtimes */}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 gap-12">
+          {/* Main Content: Showtimes */}
+          <div className="space-y-8">
             {/* Sticky Date Selector */}
             <div className="sticky top-[72px] z-30 -mx-6 px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 py-4 border-b border-border/40 transition-all">
               <div className="flex items-center gap-2 mb-3">
@@ -243,45 +223,6 @@ export default function CinemaDetailPage({
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Right Column: Info & Facilities */}
-          <div className="space-y-8">
-            <Card className="p-6 border-border/50 bg-card/50 backdrop-blur-sm">
-              <h3 className="text-xl font-bold mb-4">Thông Tin Rạp</h3>
-              <div className="space-y-4 text-sm">
-                <p className="text-muted-foreground leading-relaxed">
-                  {cinema.description}
-                </p>
-                <div className="pt-4 border-t border-border/50 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Số phòng chiếu</span>
-                    <span className="font-bold">{cinema.numberOfRooms}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Hotline</span>
-                    <span className="font-bold text-primary">{cinema.phone}</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 border-border/50 bg-card/50 backdrop-blur-sm">
-              <h3 className="text-xl font-bold mb-4">Tiện Ích</h3>
-              <div className="grid grid-cols-1 gap-3">
-                {cinema.facilities.map((facility) => (
-                  <div
-                    key={facility}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 border border-border/50"
-                  >
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <CheckCircle2 className="h-4 w-4" />
-                    </div>
-                    <span className="font-medium">{facility}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
           </div>
         </div>
       </div>

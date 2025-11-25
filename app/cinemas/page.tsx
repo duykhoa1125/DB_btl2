@@ -1,25 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { mockCinemas } from "@/lib/mock-data";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Film, ArrowRight } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MapPin, Film, ArrowRight } from "lucide-react";
 
 export default function CinemasPage() {
-  const [selectedCity, setSelectedCity] = useState("all");
-
-  // Get unique cities
-  const cities = Array.from(new Set(mockCinemas.map((c) => c.city)));
-
-  const filteredCinemas =
-    selectedCity === "all"
-      ? mockCinemas
-      : mockCinemas.filter((c) => c.city === selectedCity);
-
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
@@ -43,84 +30,30 @@ export default function CinemasPage() {
           </p>
         </div>
 
-        {/* City Filter */}
-        <div className="mb-12 flex justify-center">
-          <Tabs
-            defaultValue="all"
-            value={selectedCity}
-            onValueChange={setSelectedCity}
-            className="w-full max-w-md"
-          >
-            <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-full h-12 border border-border/50">
-              <TabsTrigger
-                value="all"
-                className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
-              >
-                Tất cả
-              </TabsTrigger>
-              {cities.map((city) => (
-                <TabsTrigger
-                  key={city}
-                  value={city}
-                  className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
-                >
-                  {city.replace("TP. ", "")}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-
         {/* Cinema List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredCinemas.map((cinema) => (
+          {mockCinemas.map((cinema) => (
             <Card
               key={cinema.cinemaId}
               className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full"
             >
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={cinema.imageUrl}
-                  alt={cinema.cinemaName}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+              {/* Decorative Header instead of Image */}
+              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/20 via-background to-accent/20 group-hover:from-primary/30 transition-all duration-500">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Film className="w-12 h-12 text-primary/40 group-hover:scale-110 transition-transform duration-500" />
+                </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-xl font-bold text-white mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
                     {cinema.cinemaName}
                   </h3>
-                  <div className="flex items-center text-white/80 text-sm">
-                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary" />
-                    <span className="truncate">{cinema.address}</span>
-                  </div>
                 </div>
               </div>
 
               <CardContent className="p-6 flex-1 space-y-4">
                 <div className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <Phone className="w-4 h-4 mt-0.5 text-primary" />
-                  <span>{cinema.phone}</span>
+                  <MapPin className="w-4 h-4 mt-0.5 text-primary" />
+                  <span>{cinema.address}</span>
                 </div>
-
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-foreground">Tiện ích:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {cinema.facilities.map((facility) => (
-                      <Badge
-                        key={facility}
-                        variant="secondary"
-                        className="bg-primary/10 text-primary hover:bg-primary/20 border-none font-normal"
-                      >
-                        {facility}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {cinema.description}
-                </p>
               </CardContent>
 
               <CardFooter className="p-6 pt-0 mt-auto">
@@ -138,10 +71,10 @@ export default function CinemasPage() {
           ))}
         </div>
 
-        {filteredCinemas.length === 0 && (
+        {mockCinemas.length === 0 && (
           <div className="text-center py-20">
             <p className="text-muted-foreground text-lg">
-              Không tìm thấy rạp nào tại khu vực này.
+              Không tìm thấy rạp nào.
             </p>
           </div>
         )}
