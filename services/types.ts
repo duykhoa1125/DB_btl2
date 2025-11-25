@@ -60,6 +60,7 @@ export interface Seat {
 // 2. MOVIE
 export interface Movie {
     movie_id: string;
+    image: string;
     name: string;
     duration: number;       // Phút
     release_date: string;   // ISO Date String: "2024-05-25"
