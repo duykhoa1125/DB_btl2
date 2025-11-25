@@ -3,7 +3,7 @@ import { ShowtimeSelector } from "@/components/showtime-selector";
 import { RatingSummary } from "@/components/rating-summary";
 import { Breadcrumb } from "@/components/breadcrumb";
 
-import { mockMovies, mockShowtimes, mockReviews } from "@/lib/mock-data";
+import { getMovieWithDetails, MOCK_SHOWTIMES, MOCK_REVIEWS } from "@/services/mock-data";
 import { User, Clock, Calendar, Factory, Play } from "lucide-react";
 
 import { Reviews } from "@/components/reviews";
@@ -15,18 +15,10 @@ export default async function MovieDetailPage({
 }) {
   const { id } = await params;
 
-  console.log("Searching for movie with ID:", id);
-  console.log(
-    "Available movies:",
-    mockMovies.map((m) => m.movie_id)
-  );
+  const movie = getMovieWithDetails(id);
+  const showtimes = MOCK_SHOWTIMES. filter((s) => s.showtime_id.includes(id) || s.movie_id === id);
 
-  const movie = mockMovies.find((m) => m.movie_id === id);
-  const showtimes = mockShowtimes.filter((s) => s.movie_id === id);
-
-  const reviewCount = mockReviews.filter((r) => r.movie_id === id).length;
-
-  console.log("Found movie:", movie);
+  const reviewCount = MOCK_REVIEWS.filter((r) => r.movie_id === id).length;
 
   if (!movie) {
     return (
@@ -50,7 +42,7 @@ export default async function MovieDetailPage({
           <Breadcrumb 
             items={[
               { label: "Phim", href: "/" },
-              { label: movie.title }
+              { label: movie.name }
             ]} 
           />
         </div>
@@ -65,12 +57,12 @@ export default async function MovieDetailPage({
             <div className="group relative h-[400px] w-[270px] overflow-hidden rounded-xl shadow-xl">
               <img
                 src={movie.image || "/placeholder.svg"}
-                alt={movie.title}
+                alt={movie.name}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <a 
-                href={movie.trailerUrl}
+                href={movie.trailer || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
@@ -87,16 +79,21 @@ export default async function MovieDetailPage({
             {/* Title & Status */}
             <div>
               <div className="mb-4 flex flex-wrap items-center gap-3">
-                <Badge variant={movie.status === "Now Showing" ? "default" : "outline"} className="bg-primary hover:bg-primary/90 text-primary-foreground border-none px-3 py-1">
-                  {movie.status}
+                <Badge variant={movie.status === "showing" ? "default" : "outline"} className="bg-primary hover:bg-primary/90 text-primary-foreground border-none px-3 py-1">
+                  {movie.status === "showing" ? "Đang chiếu" : movie.status === "upcoming" ? "Sắp chiếu" : "Đã kết thúc"}
                 </Badge>
+                {movie.age_rating > 0 && (
+                  <Badge variant="outline" className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border-red-500/50 px-3 py-1">
+                    {movie.age_rating}+
+                  </Badge>
+                )}
               </div>
 
               <h1 className="mb-3 text-4xl md:text-5xl font-bold leading-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                {movie.title}
+                {movie.name}
               </h1>
               <p className="text-base md:text-lg leading-relaxed text-muted-foreground line-clamp-3 font-light">
-                {movie.description}
+                {movie.synopsis || ''}
               </p>
             </div>
 
@@ -115,7 +112,7 @@ export default async function MovieDetailPage({
                   <Calendar className="h-3.5 w-3.5 text-primary" />
                   <span>Năm</span>
                 </div>
-                <p className="font-bold text-lg group-hover:text-primary transition-colors">{movie.releaseYear}</p>
+                <p className="font-bold text-lg group-hover:text-primary transition-colors">{new Date(movie.release_date).getFullYear()}</p>
               </div>
 
               <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
@@ -123,9 +120,19 @@ export default async function MovieDetailPage({
                   <User className="h-3.5 w-3.5 text-primary" />
                   <span>Đạo diễn</span>
                 </div>
-                <p className="font-bold text-lg truncate group-hover:text-primary transition-colors">{movie.director}</p>
+                <p className="font-bold text-lg truncate group-hover:text-primary transition-colors">
+                  {movie.directors && movie.directors.length > 0 ? movie.directors.join(', ') : 'Chưa cập nhật'}
+                </p>
               </div>
 
+              {movie.language && (
+                <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
+                  <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                    <span>Ngôn ngữ</span>
+                  </div>
+                  <p className="font-bold text-lg uppercase group-hover:text-primary transition-colors">{movie.language}</p>
+                </div>
+              )}
             </div>
 
 
@@ -136,7 +143,7 @@ export default async function MovieDetailPage({
                 <span>Diễn viên</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {movie.actors.slice(0, 5).map((actor, index) => (
+                {movie.actors && movie.actors.slice(0, 5).map((actor, index) => (
                   <span
                     key={index}
                     className="rounded-lg bg-muted/50 border border-border/50 px-3 py-1.5 text-sm font-medium hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all cursor-default"
@@ -144,7 +151,7 @@ export default async function MovieDetailPage({
                     {actor}
                   </span>
                 ))}
-                {movie.actors.length > 5 && (
+                {movie.actors && movie.actors.length > 5 && (
                   <span className="rounded-lg bg-muted/50 border border-border/50 px-3 py-1.5 text-sm font-medium text-muted-foreground">
                     +{movie.actors.length - 5}
                   </span>
@@ -172,7 +179,7 @@ export default async function MovieDetailPage({
               </div>
               <div className="relative bg-black" style={{ paddingBottom: "56.25%" }}>
                 <iframe
-                  src={movie.trailerUrl || ""}
+                  src={movie.trailer || ""}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="absolute inset-0 h-full w-full"
@@ -204,7 +211,7 @@ export default async function MovieDetailPage({
       {/* Reviews Section */}
       <section className="border-t border-border py-12">
         <div className="mx-auto max-w-7xl px-6">
-          <Reviews movie_id={movie.movie_id} movieTitle={movie.title} />
+          <Reviews movie_id={movie.movie_id} movieTitle={movie.name} />
         </div>
       </section>
     </div>

@@ -3,7 +3,7 @@ import {
     MovieStatus, SeatType, SeatPhysicalState, EntityState,
     MemberLevel, Gender, MovieLanguage, Director, Actor,
     Voucher, Event, Promotional, MovieReview, Food,
-    SeatLayoutItem, BookingSeatState
+    SeatLayoutItem, BookingSeatState, MovieDetail
 } from './types';
 
 // --- HELPERS ---
@@ -497,3 +497,55 @@ export const MOCK_EVENTS: Event[] = [
         end_date: '2024-12-31'
     }
 ];
+
+// --- HELPER FUNCTIONS ---
+
+/**
+ * Get movie with aggregated directors and actors
+ */
+export function getMovieWithDetails(movieId: string): MovieDetail | undefined {
+    const movie = MOCK_MOVIES.find(m => m.movie_id === movieId);
+    if (!movie) return undefined;
+
+    const directors = MOCK_DIRECTORS
+        .filter(d => d.movie_id === movieId)
+        .map(d => d.name);
+
+    const actors = MOCK_ACTORS
+        .filter(a => a.movie_id === movieId)
+        .map(a => a.name);
+
+    const avg_rating = calculateAverageRating(movieId);
+
+    return { ...movie, directors, actors, avg_rating };
+}
+
+/**
+ * Get all movies with their details (directors, actors, ratings)
+ */
+export function getAllMoviesWithDetails(): MovieDetail[] {
+    return MOCK_MOVIES.map(movie => {
+        const directors = MOCK_DIRECTORS
+            .filter(d => d.movie_id === movie.movie_id)
+            .map(d => d.name);
+
+        const actors = MOCK_ACTORS
+            .filter(a => a.movie_id === movie.movie_id)
+            .map(a => a.name);
+
+        const avg_rating = calculateAverageRating(movie.movie_id);
+
+        return { ...movie, directors, actors, avg_rating };
+    });
+}
+
+/**
+ * Calculate average star rating from reviews (1-5 scale)
+ */
+export function calculateAverageRating(movieId: string): number {
+    const reviews = MOCK_REVIEWS.filter(r => r.movie_id === movieId);
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, r) => acc + r.star_rating, 0);
+    return sum / reviews.length;
+}
+

@@ -6,14 +6,16 @@ import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
-import type { Seat, Food, Voucher, Movie, Showtime, VoucherWithDetails } from "@/lib/mock-data";
+import type { Seat, Food, Voucher, VoucherWithDetails } from "@/lib/mock-data";
+import type { Showtime, MovieDetail } from "@/services/types";
+import { MOCK_ROOMS } from "@/services/mock-data";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Calendar, Clock, MapPin, CreditCard, Wallet, Banknote, Building2, CheckCircle2 } from "lucide-react";
 
 interface BookingContentProps {
   showtime: Showtime;
-  movie: Movie;
+  movie: MovieDetail;
 }
 
 export function BookingContent({ showtime, movie }: BookingContentProps) {
@@ -36,17 +38,26 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
     }
   }, [searchParams]);
 
-  const formatDateTime = (datetime: string) => {
-    const date = new Date(datetime);
+  // Format date and time from separate fields
+  const formatDateTime = () => {
+    const dateObj = new Date(showtime.start_date);
+    const [hours, minutes] = showtime.start_time.split(':');
+    
     return {
-      date: date.toLocaleDateString("vi-VN", { weekday: 'long', day: 'numeric', month: 'long' }),
-      time: date.toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })
+      date: dateObj.toLocaleDateString("vi-VN", { weekday: 'long', day: 'numeric', month: 'long' }),
+      time: `${hours}:${minutes}`
     };
   };
 
-  const { date, time } = formatDateTime(showtime.startTime);
+  const { date, time } = formatDateTime();
+  
+  // Get room info
+  const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+  const roomName = room?.name || showtime.room_id;
 
-  const ticketTotal = selectedSeats.length * showtime.ticketPrice;
+  // Calculate ticket price (base price, could be dynamic based on seat type)
+  const baseTicketPrice = 100000; // Default price per ticket
+  const ticketTotal = selectedSeats.length * baseTicketPrice;
   const foodTotal = selectedFoods.reduce(
     (sum, food) => sum + food.price * food.quantity,
     0
@@ -83,7 +94,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
           <Breadcrumb 
             items={[
               { label: "Phim", href: "/" },
-              { label: movie.title, href: `/movie/${movie.movie_id}` },
+              { label: movie.name, href: `/movie/${movie.movie_id}` },
               { label: "Đặt vé" }
             ]} 
           />
@@ -98,18 +109,18 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
             <div className="relative h-32 w-24 shrink-0 overflow-hidden rounded-xl shadow-lg ring-1 ring-white/10">
               <img
                 src={movie.image}
-                alt={movie.title}
+                alt={movie.name}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
             </div>
             <div className="flex-1 space-y-2">
               <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
-                {movie.title}
+                {movie.name}
               </h2>
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span className="font-medium text-foreground">{showtime.room}</span>
+                  <span className="font-medium text-foreground">{roomName}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
                   <Calendar className="w-4 h-4 text-primary" />

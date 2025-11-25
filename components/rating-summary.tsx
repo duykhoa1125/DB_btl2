@@ -1,14 +1,17 @@
 "use client";
 
-import type { Movie } from "@/lib/mock-data";
+import type { MovieDetail } from "@/services/types";
 import { StarIcon } from "lucide-react";
 
 interface RatingSummaryProps {
-  movie: Movie;
+  movie: MovieDetail;
   reviewCount: number;
 }
 
 export function RatingSummary({ movie, reviewCount }: RatingSummaryProps) {
+  // Use avg_rating from movie reviews (1-5 scale)
+  const avgRating = movie.avg_rating || 0;
+  
   // Calculate rating distribution (simulated)
   const ratingDistribution = {
     5: 45,
@@ -25,14 +28,14 @@ export function RatingSummary({ movie, reviewCount }: RatingSummaryProps) {
       <div className="flex flex-col items-center gap-6">
         <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 min-w-[120px]">
           <span className="text-5xl font-black bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
-            {movie.rating.toFixed(1)}
+            {avgRating.toFixed(1)}
           </span>
           <div className="flex gap-1 my-2">
             {[...Array(5)].map((_, i) => (
               <StarIcon
                 key={i}
                 className={`h-4 w-4 ${
-                  i < Math.round(movie.rating / 2)
+                  i < Math.round(avgRating)
                     ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.4)]"
                     : "text-muted stroke-muted-foreground/30"
                 }`}

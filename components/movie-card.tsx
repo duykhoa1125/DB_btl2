@@ -2,10 +2,10 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Star, Clock, Tag, Film } from "lucide-react";
-import type { Movie } from "@/lib/mock-data";
+import type { MovieDetail } from "@/services/types";
 
 interface MovieCardProps {
-  movie: Movie;
+  movie: MovieDetail;
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
@@ -24,7 +24,7 @@ export function MovieCard({ movie }: MovieCardProps) {
                 <div className="aspect-[2/3] w-full relative">
                      <Image
                         src={movie.image || "/placeholder.svg"}
-                        alt={movie.title}
+                        alt={movie.name}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
@@ -33,19 +33,30 @@ export function MovieCard({ movie }: MovieCardProps) {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
 
                       {/* Top Right Rating Badge */}
-                      <div className="absolute top-3 right-3 z-10">
-                        <div className="flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-yellow-500 border border-white/10 shadow-sm">
-                            <Star className="h-3 w-3 fill-yellow-500" />
-                            <span>{(movie.rating / 2).toFixed(1)}</span>
+                      {movie.avg_rating !== undefined && movie.avg_rating > 0 && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <div className="flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-yellow-500 border border-white/10 shadow-sm">
+                              <Star className="h-3 w-3 fill-yellow-500" />
+                              <span>{movie.avg_rating.toFixed(1)}</span>
+                          </div>
                         </div>
-                      </div>
+                      )}
+                      
+                      {/* Age Rating Badge */}
+                      {movie.age_rating > 0 && (
+                        <div className="absolute top-3 left-3 z-10">
+                          <div className="rounded-full bg-red-500/80 backdrop-blur-md px-2.5 py-1 text-xs font-bold text-white border border-red-300/50 shadow-sm">
+                            {movie.age_rating}+
+                          </div>
+                        </div>
+                      )}
                 </div>
                 
                 {/* Content Section - Slide up effect */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/95 to-transparent transform transition-transform duration-500 translate-y-[60px] group-hover:translate-y-0">
                   <div className="flex flex-col gap-1.5">
                     <h3 className="line-clamp-2 text-lg font-bold text-white group-hover:text-primary transition-colors drop-shadow-md">
-                      {movie.title}
+                      {movie.name}
                     </h3>
                     
                     <div className="flex items-center gap-3 text-xs text-gray-300 mb-1">
@@ -53,6 +64,11 @@ export function MovieCard({ movie }: MovieCardProps) {
                           <Clock className="w-3 h-3 text-primary" />
                           <span>{movie.duration}′</span>
                        </div>
+                       {movie.language && (
+                         <div className="bg-purple-500/20 px-2 py-0.5 rounded uppercase">
+                           {movie.language}
+                         </div>
+                       )}
                     </div>
 
                   </div>

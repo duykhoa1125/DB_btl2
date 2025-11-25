@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Movie } from "@/lib/mock-data";
+import type { MovieDetail } from "@/services/types";
 
 interface CarouselProps {
-  items: Movie[];
+  items: MovieDetail[];
 }
 
 export function Carousel({ items }: CarouselProps) {
@@ -37,7 +37,7 @@ export function Carousel({ items }: CarouselProps) {
         >
           <img
             src={item.image || "/placeholder.svg"}
-            alt={item.title}
+            alt={item.name}
             className="h-full w-full object-cover transition-transform duration-[10s] ease-linear scale-105"
             style={{ transform: index === current ? "scale(1.1)" : "scale(1)" }}
           />
@@ -50,26 +50,34 @@ export function Carousel({ items }: CarouselProps) {
 
               
               <h2 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
-                {item.title}
+                {item.name}
               </h2>
               
               <p className="max-w-2xl line-clamp-2 text-lg text-gray-200/90 font-light">
-                {item.description}
+                {item.synopsis || ''}
               </p>
               
               <div className="flex items-center gap-6 text-sm text-gray-300 pt-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-primary">Đạo diễn:</span>
-                  <span>{item.director}</span>
-                </div>
-                <div className="h-4 w-px bg-white/20" />
+                {item.directors && item.directors.length > 0 && (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-primary">Đạo diễn:</span>
+                      <span>{item.directors.join(', ')}</span>
+                    </div>
+                    <div className="h-4 w-px bg-white/20" />
+                  </>
+                )}
                 <div className="flex items-center gap-2">
                   <span>⏱️ {item.duration} phút</span>
                 </div>
-                <div className="h-4 w-px bg-white/20" />
-                <div className="flex items-center gap-2">
-                  <span>⭐ {item.rating}/10</span>
-                </div>
+                {item.avg_rating !== undefined && item.avg_rating > 0 && (
+                  <>
+                    <div className="h-4 w-px bg-white/20" />
+                    <div className="flex items-center gap-2">
+                      <span>⭐ {item.avg_rating.toFixed(1)}/5</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

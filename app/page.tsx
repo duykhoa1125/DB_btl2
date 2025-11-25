@@ -1,12 +1,13 @@
 import { Carousel } from "@/components/carousel";
-import { mockMovies } from "@/lib/mock-data";
+import { getAllMoviesWithDetails } from "@/services/mock-data";
 import { MovieTabs } from "@/components/movie-tabs";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Film } from "lucide-react";
 
 export default function Home() {
-  const nowShowingMovies = mockMovies.filter((m) => m.status === "Now Showing");
-  const comingSoonMovies = mockMovies.filter((m) => m.status === "Coming Soon");
+  const allMovies = getAllMoviesWithDetails();
+  const nowShowingMovies = allMovies.filter((m) => m.status === "showing");
+  const comingSoonMovies = allMovies.filter((m) => m.status === "upcoming");
 
   return (
     <div className="bg-background relative">
@@ -32,7 +33,7 @@ export default function Home() {
         </div>
         
         <Carousel
-          items={nowShowingMovies.length > 0 ? nowShowingMovies : mockMovies}
+          items={nowShowingMovies.length > 0 ? nowShowingMovies : allMovies}
         />
       </section>
 

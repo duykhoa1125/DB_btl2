@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { type Showtime, mockCinemas } from "@/lib/mock-data";
+import { type Showtime } from "@/services/types";
+import { MOCK_CINEMAS, MOCK_ROOMS } from "@/services/mock-data";
 import { Calendar, Clock, MapPin, Ticket, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,17 +21,14 @@ export function ShowtimeSelector({
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<string | null>(null);
 
-  // Format time from ISO datetime
-  const formatTime = (datetime: string) => {
-    const date = new Date(datetime);
-    return date.toLocaleTimeString("vi-VN", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  // Format time from start_time (HH:mm:ss)
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':');
+    return `${hours}:${minutes}`;
   };
 
-  const formatDate = (datetime: string) => {
-    const date = new Date(datetime);
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
     return date.toLocaleDateString("vi-VN", {
       weekday: "long",
       month: "long",
@@ -38,16 +36,16 @@ export function ShowtimeSelector({
     });
   };
 
-  const getMonthName = (datetime: string) => {
-    const date = new Date(datetime);
+  const getMonthName = (dateStr: string) => {
+    const date = new Date(dateStr);
     return date.toLocaleDateString("vi-VN", {
       month: "short",
     });
   };
 
-  // Group showtimes by date and cinema
+  // Group showtimes by date (using start_date)
   const groupedShowtimes = showtimes.reduce((acc, showtime) => {
-    const date = showtime.startTime.split("T")[0];
+    const date = showtime.start_date; // Already in YYYY-MM-DD format
     if (!acc[date]) {
       acc[date] = [];
     }
@@ -152,16 +150,20 @@ export function ShowtimeSelector({
           {/* Group by Cinema */}
           {(() => {
             const showtimesForDate = groupedShowtimes[selectedDate];
-            const showtimesByCinema = showtimesForDate.reduce((acc, showtime) => {
-              if (!acc[showtime.cinema_id]) {
-                acc[showtime.cinema_id] = [];
+            // Group by room (which contains cinema info via room_id)
+            const showtimesByRoom = showtimesForDate.reduce((acc, showtime) => {
+              const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+              const cinema_id = room?.cinema_id || 'unknown';
+              
+              if (!acc[cinema_id]) {
+                acc[cinema_id] = [];
               }
-              acc[showtime.cinema_id].push(showtime);
+              acc[cinema_id].push(showtime);
               return acc;
             }, {} as Record<string, Showtime[]>);
 
-            return Object.entries(showtimesByCinema).map(([cinema_id, cinemaShowtimes]) => {
-              const cinema = mockCinemas.find((c) => c.cinema_id === cinema_id);
+            return Object.entries(showtimesByRoom).map(([cinema_id, cinemaShowtimes]) => {
+              const cinema = MOCK_CINEMAS.find((c) => c.cinema_id === cinema_id);
               
               return (
                 <div key={cinema_id} className="space-y-4">
@@ -169,7 +171,7 @@ export function ShowtimeSelector({
                   <div className="flex items-center gap-2 border-l-4 border-primary pl-4 py-1 bg-muted/30 rounded-r-lg">
                     <MapPin className="h-5 w-5 text-primary" />
                     <h4 className="text-lg font-bold text-foreground">
-                      {cinema?.cinemaName || "Unknown Cinema"}
+                      {cinema?.name || "Unknown Cinema"}
                     </h4>
                   </div>
 
@@ -203,15 +205,20 @@ export function ShowtimeSelector({
                                 <Clock className="h-6 w-6" />
                               </div>
                               <span className="text-3xl font-black tracking-tight text-foreground">
-                                {formatTime(showtime.startTime)}
+                                {formatTime(showtime.start_time)}
                               </span>
                             </div>
 
                             {/* Room Info (Cinema name removed as it's in header) */}
                             <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-                              <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
-                                {showtime.room}
-                              </span>
+                              {(() => {
+                                const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+                                return (
+                                  <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
+                                    {room?.name || showtime.room_id}
+                                  </span>
+                                );
+                              })()}
                             </div>
 
                             {/* Price */}
