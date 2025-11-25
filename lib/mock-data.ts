@@ -1,7 +1,7 @@
 // Movie types and mock data for the cinema ticket booking system
 
 export interface Movie {
-  movieId: string;
+  movie_id: string;
   title: string;
   description: string;
   image: string;
@@ -17,9 +17,9 @@ export interface Movie {
 }
 
 export interface Showtime {
-  showtimeId: string;
-  movieId: string;
-  cinemaId: string;
+  showtime_id: string;
+  movie_id: string;
+  cinema_id: string;
   startTime: string; // ISO datetime
   endTime: string; // ISO datetime
   room: string;
@@ -28,7 +28,7 @@ export interface Showtime {
 }
 
 export interface Seat {
-  seatId: string;
+  seat_id: string;
   seatName: string; // A1, A2, B1, etc.
   row: string; // A, B, C, D, etc.
   column: number; // 1, 2, 3, etc.
@@ -36,14 +36,14 @@ export interface Seat {
 }
 
 export interface SeatBooking {
-  seatBookingId: string;
-  showtimeId: string;
-  seatId: string;
+  seat_booking_id: string;
+  showtime_id: string;
+  seat_id: string;
   status: "Available" | "Booked" | "Sold";
 }
 
 export interface Food {
-  foodId: string;
+  food_id: string;
   foodName: string;
   category: "Popcorn" | "Drink" | "Special";
   price: number;
@@ -51,8 +51,8 @@ export interface Food {
 }
 
 export interface Invoice {
-  invoiceId: string;
-  bookingId: string;
+  invoice_id: string;
+  booking_id: string;
   createdDate: string; // ISO date
   totalAmount: number;
   status: "Unpaid" | "Paid" | "Cancelled";
@@ -60,14 +60,14 @@ export interface Invoice {
 }
 
 export interface Cinema {
-  cinemaId: string;
+  cinema_id: string;
   cinemaName: string;
   address: string;
 }
 
 export const mockMovies: Movie[] = [
   {
-    movieId: "movie_001",
+    movie_id: "movie_001",
     title: "Avengers: Endgame",
     description:
       "Các siêu anh hùng Avengers phải đối mặt với Thanos trong trận chiến cuối cùng để cứu thế giới.",
@@ -88,7 +88,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/TcMBFSGVi1c",
   },
   {
-    movieId: "movie_002",
+    movie_id: "movie_002",
     title: "The Shawshank Redemption",
     description:
       "Một người tù bị kết án chung thân lên kế hoạch trốn thoát trong khi giúp đỡ những tù nhân khác.",
@@ -104,7 +104,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/NmzuHjWmXOc",
   },
   {
-    movieId: "movie_003",
+    movie_id: "movie_003",
     title: "Inception",
     description:
       "Một tên trộm chuyên biệt trong ăn cắp từ các giấc mơ phải thực hiện nhiệm vụ đặc biệt: nhồi nộ ý tưởng.",
@@ -125,7 +125,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/YoHD_XwIlf8",
   },
   {
-    movieId: "movie_004",
+    movie_id: "movie_004",
     title: "The Dark Knight",
     description:
       "Batman phải chống lại Joker, một tên tội phạm có khả năng tạo ra hỗn loạn trong Gotham.",
@@ -141,7 +141,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/EXeTwQWrcwY",
   },
   {
-    movieId: "movie_005",
+    movie_id: "movie_005",
     title: "Interstellar",
     description:
       "Một nhóm nhà du hành vũ trụ phải vượt qua lỗ sâu không gian để cứu nhân loại.",
@@ -157,7 +157,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/zSID6PrCR74",
   },
   {
-    movieId: "movie_006",
+    movie_id: "movie_006",
     title: "Forrest Gump",
     description:
       "Cuộc sống của Forrest Gump, một người bình thường nhưng lại tham gia vào những sự kiện lịch sử quan trọng.",
@@ -173,7 +173,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/bLvqoByHw20",
   },
   {
-    movieId: "movie_007",
+    movie_id: "movie_007",
     title: "Dune",
     description:
       "Một người trẻ phải đối mặt với vận mệnh của mình khi phải bảo vệ một hành tinh sa mạc giàu tài nguyên.",
@@ -189,7 +189,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/n9xhJsAgZmE",
   },
   {
-    movieId: "movie_008",
+    movie_id: "movie_008",
     title: "Avatar: The Way of Water",
     description:
       "Jake Sully phải bảo vệ gia đình của mình khỏi những kẻ thù trong một thế giới hoàn toàn khác.",
@@ -205,7 +205,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/d9MyW72EhRE",
   },
   {
-    movieId: "movie_009",
+    movie_id: "movie_009",
     title: "Oppenheimer",
     description:
       "Câu chuyện về J. Robert Oppenheimer và sự phát triển của bom nguyên tử trong Thế chiến II.",
@@ -221,7 +221,7 @@ export const mockMovies: Movie[] = [
     trailerUrl: "https://www.youtube.com/embed/bK6DsqIvgIU",
   },
   {
-    movieId: "movie_010",
+    movie_id: "movie_010",
     title: "Pulp Fiction",
     description:
       "Một bộ phim gồm nhiều câu chuyện liên kết với nhau về các nhân vật trong thế giới Mafia.",
@@ -240,9 +240,9 @@ export const mockMovies: Movie[] = [
 
 export const mockShowtimes: Showtime[] = [
   {
-    showtimeId: "st_001",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_001",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-01T09:00:00",
     endTime: "2025-11-01T10:54:00",
     room: "Room 1",
@@ -250,9 +250,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_002",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_002",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-01T13:00:00",
     endTime: "2025-11-01T14:54:00",
     room: "Room 1",
@@ -260,9 +260,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_003",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_003",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-01T16:00:00",
     endTime: "2025-11-01T17:54:00",
     room: "Room 1",
@@ -270,9 +270,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_004",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_004",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-01T19:00:00",
     endTime: "2025-11-01T20:54:00",
     room: "Room 1",
@@ -280,9 +280,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_005",
-    movieId: "movie_002",
-    cinemaId: "cinema_001",
+    showtime_id: "st_005",
+    movie_id: "movie_002",
+    cinema_id: "cinema_001",
     startTime: "2025-11-01T09:30:00",
     endTime: "2025-11-01T11:00:00",
     room: "Room 2",
@@ -290,9 +290,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_006",
-    movieId: "movie_002",
-    cinemaId: "cinema_001",
+    showtime_id: "st_006",
+    movie_id: "movie_002",
+    cinema_id: "cinema_001",
     startTime: "2025-11-01T14:00:00",
     endTime: "2025-11-01T15:30:00",
     room: "Room 2",
@@ -300,9 +300,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_007",
-    movieId: "movie_003",
-    cinemaId: "cinema_002",
+    showtime_id: "st_007",
+    movie_id: "movie_003",
+    cinema_id: "cinema_002",
     startTime: "2025-11-01T10:00:00",
     endTime: "2025-11-01T11:48:00",
     room: "Room 1",
@@ -310,9 +310,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_008",
-    movieId: "movie_003",
-    cinemaId: "cinema_002",
+    showtime_id: "st_008",
+    movie_id: "movie_003",
+    cinema_id: "cinema_002",
     startTime: "2025-11-01T15:30:00",
     endTime: "2025-11-01T17:18:00",
     room: "Room 1",
@@ -321,9 +321,9 @@ export const mockShowtimes: Showtime[] = [
   },
   // Additional showtimes for movie_001: 7 days (2025-11-10 -> 2025-11-16), 4 showtimes per day
   {
-    showtimeId: "st_009",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_009",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-10T09:00:00",
     endTime: "2025-11-10T10:54:00",
     room: "Room 1",
@@ -331,9 +331,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_010",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_010",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-10T12:00:00",
     endTime: "2025-11-10T13:54:00",
     room: "Room 1",
@@ -341,9 +341,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_011",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_011",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-10T15:00:00",
     endTime: "2025-11-10T16:54:00",
     room: "Room 1",
@@ -351,9 +351,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_012",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_012",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-10T18:00:00",
     endTime: "2025-11-10T19:54:00",
     room: "Room 1",
@@ -361,9 +361,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_013",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_013",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-11T09:00:00",
     endTime: "2025-11-11T10:54:00",
     room: "Room 1",
@@ -371,9 +371,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_014",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_014",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-11T12:00:00",
     endTime: "2025-11-11T13:54:00",
     room: "Room 1",
@@ -381,9 +381,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_015",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_015",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-11T15:00:00",
     endTime: "2025-11-11T16:54:00",
     room: "Room 1",
@@ -391,9 +391,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_016",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_016",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-11T18:00:00",
     endTime: "2025-11-11T19:54:00",
     room: "Room 1",
@@ -401,9 +401,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_017",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_017",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-12T09:00:00",
     endTime: "2025-11-12T10:54:00",
     room: "Room 1",
@@ -411,9 +411,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_018",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_018",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-12T12:00:00",
     endTime: "2025-11-12T13:54:00",
     room: "Room 1",
@@ -421,9 +421,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_019",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_019",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-12T15:00:00",
     endTime: "2025-11-12T16:54:00",
     room: "Room 1",
@@ -431,9 +431,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_020",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_020",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-12T18:00:00",
     endTime: "2025-11-12T19:54:00",
     room: "Room 1",
@@ -441,9 +441,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_021",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_021",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-13T09:00:00",
     endTime: "2025-11-13T10:54:00",
     room: "Room 1",
@@ -451,9 +451,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_022",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_022",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-13T12:00:00",
     endTime: "2025-11-13T13:54:00",
     room: "Room 1",
@@ -461,9 +461,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_023",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_023",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-13T15:00:00",
     endTime: "2025-11-13T16:54:00",
     room: "Room 1",
@@ -471,9 +471,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_024",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_024",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-13T18:00:00",
     endTime: "2025-11-13T19:54:00",
     room: "Room 1",
@@ -481,9 +481,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_025",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_025",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-14T09:00:00",
     endTime: "2025-11-14T10:54:00",
     room: "Room 1",
@@ -491,9 +491,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_026",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_026",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-14T12:00:00",
     endTime: "2025-11-14T13:54:00",
     room: "Room 1",
@@ -501,9 +501,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_027",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_027",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-14T15:00:00",
     endTime: "2025-11-14T16:54:00",
     room: "Room 1",
@@ -511,9 +511,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_028",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_028",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-14T18:00:00",
     endTime: "2025-11-14T19:54:00",
     room: "Room 1",
@@ -521,9 +521,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_029",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_029",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-15T09:00:00",
     endTime: "2025-11-15T10:54:00",
     room: "Room 1",
@@ -531,9 +531,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_030",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_030",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-15T12:00:00",
     endTime: "2025-11-15T13:54:00",
     room: "Room 1",
@@ -541,9 +541,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_031",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_031",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-15T15:00:00",
     endTime: "2025-11-15T16:54:00",
     room: "Room 1",
@@ -551,9 +551,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_032",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_032",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-15T18:00:00",
     endTime: "2025-11-15T19:54:00",
     room: "Room 1",
@@ -561,9 +561,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_033",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_033",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-16T09:00:00",
     endTime: "2025-11-16T10:54:00",
     room: "Room 1",
@@ -571,9 +571,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_034",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_034",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-16T12:00:00",
     endTime: "2025-11-16T13:54:00",
     room: "Room 1",
@@ -581,9 +581,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_035",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_035",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-16T15:00:00",
     endTime: "2025-11-16T16:54:00",
     room: "Room 1",
@@ -591,9 +591,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_036",
-    movieId: "movie_001",
-    cinemaId: "cinema_001",
+    showtime_id: "st_036",
+    movie_id: "movie_001",
+    cinema_id: "cinema_001",
     startTime: "2025-11-16T18:00:00",
     endTime: "2025-11-16T19:54:00",
     room: "Room 1",
@@ -602,9 +602,9 @@ export const mockShowtimes: Showtime[] = [
   },
   // Additional showtimes for movie_001 across multiple cinemas to test grouping
   {
-    showtimeId: "st_047",
-    movieId: "movie_001",
-    cinemaId: "cinema_002",
+    showtime_id: "st_047",
+    movie_id: "movie_001",
+    cinema_id: "cinema_002",
     startTime: "2025-11-01T10:00:00",
     endTime: "2025-11-01T13:01:00",
     room: "Room 1",
@@ -612,9 +612,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_048",
-    movieId: "movie_001",
-    cinemaId: "cinema_002",
+    showtime_id: "st_048",
+    movie_id: "movie_001",
+    cinema_id: "cinema_002",
     startTime: "2025-11-01T14:00:00",
     endTime: "2025-11-01T17:01:00",
     room: "Room 1",
@@ -622,9 +622,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_049",
-    movieId: "movie_001",
-    cinemaId: "cinema_003",
+    showtime_id: "st_049",
+    movie_id: "movie_001",
+    cinema_id: "cinema_003",
     startTime: "2025-11-01T11:00:00",
     endTime: "2025-11-01T14:01:00",
     room: "IMAX",
@@ -632,9 +632,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_050",
-    movieId: "movie_001",
-    cinemaId: "cinema_003",
+    showtime_id: "st_050",
+    movie_id: "movie_001",
+    cinema_id: "cinema_003",
     startTime: "2025-11-01T19:00:00",
     endTime: "2025-11-01T22:01:00",
     room: "IMAX",
@@ -642,9 +642,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_051",
-    movieId: "movie_001",
-    cinemaId: "cinema_004",
+    showtime_id: "st_051",
+    movie_id: "movie_001",
+    cinema_id: "cinema_004",
     startTime: "2025-11-01T09:00:00",
     endTime: "2025-11-01T12:01:00",
     room: "Gold Class",
@@ -654,9 +654,9 @@ export const mockShowtimes: Showtime[] = [
   // Showtimes for new cinemas (Hanoi, Da Nang, Can Tho, Thu Duc)
   // Cinema 005 (Hanoi)
   {
-    showtimeId: "st_037",
-    movieId: "movie_002",
-    cinemaId: "cinema_005",
+    showtime_id: "st_037",
+    movie_id: "movie_002",
+    cinema_id: "cinema_005",
     startTime: "2025-11-10T10:00:00",
     endTime: "2025-11-10T12:22:00",
     room: "IMAX 1",
@@ -664,9 +664,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_038",
-    movieId: "movie_002",
-    cinemaId: "cinema_005",
+    showtime_id: "st_038",
+    movie_id: "movie_002",
+    cinema_id: "cinema_005",
     startTime: "2025-11-10T14:00:00",
     endTime: "2025-11-10T16:22:00",
     room: "IMAX 1",
@@ -674,9 +674,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_039",
-    movieId: "movie_003",
-    cinemaId: "cinema_005",
+    showtime_id: "st_039",
+    movie_id: "movie_003",
+    cinema_id: "cinema_005",
     startTime: "2025-11-10T19:00:00",
     endTime: "2025-11-10T21:28:00",
     room: "Standard 2",
@@ -685,9 +685,9 @@ export const mockShowtimes: Showtime[] = [
   },
   // Cinema 006 (Da Nang)
   {
-    showtimeId: "st_040",
-    movieId: "movie_001",
-    cinemaId: "cinema_006",
+    showtime_id: "st_040",
+    movie_id: "movie_001",
+    cinema_id: "cinema_006",
     startTime: "2025-11-10T09:30:00",
     endTime: "2025-11-10T12:31:00",
     room: "Room 1",
@@ -695,9 +695,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_041",
-    movieId: "movie_004",
-    cinemaId: "cinema_006",
+    showtime_id: "st_041",
+    movie_id: "movie_004",
+    cinema_id: "cinema_006",
     startTime: "2025-11-10T13:00:00",
     endTime: "2025-11-10T15:32:00",
     room: "Room 2",
@@ -706,9 +706,9 @@ export const mockShowtimes: Showtime[] = [
   },
   // Cinema 007 (Can Tho)
   {
-    showtimeId: "st_042",
-    movieId: "movie_005",
-    cinemaId: "cinema_007",
+    showtime_id: "st_042",
+    movie_id: "movie_005",
+    cinema_id: "cinema_007",
     startTime: "2025-11-10T18:30:00",
     endTime: "2025-11-10T21:19:00",
     room: "Room 1",
@@ -717,9 +717,9 @@ export const mockShowtimes: Showtime[] = [
   },
   // Cinema 008 (Thu Duc)
   {
-    showtimeId: "st_043",
-    movieId: "movie_006",
-    cinemaId: "cinema_008",
+    showtime_id: "st_043",
+    movie_id: "movie_006",
+    cinema_id: "cinema_008",
     startTime: "2025-11-10T15:00:00",
     endTime: "2025-11-10T17:22:00",
     room: "ScreenX 1",
@@ -727,9 +727,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_044",
-    movieId: "movie_001",
-    cinemaId: "cinema_008",
+    showtime_id: "st_044",
+    movie_id: "movie_001",
+    cinema_id: "cinema_008",
     startTime: "2025-11-10T20:00:00",
     endTime: "2025-11-10T23:01:00",
     room: "Standard 3",
@@ -738,9 +738,9 @@ export const mockShowtimes: Showtime[] = [
   },
   // More dates for Cinema 005
   {
-    showtimeId: "st_045",
-    movieId: "movie_002",
-    cinemaId: "cinema_005",
+    showtime_id: "st_045",
+    movie_id: "movie_002",
+    cinema_id: "cinema_005",
     startTime: "2025-11-11T10:00:00",
     endTime: "2025-11-11T12:22:00",
     room: "IMAX 1",
@@ -748,9 +748,9 @@ export const mockShowtimes: Showtime[] = [
     status: "Available",
   },
   {
-    showtimeId: "st_046",
-    movieId: "movie_003",
-    cinemaId: "cinema_005",
+    showtime_id: "st_046",
+    movie_id: "movie_003",
+    cinema_id: "cinema_005",
     startTime: "2025-11-11T19:00:00",
     endTime: "2025-11-11T21:28:00",
     room: "Standard 2",
@@ -764,7 +764,7 @@ export const mockSeats: Seat[] = [
   ...Array.from({ length: 4 }, (_, r) => {
     const rowChar = String.fromCharCode(65 + r); // A, B, C, D
     return Array.from({ length: 14 }, (_, c) => ({
-      seatId: `seat_${rowChar}${c + 1}`,
+      seat_id: `seat_${rowChar}${c + 1}`,
       seatName: `${rowChar}${c + 1}`,
       row: rowChar,
       column: c + 1,
@@ -776,7 +776,7 @@ export const mockSeats: Seat[] = [
   ...Array.from({ length: 4 }, (_, r) => {
     const rowChar = String.fromCharCode(69 + r); // E, F, G, H
     return Array.from({ length: 14 }, (_, c) => ({
-      seatId: `seat_${rowChar}${c + 1}`,
+      seat_id: `seat_${rowChar}${c + 1}`,
       seatName: `${rowChar}${c + 1}`,
       row: rowChar,
       column: c + 1,
@@ -786,7 +786,7 @@ export const mockSeats: Seat[] = [
 
   // Couple Row (J) - Fewer seats, centered
   ...Array.from({ length: 6 }, (_, c) => ({
-    seatId: `seat_J${c + 1}`,
+    seat_id: `seat_J${c + 1}`,
     seatName: `J${c + 1}`,
     row: "J",
     column: c + 1, // Will map to center columns visually
@@ -796,70 +796,70 @@ export const mockSeats: Seat[] = [
 
 export const mockFoods: Food[] = [
   {
-    foodId: "food_001",
+    food_id: "food_001",
     foodName: "Bắp mặn vừa",
     category: "Popcorn",
     price: 45000,
     image: "/popcorn-salty.jpg",
   },
   {
-    foodId: "food_002",
+    food_id: "food_002",
     foodName: "Bắp mặn lớn",
     category: "Popcorn",
     price: 65000,
     image: "/popcorn-large-salty.jpg",
   },
   {
-    foodId: "food_003",
+    food_id: "food_003",
     foodName: "Bắp bơ vừa",
     category: "Popcorn",
     price: 50000,
     image: "/popcorn-butter.jpg",
   },
   {
-    foodId: "food_004",
+    food_id: "food_004",
     foodName: "Bắp bơ lớn",
     category: "Popcorn",
     price: 70000,
     image: "/popcorn-large-butter.jpg",
   },
   {
-    foodId: "food_005",
+    food_id: "food_005",
     foodName: "Nước cam vừa",
     category: "Drink",
     price: 35000,
     image: "/vibrant-orange-juice.png",
   },
   {
-    foodId: "food_006",
+    food_id: "food_006",
     foodName: "Nước cam lớn",
     category: "Drink",
     price: 45000,
     image: "/orange-juice-large.jpg",
   },
   {
-    foodId: "food_007",
+    food_id: "food_007",
     foodName: "Coca-Cola vừa",
     category: "Drink",
     price: 30000,
     image: "/classic-coca-cola.png",
   },
   {
-    foodId: "food_008",
+    food_id: "food_008",
     foodName: "Coca-Cola lớn",
     category: "Drink",
     price: 40000,
     image: "/coca-cola-large.jpg",
   },
   {
-    foodId: "food_009",
+    food_id: "food_009",
     foodName: "Combo tiết kiệm",
     category: "Special",
     price: 120000,
     image: "/combo-popcorn-drink.jpg",
   },
   {
-    foodId: "food_010",
+    food_id: "food_010",
     foodName: "Combo VIP",
     category: "Special",
     price: 180000,
@@ -871,7 +871,7 @@ export const mockFoods: Food[] = [
 // FOOD CATALOG - Catalog món ăn với shelf life
 // ==========================================
 export interface FoodCatalogItem {
-  foodId: string;
+  food_id: string;
   foodName: string;
   category: "Popcorn" | "Drink" | "Special";
   price: number;
@@ -882,7 +882,7 @@ export interface FoodCatalogItem {
 
 export const foodCatalog: FoodCatalogItem[] = [
   {
-    foodId: "food_001",
+    food_id: "food_001",
     foodName: "Bắp mặn vừa",
     category: "Popcorn",
     price: 45000,
@@ -891,7 +891,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 3,
   },
   {
-    foodId: "food_002",
+    food_id: "food_002",
     foodName: "Bắp mặn lớn",
     category: "Popcorn",
     price: 65000,
@@ -900,7 +900,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 3,
   },
   {
-    foodId: "food_003",
+    food_id: "food_003",
     foodName: "Bắp bơ vừa",
     category: "Popcorn",
     price: 50000,
@@ -909,7 +909,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 3,
   },
   {
-    foodId: "food_004",
+    food_id: "food_004",
     foodName: "Bắp bơ lớn",
     category: "Popcorn",
     price: 70000,
@@ -918,7 +918,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 3,
   },
   {
-    foodId: "food_005",
+    food_id: "food_005",
     foodName: "Nước cam vừa",
     category: "Drink",
     price: 35000,
@@ -927,7 +927,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 7,
   },
   {
-    foodId: "food_006",
+    food_id: "food_006",
     foodName: "Nước cam lớn",
     category: "Drink",
     price: 45000,
@@ -936,7 +936,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 7,
   },
   {
-    foodId: "food_007",
+    food_id: "food_007",
     foodName: "Coca-Cola vừa",
     category: "Drink",
     price: 30000,
@@ -945,7 +945,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 365,
   },
   {
-    foodId: "food_008",
+    food_id: "food_008",
     foodName: "Coca-Cola lớn",
     category: "Drink",
     price: 40000,
@@ -954,7 +954,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 365,
   },
   {
-    foodId: "food_009",
+    food_id: "food_009",
     foodName: "Combo tiết kiệm",
     category: "Special",
     price: 120000,
@@ -963,7 +963,7 @@ export const foodCatalog: FoodCatalogItem[] = [
     shelfLifeDays: 1,
   },
   {
-    foodId: "food_010",
+    food_id: "food_010",
     foodName: "Combo VIP",
     category: "Special",
     price: 180000,
@@ -976,7 +976,7 @@ export const foodCatalog: FoodCatalogItem[] = [
 // Convert to Map for easy lookup
 export const foodCatalogMap = new Map(
   foodCatalog.map((item) => [
-    item.foodId,
+    item.food_id,
     {
       name: item.foodName,
       description: item.description,
@@ -989,42 +989,42 @@ export const foodCatalogMap = new Map(
 
 export const mockCinemas: Cinema[] = [
   {
-    cinemaId: "cinema_001",
+    cinema_id: "cinema_001",
     cinemaName: "CinemaHub - Tân Bình",
     address: "123 Nguyễn Hữu Cảnh, Quận Tân Bình",
   },
   {
-    cinemaId: "cinema_002",
+    cinema_id: "cinema_002",
     cinemaName: "CinemaHub - Bình Thạnh",
     address: "456 Nguyễn Văn Trỗi, Quận Bình Thạnh",
   },
   {
-    cinemaId: "cinema_003",
+    cinema_id: "cinema_003",
     cinemaName: "CinemaHub - Quận 1",
     address: "789 Lê Lợi, Quận 1",
   },
   {
-    cinemaId: "cinema_004",
+    cinema_id: "cinema_004",
     cinemaName: "CinemaHub - Hà Nội",
     address: "321 Tô Vĩ Tử, Quận Đống Đa",
   },
   {
-    cinemaId: "cinema_005",
+    cinema_id: "cinema_005",
     cinemaName: "CinemaHub - Cầu Giấy",
     address: "241 Xuân Thủy, Quận Cầu Giấy",
   },
   {
-    cinemaId: "cinema_006",
+    cinema_id: "cinema_006",
     cinemaName: "CinemaHub - Đà Nẵng",
     address: "910 Ngô Quyền, Quận Sơn Trà",
   },
   {
-    cinemaId: "cinema_007",
+    cinema_id: "cinema_007",
     cinemaName: "CinemaHub - Cần Thơ",
     address: "209 Đường 30/4, Quận Ninh Kiều",
   },
   {
-    cinemaId: "cinema_008",
+    cinema_id: "cinema_008",
     cinemaName: "CinemaHub - Thủ Đức",
     address: "216 Võ Văn Ngân, TP. Thủ Đức",
   },
@@ -1222,8 +1222,8 @@ export const mockStaffs: Staff[] = [
 ];
 
 // Helper function: Get staff by cinema
-export function getStaffByCinema(cinemaId: string): Staff[] {
-  return mockStaffs.filter((staff) => staff.cinema_id === cinemaId);
+export function getStaffByCinema(cinema_id: string): Staff[] {
+  return mockStaffs.filter((staff) => staff.cinema_id === cinema_id);
 }
 
 // Helper function: Get manager of a staff
@@ -1239,14 +1239,14 @@ export function getSubordinates(managerId: string): Staff[] {
 }
 
 // Helper function: Build staff hierarchy tree
-export function buildStaffHierarchy(cinemaId: string): Staff[] {
-  const cinemaStaff = getStaffByCinema(cinemaId);
+export function buildStaffHierarchy(cinema_id: string): Staff[] {
+  const cinemaStaff = getStaffByCinema(cinema_id);
   // Return only top-level managers (no manage_id)
   return cinemaStaff.filter((staff) => !staff.manage_id);
 }
 
 export interface User {
-  userId: string;
+  user_id: string;
   email: string;
   passwordHash: string;
   fullName: string;
@@ -1260,11 +1260,11 @@ export interface User {
 }
 
 export interface Booking {
-  bookingId: string;
-  userId: string | null; // null for guest bookings
-  showtimeId: string;
-  seatList: string[]; // Array of seatId
-  foodList: Array<{ foodId: string; quantity: number }>;
+  booking_id: string;
+  user_id: string | null; // null for guest bookings
+  showtime_id: string;
+  seatList: string[]; // Array of seat_id
+  foodList: Array<{ food_id: string; quantity: number }>;
   totalAmount: number;
   status: "Pending_Confirmation" | "Confirmed" | "Cancelled";
   paymentMethod: "Credit_Card" | "Cash" | "E_Wallet";
@@ -1274,7 +1274,7 @@ export interface Booking {
 
 export const mockUsers: User[] = [
   {
-    userId: "user_001",
+    user_id: "user_001",
     email: "john.doe@gmail.com",
     passwordHash: "hashed_password_123", // In real app, use proper hashing
     fullName: "John Doe",
@@ -1287,7 +1287,7 @@ export const mockUsers: User[] = [
     membershipPoints: 1560, // Gold tier (>= 1000)
   },
   {
-    userId: "user_002",
+    user_id: "user_002",
     email: "jane.smith@gmail.com",
     passwordHash: "hashed_password_456",
     fullName: "Jane Smith",
@@ -1303,13 +1303,13 @@ export const mockUsers: User[] = [
 
 export const mockBookings: Booking[] = [
   {
-    bookingId: "booking_001",
-    userId: "user_001",
-    showtimeId: "st_001",
+    booking_id: "booking_001",
+    user_id: "user_001",
+    showtime_id: "st_001",
     seatList: ["seat_A1", "seat_A2"],
     foodList: [
-      { foodId: "food_001", quantity: 1 },
-      { foodId: "food_007", quantity: 2 },
+      { food_id: "food_001", quantity: 1 },
+      { food_id: "food_007", quantity: 2 },
     ],
     totalAmount: 185000,
     status: "Confirmed",
@@ -1318,13 +1318,13 @@ export const mockBookings: Booking[] = [
     ticketCode: "CV-20251025-001",
   },
   {
-    bookingId: "booking_002",
-    userId: "user_001",
-    showtimeId: "st_003",
+    booking_id: "booking_002",
+    user_id: "user_001",
+    showtime_id: "st_003",
     seatList: ["seat_C5", "seat_C6"],
     foodList: [
-      { foodId: "food_003", quantity: 1 },
-      { foodId: "food_006", quantity: 1 },
+      { food_id: "food_003", quantity: 1 },
+      { food_id: "food_006", quantity: 1 },
     ],
     totalAmount: 245000,
     status: "Confirmed",
@@ -1333,11 +1333,11 @@ export const mockBookings: Booking[] = [
     ticketCode: "CV-20251020-002",
   },
   {
-    bookingId: "booking_003",
-    userId: "user_002",
-    showtimeId: "st_002",
+    booking_id: "booking_003",
+    user_id: "user_002",
+    showtime_id: "st_002",
     seatList: ["seat_B5", "seat_B6"],
-    foodList: [{ foodId: "food_009", quantity: 1 }],
+    foodList: [{ food_id: "food_009", quantity: 1 }],
     totalAmount: 280000,
     status: "Confirmed",
     paymentMethod: "Credit_Card",
@@ -1345,9 +1345,9 @@ export const mockBookings: Booking[] = [
     ticketCode: "CV-20251018-003",
   },
   {
-    bookingId: "booking_004",
-    userId: "user_001",
-    showtimeId: "st_005",
+    booking_id: "booking_004",
+    user_id: "user_001",
+    showtime_id: "st_005",
     seatList: ["seat_A3"],
     foodList: [],
     totalAmount: 80000,
@@ -1574,9 +1574,9 @@ export function getFoodsByBillId(billId: string): FoodTracking[] {
 
 
 export interface Review {
-  reviewId: string;
-  movieId: string;
-  userId: string;
+  review_id: string;
+  movie_id: string;
+  user_id: string;
   rating: number; // 1-10
   title: string;
   content: string;
@@ -1599,11 +1599,23 @@ import type {
   Food as FoodTracking,
 } from "@/services/types";
 
+export type {
+  Event,
+  Promotional,
+  Voucher,
+  Gift,
+  Discount,
+  PromotionalBill,
+  MemberLevel,
+  Bill,
+  Ticket,
+};
+
 export const mockReviews: Review[] = [
   {
-    reviewId: "review_001",
-    movieId: "movie_001",
-    userId: "user_001",
+    review_id: "review_001",
+    movie_id: "movie_001",
+    user_id: "user_001",
     rating: 9,
     title: "Tuyệt vời! Đáng xem",
     content:
@@ -1613,9 +1625,9 @@ export const mockReviews: Review[] = [
     createdDate: "2025-10-20T10:30:00",
   },
   {
-    reviewId: "review_002",
-    movieId: "movie_001",
-    userId: "user_002",
+    review_id: "review_002",
+    movie_id: "movie_001",
+    user_id: "user_002",
     rating: 8,
     title: "Rất hay nhưng hơi dài",
     content:
@@ -1625,9 +1637,9 @@ export const mockReviews: Review[] = [
     createdDate: "2025-10-18T15:45:00",
   },
   {
-    reviewId: "review_003",
-    movieId: "movie_002",
-    userId: "user_001",
+    review_id: "review_003",
+    movie_id: "movie_002",
+    user_id: "user_001",
     rating: 10,
     title: "Kiệt tác điện ảnh",
     content:
@@ -1637,9 +1649,9 @@ export const mockReviews: Review[] = [
     createdDate: "2025-10-15T08:00:00",
   },
   {
-    reviewId: "review_004",
-    movieId: "movie_002",
-    userId: "user_002",
+    review_id: "review_004",
+    movie_id: "movie_002",
+    user_id: "user_002",
     rating: 9,
     title: "Chắc chắn xem lại",
     content:
@@ -1649,9 +1661,9 @@ export const mockReviews: Review[] = [
     createdDate: "2025-10-10T14:20:00",
   },
   {
-    reviewId: "review_005",
-    movieId: "movie_003",
-    userId: "user_001",
+    review_id: "review_005",
+    movie_id: "movie_003",
+    user_id: "user_001",
     rating: 8,
     title: "Hoa mắt sau khi xem",
     content:

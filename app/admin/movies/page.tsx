@@ -69,7 +69,7 @@ export default function MoviesPage() {
 
   const handleDeleteConfirm = () => {
     if (movieToDelete) {
-      const success = deleteMovie(movieToDelete.movieId);
+      const success = deleteMovie(movieToDelete.movie_id);
       if (success) {
         setMovies(getAllMovies());
         toast({
@@ -165,7 +165,7 @@ export default function MoviesPage() {
               ) : (
                 filteredMovies.map((movie) => (
                   <tr
-                    key={movie.movieId}
+                    key={movie.movie_id}
                     className="border-b border-border/50 transition-colors hover:bg-card/50"
                   >
                     <td className="p-4">
@@ -220,7 +220,7 @@ export default function MoviesPage() {
                           asChild
                           className="h-8 w-8 p-0"
                         >
-                          <Link href={`/movie/${movie.movieId}`}>
+                          <Link href={`/movie/${movie.movie_id}`}>
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
@@ -230,7 +230,7 @@ export default function MoviesPage() {
                           asChild
                           className="h-8 w-8 p-0"
                         >
-                          <Link href={`/admin/movies/${movie.movieId}/edit`}>
+                          <Link href={`/admin/movies/${movie.movie_id}/edit`}>
                             <Edit className="h-4 w-4" />
                           </Link>
                         </Button>

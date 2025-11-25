@@ -12,7 +12,13 @@ import {
     createBill,
     createPromotionalBill
 } from '@/services/ticketService';
-import { foodCatalogMap } from '@/lib/mock-data';
+import {
+    foodCatalogMap,
+    mockFoodTrackings,
+    getBillById,
+    getTicketsByBillId,
+    getFoodsByBillId
+} from '@/lib/mock-data';
 
 // ============================================
 // EXAMPLE 1: Complete Booking with Everything
@@ -115,7 +121,7 @@ export function exampleFoodWithExpiryDates() {
 
     console.log("Food Items with Dates:");
     foods.forEach(food => {
-        console.log(`- ${food.name}: Qty ${food.quantity}`);
+        console.log(`- ${food.name}`);
         console.log(`  Production: ${food.production_date}`);
         console.log(`  Expiration: ${food.expiration_date}`);
 
@@ -158,19 +164,12 @@ export function examplePromotionalBillTracking() {
 // ============================================
 // EXAMPLE 6: Retrieve Bill Details
 // ============================================
-import { getBillDetails, getBillById, getTicketsByBillId, getFoodsByBillId } from '@/lib/mock-data';
+
 
 export function exampleRetrieveBillDetails() {
     const billId = "bill_001";
 
-    // Method 1: Get everything at once
-    const details = getBillDetails(billId);
-    if (details) {
-        console.log("Bill:", details.bill);
-        console.log("Tickets:", details.tickets); // Array of individual tickets
-        console.log("Foods:", details.foods); // Foods with dates
-        console.log("Has Promotional:", details.isPromotional);
-    }
+
 
     // Method 2: Get individual components
     const bill = getBillById(billId);
@@ -261,7 +260,7 @@ export function exampleDisplayTicketInUI(ticketId: string) {
 // EXAMPLE 9: Check Food Expiry Status
 // ============================================
 export function exampleCheckFoodExpiry(foodId: string) {
-    import { mockFoodTrackings } from '@/lib/mock-data';
+
 
     const food = mockFoodTrackings.find(f => f.food_id === foodId);
     if (!food) return null;

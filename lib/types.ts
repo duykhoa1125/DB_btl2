@@ -1,6 +1,6 @@
 // Data types for cinema booking app
 export interface Movie {
-  movieId: number;
+  movie_id: number;
   title: string;
   description: string;
   duration: number; // in minutes
@@ -13,7 +13,7 @@ export interface Movie {
 }
 
 export interface Cinema {
-  cinemaId: number;
+  cinema_id: number;
   cinemaName: string;
   address: string;
   rooms: Room[];
@@ -25,8 +25,8 @@ export interface Room {
 }
 
 export interface Showtime {
-  showtimeId: number;
-  movieId: number;
+  showtime_id: number;
+  movie_id: number;
   roomId: number;
   showDate: string; // YYYY-MM-DD
   startTime: string; // HH:mm
@@ -42,7 +42,7 @@ export interface Seat {
 }
 
 export interface Food {
-  foodId: number;
+  food_id: number;
   foodName: string;
   description: string;
   price: number;

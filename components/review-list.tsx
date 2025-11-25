@@ -24,21 +24,21 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
   const [replyText, setReplyText] = useState("");
   const [replies, setReplies] = useState<Record<string, string[]>>({});
 
-  const toggleLike = (reviewId: string) => {
+  const toggleLike = (review_id: string) => {
     const newLiked = new Set(likedReviews);
-    if (newLiked.has(reviewId)) {
-      newLiked.delete(reviewId);
+    if (newLiked.has(review_id)) {
+      newLiked.delete(review_id);
     } else {
-      newLiked.add(reviewId);
+      newLiked.add(review_id);
     }
     setLikedReviews(newLiked);
   };
 
-  const handleReply = (reviewId: string) => {
+  const handleReply = (review_id: string) => {
     if (replyText.trim()) {
       setReplies({
         ...replies,
-        [reviewId]: [...(replies[reviewId] || []), replyText],
+        [review_id]: [...(replies[review_id] || []), replyText],
       });
       setReplyText("");
       setReplyingTo(null);
@@ -118,13 +118,13 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
       <div className="space-y-4">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => {
-            const isLiked = likedReviews.has(review.reviewId);
+            const isLiked = likedReviews.has(review.review_id);
             const currentLikes = review.likeCount + (isLiked ? 1 : 0);
-            const isReplying = replyingTo === review.reviewId;
+            const isReplying = replyingTo === review.review_id;
 
             return (
               <div
-                key={review.reviewId}
+                key={review.review_id}
                 className="group overflow-hidden rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:bg-card/80"
               >
                 <div className="mb-4 flex items-start justify-between">
@@ -165,7 +165,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
 
                   <button
                     onClick={() =>
-                      setReplyingTo(isReplying ? null : review.reviewId)
+                      setReplyingTo(isReplying ? null : review.review_id)
                     }
                     className={cn(
                       "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300",
@@ -202,7 +202,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                       </Button>
                       <Button
                         size="sm"
-                        onClick={() => handleReply(review.reviewId)}
+                        onClick={() => handleReply(review.review_id)}
                         disabled={!replyText.trim()}
                         className="gap-2 bg-primary hover:bg-primary/90"
                       >
@@ -214,12 +214,12 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                 )}
 
                 {/* Replies Display */}
-                {replies[review.reviewId]?.length > 0 && (
+                {replies[review.review_id]?.length > 0 && (
                   <div className="mt-4 space-y-3 border-t border-border/50 pt-4 pl-4 border-l-2 border-l-primary/20">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      Phản hồi ({replies[review.reviewId].length})
+                      Phản hồi ({replies[review.review_id].length})
                     </p>
-                    {replies[review.reviewId].map((reply, idx) => (
+                    {replies[review.review_id].map((reply, idx) => (
                       <div
                         key={idx}
                         className="rounded-xl bg-muted/30 p-3 text-sm border border-border/30"

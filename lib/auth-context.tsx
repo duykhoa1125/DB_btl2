@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const now = new Date().toISOString();
     const newUser: User = {
-      userId: `user_${Date.now()}`,
+      user_id: `user_${Date.now()}`,
       email: email,
       passwordHash: password,
       fullName: fullName,
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const updated = { ...currentUser, ...updates };
       setCurrentUser(updated);
       localStorage.setItem("currentUser", JSON.stringify(updated));
-      const index = mockUsers.findIndex((u) => u.userId === currentUser.userId);
+      const index = mockUsers.findIndex((u) => u.user_id === currentUser.user_id);
       if (index !== -1) {
         mockUsers[index] = updated;
       }

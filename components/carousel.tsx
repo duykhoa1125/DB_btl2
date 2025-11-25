@@ -30,7 +30,7 @@ export function Carousel({ items }: CarouselProps) {
     <div className="relative h-[500px] w-full overflow-hidden rounded-3xl bg-background shadow-2xl border border-border/50 group">
       {items.map((item, index) => (
         <div
-          key={item.movieId}
+          key={item.movie_id}
           className={`absolute inset-0 transition-opacity duration-1000 ${
             index === current ? "opacity-100" : "opacity-0"
           }`}

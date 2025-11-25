@@ -22,17 +22,17 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
 
   const handleQuantityChange = (food: Food, change: number) => {
     const newFoods = new Map(selectedFoods);
-    const existing = newFoods.get(food.foodId);
+    const existing = newFoods.get(food.food_id);
 
     if (existing) {
       const newQuantity = existing.quantity + change;
       if (newQuantity <= 0) {
-        newFoods.delete(food.foodId);
+        newFoods.delete(food.food_id);
       } else {
-        newFoods.set(food.foodId, { ...existing, quantity: newQuantity });
+        newFoods.set(food.food_id, { ...existing, quantity: newQuantity });
       }
     } else if (change > 0) {
-      newFoods.set(food.foodId, { ...food, quantity: 1 });
+      newFoods.set(food.food_id, { ...food, quantity: 1 });
     }
 
     setSelectedFoods(newFoods);
@@ -64,12 +64,12 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {mockFoods.map((food) => {
-          const selectedFood = selectedFoods.get(food.foodId);
+          const selectedFood = selectedFoods.get(food.food_id);
           const quantity = selectedFood?.quantity || 0;
 
           return (
             <div
-              key={food.foodId}
+              key={food.food_id}
               className={cn(
                 "group relative overflow-hidden rounded-2xl border transition-all duration-300",
                 quantity > 0

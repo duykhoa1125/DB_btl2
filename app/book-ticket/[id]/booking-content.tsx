@@ -6,7 +6,7 @@ import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
-import type { Seat, Food, Voucher, Movie, Showtime } from "@/lib/mock-data";
+import type { Seat, Food, Voucher, Movie, Showtime, VoucherWithDetails } from "@/lib/mock-data";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Calendar, Clock, MapPin, CreditCard, Wallet, Banknote, Building2, CheckCircle2 } from "lucide-react";
@@ -25,7 +25,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const [bookingStep, setBookingStep] = useState<"seats" | "food" | "payment">(
     "seats"
   );
-  const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
+  const [appliedVoucher, setAppliedVoucher] = useState<VoucherWithDetails | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
 
@@ -54,7 +54,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const subtotal = ticketTotal + foodTotal;
   const finalTotal = Math.max(0, subtotal - discountAmount);
 
-  const handleVoucherApply = (voucher: Voucher | null, discount: number) => {
+  const handleVoucherApply = (voucher: VoucherWithDetails | null, discount: number) => {
     setAppliedVoucher(voucher);
     if (voucher === null) {
       setDiscountAmount(0);
@@ -83,7 +83,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
           <Breadcrumb 
             items={[
               { label: "Phim", href: "/" },
-              { label: movie.title, href: `/movie/${movie.movieId}` },
+              { label: movie.title, href: `/movie/${movie.movie_id}` },
               { label: "Đặt vé" }
             ]} 
           />
@@ -325,7 +325,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                     {selectedFoods.length > 0 && (
                       <div className="space-y-2">
                         {selectedFoods.map((food) => (
-                          <div key={food.foodId} className="flex justify-between text-sm">
+                          <div key={food.food_id} className="flex justify-between text-sm">
                             <span className="text-muted-foreground">{food.foodName} (x{food.quantity})</span>
                             <span className="font-medium">{(food.price * food.quantity).toLocaleString("vi-VN")}₫</span>
                           </div>

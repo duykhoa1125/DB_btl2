@@ -76,7 +76,7 @@ export function ProfileContent() {
   }
 
   // Get user bookings (filter by current user)
-  const userBookings = mockBookings.filter((b) => b.userId === currentUser.userId);
+  const userBookings = mockBookings.filter((b) => b.user_id === currentUser.user_id);
   
   // Get user membership history
   const userMembershipHistory = mockAccountMemberships.filter(
@@ -313,19 +313,19 @@ export function ProfileContent() {
                     ) : (
                       userBookings.map((booking) => {
                         const showtime = mockShowtimes.find(
-                          (s) => s.showtimeId === booking.showtimeId
+                          (s) => s.showtime_id === booking.showtime_id
                         );
                         const movie = showtime
-                          ? mockMovies.find((m) => m.movieId === showtime.movieId)
+                          ? mockMovies.find((m) => m.movie_id === showtime.movie_id)
                           : null;
-                        const isExpanded = expandedBooking === booking.bookingId;
+                        const isExpanded = expandedBooking === booking.booking_id;
 
                         return (
-                          <div key={booking.bookingId} className="p-6">
+                          <div key={booking.booking_id} className="p-6">
                             <button
                               onClick={() =>
                                 setExpandedBooking(
-                                  isExpanded ? null : booking.bookingId
+                                  isExpanded ? null : booking.booking_id
                                 )
                               }
                               className="flex w-full items-center justify-between text-left transition-colors hover:text-primary"
@@ -363,13 +363,13 @@ export function ProfileContent() {
                                     Chi tiết vé ({booking.seatList.length})
                                   </p>
                                   <div className="space-y-1">
-                                    {booking.seatList.map((seatId) => {
+                                    {booking.seatList.map((seat_id) => {
                                       const seat = mockSeats.find(
-                                        (s) => s.seatId === seatId
+                                        (s) => s.seat_id === seat_id
                                       );
                                       return (
                                         <div
-                                          key={seatId}
+                                          key={seat_id}
                                           className="flex justify-between text-sm"
                                         >
                                           <span className="text-muted-foreground">
@@ -394,11 +394,11 @@ export function ProfileContent() {
                                     <div className="space-y-1">
                                       {booking.foodList.map((item) => {
                                         const food = mockFoods.find(
-                                          (f) => f.foodId === item.foodId
+                                          (f) => f.food_id === item.food_id
                                         );
                                         return (
                                           <div
-                                            key={item.foodId}
+                                            key={item.food_id}
                                             className="flex justify-between text-sm"
                                           >
                                             <span className="text-muted-foreground">

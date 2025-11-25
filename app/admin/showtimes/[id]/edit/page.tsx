@@ -30,8 +30,8 @@ export default function EditShowtimePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    movieId: "",
-    cinemaId: "",
+    movie_id: "",
+    cinema_id: "",
     startTime: "",
     endTime: "",
     room: "",
@@ -44,8 +44,8 @@ export default function EditShowtimePage() {
   const cinemas = getAllCinemas();
 
   useEffect(() => {
-    const showtimeId = params.id as string;
-    const showtime = getShowtimeById(showtimeId);
+    const showtime_id = params.id as string;
+    const showtime = getShowtimeById(showtime_id);
 
     if (!showtime) {
       toast({
@@ -58,8 +58,8 @@ export default function EditShowtimePage() {
     }
 
     setFormData({
-      movieId: showtime.movieId,
-      cinemaId: showtime.cinemaId,
+      movie_id: showtime.movie_id,
+      cinema_id: showtime.cinema_id,
       startTime: showtime.startTime.replace("Z", "").slice(0, 16),
       endTime: showtime.endTime.replace("Z", "").slice(0, 16),
       room: showtime.room,
@@ -72,8 +72,8 @@ export default function EditShowtimePage() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.movieId) newErrors.movieId = "Movie is required";
-    if (!formData.cinemaId) newErrors.cinemaId = "Cinema is required";
+    if (!formData.movie_id) newErrors.movie_id = "Movie is required";
+    if (!formData.cinema_id) newErrors.cinema_id = "Cinema is required";
     if (!formData.startTime) newErrors.startTime = "Start time is required";
     if (!formData.endTime) newErrors.endTime = "End time is required";
     if (!formData.room.trim()) newErrors.room = "Room is required";
@@ -109,10 +109,10 @@ export default function EditShowtimePage() {
     setIsSubmitting(true);
 
     try {
-      const showtimeId = params.id as string;
-      const updates: Partial<Omit<Showtime, "showtimeId">> = {
-        movieId: formData.movieId,
-        cinemaId: formData.cinemaId,
+      const showtime_id = params.id as string;
+      const updates: Partial<Omit<Showtime, "showtime_id">> = {
+        movie_id: formData.movie_id,
+        cinema_id: formData.cinema_id,
         startTime: formData.startTime,
         endTime: formData.endTime,
         room: formData.room,
@@ -120,7 +120,7 @@ export default function EditShowtimePage() {
         status: formData.status,
       };
 
-      updateShowtime(showtimeId, updates);
+      updateShowtime(showtime_id, updates);
 
       toast({
         title: "Success",
@@ -147,8 +147,8 @@ export default function EditShowtimePage() {
     );
   }
 
-  const selectedMovie = movies.find((m) => m.movieId === formData.movieId);
-  const selectedCinema = cinemas.find((c) => c.cinemaId === formData.cinemaId);
+  const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
+  const selectedCinema = cinemas.find((c) => c.cinema_id === formData.cinema_id);
 
   return (
     <div className="space-y-6">
@@ -181,9 +181,9 @@ export default function EditShowtimePage() {
                 Movie <span className="text-destructive">*</span>
               </label>
               <Select
-                value={formData.movieId}
+                value={formData.movie_id}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, movieId: value })
+                  setFormData({ ...formData, movie_id: value })
                 }
               >
                 <SelectTrigger>
@@ -191,7 +191,7 @@ export default function EditShowtimePage() {
                 </SelectTrigger>
                 <SelectContent>
                   {movies.map((movie) => (
-                    <SelectItem key={movie.movieId} value={movie.movieId}>
+                    <SelectItem key={movie.movie_id} value={movie.movie_id}>
                       <div className="flex items-center gap-2">
                         <Film className="h-4 w-4" />
                         <span>
@@ -202,8 +202,8 @@ export default function EditShowtimePage() {
                   ))}
                 </SelectContent>
               </Select>
-              {errors.movieId && (
-                <p className="text-sm text-destructive">{errors.movieId}</p>
+              {errors.movie_id && (
+                <p className="text-sm text-destructive">{errors.movie_id}</p>
               )}
               {selectedMovie && (
                 <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
@@ -222,9 +222,9 @@ export default function EditShowtimePage() {
                 Cinema <span className="text-destructive">*</span>
               </label>
               <Select
-                value={formData.cinemaId}
+                value={formData.cinema_id}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, cinemaId: value })
+                  setFormData({ ...formData, cinema_id: value })
                 }
               >
                 <SelectTrigger>
@@ -232,7 +232,7 @@ export default function EditShowtimePage() {
                 </SelectTrigger>
                 <SelectContent>
                   {cinemas.map((cinema) => (
-                    <SelectItem key={cinema.cinemaId} value={cinema.cinemaId}>
+                    <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4" />
                         <span>{cinema.cinemaName}</span>
@@ -241,8 +241,8 @@ export default function EditShowtimePage() {
                   ))}
                 </SelectContent>
               </Select>
-              {errors.cinemaId && (
-                <p className="text-sm text-destructive">{errors.cinemaId}</p>
+              {errors.cinema_id && (
+                <p className="text-sm text-destructive">{errors.cinema_id}</p>
               )}
               {selectedCinema && (
                 <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">

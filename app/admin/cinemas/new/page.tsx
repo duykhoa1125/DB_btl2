@@ -47,7 +47,7 @@ export default function NewCinemaPage() {
     setIsSubmitting(true);
 
     try {
-      const cinemaData: Omit<Cinema, "cinemaId"> = {
+      const cinemaData: Omit<Cinema, "cinema_id"> = {
         cinemaName: formData.cinemaName,
         address: formData.address,
       };

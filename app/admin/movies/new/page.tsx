@@ -105,7 +105,7 @@ export default function NewMoviePage() {
     setIsSubmitting(true);
 
     try {
-      const movieData: Omit<Movie, "movieId"> = {
+      const movieData: Omit<Movie, "movie_id"> = {
         title: formData.title,
         description: formData.description,
         image: formData.image,

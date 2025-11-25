@@ -16,13 +16,13 @@ export function getAllMovies(): Movie[] {
 }
 
 export function getMovieById(id: string): Movie | undefined {
-    return mockMovies.find((m) => m.movieId === id);
+    return mockMovies.find((m) => m.movie_id === id);
 }
 
-export function createMovie(movieData: Omit<Movie, "movieId">): Movie {
+export function createMovie(movieData: Omit<Movie, "movie_id">): Movie {
     const newMovie: Movie = {
         ...movieData,
-        movieId: `movie_${Date.now()}`,
+        movie_id: `movie_${Date.now()}`,
     };
     mockMovies.push(newMovie);
     return newMovie;
@@ -30,9 +30,9 @@ export function createMovie(movieData: Omit<Movie, "movieId">): Movie {
 
 export function updateMovie(
     id: string,
-    updates: Partial<Omit<Movie, "movieId">>
+    updates: Partial<Omit<Movie, "movie_id">>
 ): Movie | null {
-    const index = mockMovies.findIndex((m) => m.movieId === id);
+    const index = mockMovies.findIndex((m) => m.movie_id === id);
     if (index === -1) return null;
 
     mockMovies[index] = { ...mockMovies[index], ...updates };
@@ -40,7 +40,7 @@ export function updateMovie(
 }
 
 export function deleteMovie(id: string): boolean {
-    const index = mockMovies.findIndex((m) => m.movieId === id);
+    const index = mockMovies.findIndex((m) => m.movie_id === id);
     if (index === -1) return false;
 
     mockMovies.splice(index, 1);
@@ -54,13 +54,13 @@ export function getAllCinemas(): Cinema[] {
 }
 
 export function getCinemaById(id: string): Cinema | undefined {
-    return mockCinemas.find((c) => c.cinemaId === id);
+    return mockCinemas.find((c) => c.cinema_id === id);
 }
 
-export function createCinema(cinemaData: Omit<Cinema, "cinemaId">): Cinema {
+export function createCinema(cinemaData: Omit<Cinema, "cinema_id">): Cinema {
     const newCinema: Cinema = {
         ...cinemaData,
-        cinemaId: `cinema_${Date.now()}`,
+        cinema_id: `cinema_${Date.now()}`,
     };
     mockCinemas.push(newCinema);
     return newCinema;
@@ -68,9 +68,9 @@ export function createCinema(cinemaData: Omit<Cinema, "cinemaId">): Cinema {
 
 export function updateCinema(
     id: string,
-    updates: Partial<Omit<Cinema, "cinemaId">>
+    updates: Partial<Omit<Cinema, "cinema_id">>
 ): Cinema | null {
-    const index = mockCinemas.findIndex((c) => c.cinemaId === id);
+    const index = mockCinemas.findIndex((c) => c.cinema_id === id);
     if (index === -1) return null;
 
     mockCinemas[index] = { ...mockCinemas[index], ...updates };
@@ -78,7 +78,7 @@ export function updateCinema(
 }
 
 export function deleteCinema(id: string): boolean {
-    const index = mockCinemas.findIndex((c) => c.cinemaId === id);
+    const index = mockCinemas.findIndex((c) => c.cinema_id === id);
     if (index === -1) return false;
 
     mockCinemas.splice(index, 1);
@@ -92,15 +92,15 @@ export function getAllShowtimes(): Showtime[] {
 }
 
 export function getShowtimeById(id: string): Showtime | undefined {
-    return mockShowtimes.find((s) => s.showtimeId === id);
+    return mockShowtimes.find((s) => s.showtime_id === id);
 }
 
 export function createShowtime(
-    showtimeData: Omit<Showtime, "showtimeId">
+    showtimeData: Omit<Showtime, "showtime_id">
 ): Showtime {
     const newShowtime: Showtime = {
         ...showtimeData,
-        showtimeId: `st_${Date.now()}`,
+        showtime_id: `st_${Date.now()}`,
     };
     mockShowtimes.push(newShowtime);
     return newShowtime;
@@ -108,9 +108,9 @@ export function createShowtime(
 
 export function updateShowtime(
     id: string,
-    updates: Partial<Omit<Showtime, "showtimeId">>
+    updates: Partial<Omit<Showtime, "showtime_id">>
 ): Showtime | null {
-    const index = mockShowtimes.findIndex((s) => s.showtimeId === id);
+    const index = mockShowtimes.findIndex((s) => s.showtime_id === id);
     if (index === -1) return null;
 
     mockShowtimes[index] = { ...mockShowtimes[index], ...updates };
@@ -118,7 +118,7 @@ export function updateShowtime(
 }
 
 export function deleteShowtime(id: string): boolean {
-    const index = mockShowtimes.findIndex((s) => s.showtimeId === id);
+    const index = mockShowtimes.findIndex((s) => s.showtime_id === id);
     if (index === -1) return false;
 
     mockShowtimes.splice(index, 1);
@@ -162,18 +162,18 @@ export function getTopMoviesByRevenue(limit: number = 5) {
         .filter((b) => b.status === "Confirmed")
         .forEach((booking) => {
             const showtime = mockShowtimes.find(
-                (s) => s.showtimeId === booking.showtimeId
+                (s) => s.showtime_id === booking.showtime_id
             );
             if (showtime) {
-                const current = revenueByMovie.get(showtime.movieId) || 0;
-                revenueByMovie.set(showtime.movieId, current + booking.totalAmount);
+                const current = revenueByMovie.get(showtime.movie_id) || 0;
+                revenueByMovie.set(showtime.movie_id, current + booking.totalAmount);
             }
         });
 
     // Convert to array and sort
     const sorted = Array.from(revenueByMovie.entries())
-        .map(([movieId, revenue]) => ({
-            movie: mockMovies.find((m) => m.movieId === movieId)!,
+        .map(([movie_id, revenue]) => ({
+            movie: mockMovies.find((m) => m.movie_id === movie_id)!,
             revenue,
         }))
         .filter((item) => item.movie)

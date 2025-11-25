@@ -10,12 +10,12 @@ import { cn } from "@/lib/utils";
 
 interface ShowtimeSelectorProps {
   showtimes: Showtime[];
-  movieId: string;
+  movie_id: string;
 }
 
 export function ShowtimeSelector({
   showtimes,
-  movieId,
+  movie_id,
 }: ShowtimeSelectorProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<string | null>(null);
@@ -153,18 +153,18 @@ export function ShowtimeSelector({
           {(() => {
             const showtimesForDate = groupedShowtimes[selectedDate];
             const showtimesByCinema = showtimesForDate.reduce((acc, showtime) => {
-              if (!acc[showtime.cinemaId]) {
-                acc[showtime.cinemaId] = [];
+              if (!acc[showtime.cinema_id]) {
+                acc[showtime.cinema_id] = [];
               }
-              acc[showtime.cinemaId].push(showtime);
+              acc[showtime.cinema_id].push(showtime);
               return acc;
             }, {} as Record<string, Showtime[]>);
 
-            return Object.entries(showtimesByCinema).map(([cinemaId, cinemaShowtimes]) => {
-              const cinema = mockCinemas.find((c) => c.cinemaId === cinemaId);
+            return Object.entries(showtimesByCinema).map(([cinema_id, cinemaShowtimes]) => {
+              const cinema = mockCinemas.find((c) => c.cinema_id === cinema_id);
               
               return (
-                <div key={cinemaId} className="space-y-4">
+                <div key={cinema_id} className="space-y-4">
                   {/* Cinema Header */}
                   <div className="flex items-center gap-2 border-l-4 border-primary pl-4 py-1 bg-muted/30 rounded-r-lg">
                     <MapPin className="h-5 w-5 text-primary" />
@@ -176,14 +176,14 @@ export function ShowtimeSelector({
                   {/* Showtimes Grid */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 pl-4">
                     {cinemaShowtimes.map((showtime) => {
-                      const isSelected = selectedShowtime === showtime.showtimeId;
+                      const isSelected = selectedShowtime === showtime.showtime_id;
 
                       return (
                         <div
-                          key={showtime.showtimeId}
+                          key={showtime.showtime_id}
                           onClick={() =>
                             setSelectedShowtime(
-                              isSelected ? null : showtime.showtimeId
+                              isSelected ? null : showtime.showtime_id
                             )
                           }
                           className={cn(
@@ -226,7 +226,7 @@ export function ShowtimeSelector({
                             isSelected ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
                           )}>
                             <Link
-                              href={`/book-ticket/${showtime.showtimeId}`}
+                              href={`/book-ticket/${showtime.showtime_id}`}
                               className="w-full px-6"
                             >
                               <Button

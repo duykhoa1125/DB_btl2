@@ -24,8 +24,8 @@ export default function EditCinemaPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const cinemaId = params.id as string;
-    const cinema = getCinemaById(cinemaId);
+    const cinema_id = params.id as string;
+    const cinema = getCinemaById(cinema_id);
 
     if (!cinema) {
       toast({
@@ -70,13 +70,13 @@ export default function EditCinemaPage() {
     setIsSubmitting(true);
 
     try {
-      const cinemaId = params.id as string;
-      const updates: Partial<Omit<Cinema, "cinemaId">> = {
+      const cinema_id = params.id as string;
+      const updates: Partial<Omit<Cinema, "cinema_id">> = {
         cinemaName: formData.cinemaName,
         address: formData.address,
       };
 
-      updateCinema(cinemaId, updates);
+      updateCinema(cinema_id, updates);
 
       toast({
         title: "Success",

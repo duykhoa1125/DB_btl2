@@ -11,9 +11,9 @@ interface BookingPageProps {
 export default async function BookingPage({ params }: BookingPageProps) {
   const { id } = await params;
 
-  const showtime = mockShowtimes.find((s) => s.showtimeId === id);
+  const showtime = mockShowtimes.find((s) => s.showtime_id === id);
   const movie = showtime
-    ? mockMovies.find((p) => p.movieId === showtime.movieId)
+    ? mockMovies.find((p) => p.movie_id === showtime.movie_id)
     : null;
 
   if (!showtime || !movie) {

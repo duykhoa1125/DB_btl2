@@ -10,13 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { X, Star, Send, MessageSquarePlus } from "lucide-react";
 
 interface ReviewsProps {
-  movieId: string;
+  movie_id: string;
   movieTitle: string;
 }
 
-export function Reviews({ movieId, movieTitle }: ReviewsProps) {
+export function Reviews({ movie_id, movieTitle }: ReviewsProps) {
   const [reviews, setReviews] = useState(
-    mockReviews.filter((r) => r.movieId === movieId)
+    mockReviews.filter((r) => r.movie_id === movie_id)
   );
   
   const [rating, setRating] = useState(5);
@@ -47,9 +47,9 @@ export function Reviews({ movieId, movieTitle }: ReviewsProps) {
 
   const handleSubmit = () => {
     const review = {
-      reviewId: `review_${Date.now()}`,
-      movieId: movieId,
-      userId: "current_user",
+      review_id: `review_${Date.now()}`,
+      movie_id: movie_id,
+      user_id: "current_user",
       rating: rating,
       title: title,
       content: content,

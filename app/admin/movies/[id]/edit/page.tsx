@@ -55,8 +55,8 @@ export default function EditMoviePage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const movieId = params.id as string;
-    const movie = getMovieById(movieId);
+    const movie_id = params.id as string;
+    const movie = getMovieById(movie_id);
 
     if (!movie) {
       toast({
@@ -138,8 +138,8 @@ export default function EditMoviePage() {
     setIsSubmitting(true);
 
     try {
-      const movieId = params.id as string;
-      const updates: Partial<Omit<Movie, "movieId">> = {
+      const movie_id = params.id as string;
+      const updates: Partial<Omit<Movie, "movie_id">> = {
         title: formData.title,
         description: formData.description,
         image: formData.image,
@@ -154,7 +154,7 @@ export default function EditMoviePage() {
         trailerUrl: formData.trailerUrl,
       };
 
-      updateMovie(movieId, updates);
+      updateMovie(movie_id, updates);
 
       toast({
         title: "Success",

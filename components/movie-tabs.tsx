@@ -38,7 +38,7 @@ export function MovieTabs({ nowShowingMovies, comingSoonMovies }: MovieTabsProps
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {nowShowingMovies.length > 0 ? (
               nowShowingMovies.map((movie) => (
-                <MovieCard key={movie.movieId} movie={movie} />
+                <MovieCard key={movie.movie_id} movie={movie} />
               ))
             ) : (
               <div className="col-span-full py-20 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/20">
@@ -55,7 +55,7 @@ export function MovieTabs({ nowShowingMovies, comingSoonMovies }: MovieTabsProps
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {comingSoonMovies.length > 0 ? (
               comingSoonMovies.map((movie) => (
-                <MovieCard key={movie.movieId} movie={movie} />
+                <MovieCard key={movie.movie_id} movie={movie} />
               ))
             ) : (
               <div className="col-span-full py-20 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/20">

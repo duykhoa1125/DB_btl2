@@ -16,13 +16,13 @@ import { Badge } from "@/components/ui/badge";
 import { X, Star, PenLine, Send } from "lucide-react";
 
 interface ReviewEditorProps {
-  movieId: string;
+  movie_id: string;
   movieTitle: string;
   onSubmit?: (review: any) => void;
 }
 
 export function ReviewEditor({
-  movieId,
+  movie_id,
   movieTitle,
   onSubmit,
 }: ReviewEditorProps) {
@@ -55,9 +55,9 @@ export function ReviewEditor({
 
   const handleSubmit = () => {
     const review = {
-      reviewId: `review_${Date.now()}`,
-      movieId: movieId,
-      userId: "current_user",
+      review_id: `review_${Date.now()}`,
+      movie_id: movie_id,
+      user_id: "current_user",
       rating: rating,
       title: title,
       content: content,

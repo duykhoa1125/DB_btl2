@@ -34,7 +34,7 @@ export function OrderHistoryList() {
   }
 
   const userOrders = mockBookings.filter(
-    (order) => order.userId === currentUser.userId
+    (order) => order.user_id === currentUser.user_id
   );
 
   const filteredOrders = userOrders.filter((order) => {
@@ -55,12 +55,12 @@ export function OrderHistoryList() {
     }
   };
 
-  const getShowtimeInfo = (showtimeId: string) => {
-    const showtime = mockShowtimes.find((s) => s.showtimeId === showtimeId);
+  const getShowtimeInfo = (showtime_id: string) => {
+    const showtime = mockShowtimes.find((s) => s.showtime_id === showtime_id);
     if (!showtime) return null;
 
-    const movie = mockMovies.find((p) => p.movieId === showtime.movieId);
-    const cinema = mockCinemas.find((r) => r.cinemaId === showtime.cinemaId);
+    const movie = mockMovies.find((p) => p.movie_id === showtime.movie_id);
+    const cinema = mockCinemas.find((r) => r.cinema_id === showtime.cinema_id);
 
     return { showtime, movie, cinema };
   };
@@ -111,7 +111,7 @@ export function OrderHistoryList() {
         ) : (
           <div className="space-y-4">
             {filteredOrders.map((order) => {
-              const info = getShowtimeInfo(order.showtimeId);
+              const info = getShowtimeInfo(order.showtime_id);
               if (!info) return null;
 
               const { movie, showtime, cinema } = info;
@@ -119,7 +119,7 @@ export function OrderHistoryList() {
 
               return (
                 <div
-                  key={order.bookingId}
+                  key={order.booking_id}
                   className="group relative flex flex-col md:flex-row bg-card rounded-3xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500"
                 >
                   {/* Left Part - Movie Info */}

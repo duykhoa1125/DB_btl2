@@ -18,13 +18,13 @@ export default async function MovieDetailPage({
   console.log("Searching for movie with ID:", id);
   console.log(
     "Available movies:",
-    mockMovies.map((m) => m.movieId)
+    mockMovies.map((m) => m.movie_id)
   );
 
-  const movie = mockMovies.find((m) => m.movieId === id);
-  const showtimes = mockShowtimes.filter((s) => s.movieId === id);
+  const movie = mockMovies.find((m) => m.movie_id === id);
+  const showtimes = mockShowtimes.filter((s) => s.movie_id === id);
 
-  const reviewCount = mockReviews.filter((r) => r.movieId === id).length;
+  const reviewCount = mockReviews.filter((r) => r.movie_id === id).length;
 
   console.log("Found movie:", movie);
 
@@ -187,7 +187,7 @@ export default async function MovieDetailPage({
       <section className="border-t border-border bg-gradient-to-b from-card/50 to-background py-12">
         <div className="mx-auto max-w-7xl px-6">
           {showtimes.length > 0 ? (
-            <ShowtimeSelector showtimes={showtimes} movieId={movie.movieId} />
+            <ShowtimeSelector showtimes={showtimes} movie_id={movie.movie_id} />
           ) : (
             <div className="rounded-xl border-2 border-dashed border-border bg-muted/20 py-16 text-center">
               <p className="text-lg font-medium text-muted-foreground mb-2">
@@ -204,7 +204,7 @@ export default async function MovieDetailPage({
       {/* Reviews Section */}
       <section className="border-t border-border py-12">
         <div className="mx-auto max-w-7xl px-6">
-          <Reviews movieId={movie.movieId} movieTitle={movie.title} />
+          <Reviews movie_id={movie.movie_id} movieTitle={movie.title} />
         </div>
       </section>
     </div>

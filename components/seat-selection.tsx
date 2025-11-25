@@ -64,20 +64,20 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
 
   const handleSeatClick = (seat: Seat) => {
     const newSelected = new Set(selectedSeats);
-    if (newSelected.has(seat.seatId)) {
-      newSelected.delete(seat.seatId);
+    if (newSelected.has(seat.seat_id)) {
+      newSelected.delete(seat.seat_id);
     } else {
-      newSelected.add(seat.seatId);
+      newSelected.add(seat.seat_id);
     }
     setSelectedSeats(newSelected);
     const selectedSeatObjects = mockSeats.filter((s) =>
-      newSelected.has(s.seatId)
+      newSelected.has(s.seat_id)
     );
     onSeatsChange(selectedSeatObjects);
   };
 
   const getSeatColor = (seat: Seat) => {
-    if (selectedSeats.has(seat.seatId)) {
+    if (selectedSeats.has(seat.seat_id)) {
       return "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)] scale-105";
     }
     // Default unselected state - uniform color as requested, but hover effect remains
@@ -85,7 +85,7 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
   };
 
   const renderSeat = (seat: Seat) => {
-    const isSelected = selectedSeats.has(seat.seatId);
+    const isSelected = selectedSeats.has(seat.seat_id);
     
     let Icon = StandardSeatIcon;
     let width = "w-8";
@@ -100,7 +100,7 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
 
     return (
       <button
-        key={seat.seatId}
+        key={seat.seat_id}
         onClick={() => handleSeatClick(seat)}
         className={cn(
           "group relative flex flex-col items-center justify-center transition-all duration-300",

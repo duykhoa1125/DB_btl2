@@ -10,7 +10,7 @@ interface MovieCardProps {
 
 export function MovieCard({ movie }: MovieCardProps) {
   return (
-    <Link href={`/movie/${movie.movieId}`} className="block h-full">
+    <Link href={`/movie/${movie.movie_id}`} className="block h-full">
       <div className="group relative h-full transition-all duration-500 hover:-translate-y-3">
         {/* Glow behind the card */}
         <div className="absolute -inset-[1px] bg-gradient-to-b from-primary/50 via-accent/50 to-primary/50 rounded-[18px] blur-sm opacity-0 group-hover:opacity-100 transition duration-500" />

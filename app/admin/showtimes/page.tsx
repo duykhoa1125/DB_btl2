@@ -47,8 +47,8 @@ export default function ShowtimesPage() {
 
   // Filter showtimes
   const filteredShowtimes = showtimes.filter((showtime) => {
-    const movie = movies.find((m) => m.movieId === showtime.movieId);
-    const cinema = cinemas.find((c) => c.cinemaId === showtime.cinemaId);
+    const movie = movies.find((m) => m.movie_id === showtime.movie_id);
+    const cinema = cinemas.find((c) => c.cinema_id === showtime.cinema_id);
 
     const matchesSearch =
       movie?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -56,9 +56,9 @@ export default function ShowtimesPage() {
       showtime.room.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesMovie =
-      movieFilter === "all" || showtime.movieId === movieFilter;
+      movieFilter === "all" || showtime.movie_id === movieFilter;
     const matchesCinema =
-      cinemaFilter === "all" || showtime.cinemaId === cinemaFilter;
+      cinemaFilter === "all" || showtime.cinema_id === cinemaFilter;
     const matchesStatus =
       statusFilter === "all" || showtime.status === statusFilter;
 
@@ -72,7 +72,7 @@ export default function ShowtimesPage() {
 
   const handleDeleteConfirm = () => {
     if (showtimeToDelete) {
-      const success = deleteShowtime(showtimeToDelete.showtimeId);
+      const success = deleteShowtime(showtimeToDelete.showtime_id);
       if (success) {
         setShowtimes(getAllShowtimes());
         toast({
@@ -91,13 +91,13 @@ export default function ShowtimesPage() {
     setShowtimeToDelete(null);
   };
 
-  const getMovieName = (movieId: string) => {
-    return movies.find((m) => m.movieId === movieId)?.title || "Unknown";
+  const getMovieName = (movie_id: string) => {
+    return movies.find((m) => m.movie_id === movie_id)?.title || "Unknown";
   };
 
-  const getCinemaName = (cinemaId: string) => {
+  const getCinemaName = (cinema_id: string) => {
     return (
-      cinemas.find((c) => c.cinemaId === cinemaId)?.cinemaName || "Unknown"
+      cinemas.find((c) => c.cinema_id === cinema_id)?.cinemaName || "Unknown"
     );
   };
 
@@ -137,7 +137,7 @@ export default function ShowtimesPage() {
           <SelectContent>
             <SelectItem value="all">All Movies</SelectItem>
             {movies.slice(0, 10).map((movie) => (
-              <SelectItem key={movie.movieId} value={movie.movieId}>
+              <SelectItem key={movie.movie_id} value={movie.movie_id}>
                 {movie.title}
               </SelectItem>
             ))}
@@ -150,7 +150,7 @@ export default function ShowtimesPage() {
           <SelectContent>
             <SelectItem value="all">All Cinemas</SelectItem>
             {cinemas.map((cinema) => (
-              <SelectItem key={cinema.cinemaId} value={cinema.cinemaId}>
+              <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                 {cinema.cinemaName}
               </SelectItem>
             ))}
@@ -197,14 +197,14 @@ export default function ShowtimesPage() {
               ) : (
                 filteredShowtimes.map((showtime) => (
                   <tr
-                    key={showtime.showtimeId}
+                    key={showtime.showtime_id}
                     className="border-b border-border/50 transition-colors hover:bg-card/50"
                   >
                     <td className="p-4">
-                      <p className="font-medium">{getMovieName(showtime.movieId)}</p>
+                      <p className="font-medium">{getMovieName(showtime.movie_id)}</p>
                     </td>
                     <td className="p-4 text-sm">
-                      {getCinemaName(showtime.cinemaId)}
+                      {getCinemaName(showtime.cinema_id)}
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export default function ShowtimesPage() {
                           asChild
                           className="h-8 w-8 p-0"
                         >
-                          <Link href={`/admin/showtimes/${showtime.showtimeId}/edit`}>
+                          <Link href={`/admin/showtimes/${showtime.showtime_id}/edit`}>
                             <Edit className="h-4 w-4" />
                           </Link>
                         </Button>

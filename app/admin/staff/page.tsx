@@ -101,8 +101,8 @@ export default function StaffManagementPage() {
   });
 
   // Get cinema name
-  const getCinemaName = (cinemaId: string) => {
-    return mockCinemas.find((c) => c.cinemaId === cinemaId)?.cinemaName || cinemaId;
+  const getCinemaName = (cinema_id: string) => {
+    return mockCinemas.find((c) => c.cinema_id === cinema_id)?.cinemaName || cinema_id;
   };
 
   // Handle create/update staff
@@ -161,10 +161,10 @@ export default function StaffManagementPage() {
   };
 
   // Get available managers for a cinema
-  const getAvailableManagers = (cinemaId: string) => {
+  const getAvailableManagers = (cinema_id: string) => {
     return staffs.filter(
       (s) =>
-        s.cinema_id === cinemaId &&
+        s.cinema_id === cinema_id &&
         (s.position === "Manager" || s.position === "Supervisor") &&
         s.status === "active"
     );
@@ -177,7 +177,7 @@ export default function StaffManagementPage() {
     managers: staffs.filter((s) => s.position === "Manager" && s.status === "active").length,
     byCinema: mockCinemas.map((cinema) => ({
       cinema: cinema.cinemaName,
-      count: getStaffByCinema(cinema.cinemaId).filter((s) => s.status === "active").length,
+      count: getStaffByCinema(cinema.cinema_id).filter((s) => s.status === "active").length,
     })),
   };
 
@@ -263,7 +263,7 @@ export default function StaffManagementPage() {
           <SelectContent>
             <SelectItem value="all">Tất cả rạp</SelectItem>
             {mockCinemas.map((cinema) => (
-              <SelectItem key={cinema.cinemaId} value={cinema.cinemaId}>
+              <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                 {cinema.cinemaName}
               </SelectItem>
             ))}
@@ -378,7 +378,7 @@ export default function StaffManagementPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {mockCinemas.map((cinema) => (
-                        <SelectItem key={cinema.cinemaId} value={cinema.cinemaId}>
+                        <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                           {cinema.cinemaName}
                         </SelectItem>
                       ))}
@@ -459,7 +459,7 @@ export default function StaffManagementPage() {
           {filteredStaffs.map((staff) => {
             const manager = getStaffManager(staff.staff_id);
             const subordinates = getSubordinates(staff.staff_id);
-            const cinema = mockCinemas.find((c) => c.cinemaId === staff.cinema_id);
+            const cinema = mockCinemas.find((c) => c.cinema_id === staff.cinema_id);
 
             return (
               <Card

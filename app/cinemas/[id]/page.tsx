@@ -21,14 +21,14 @@ export default function CinemaDetailPage({
   const { id } = use(params);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const cinema = mockCinemas.find((c) => c.cinemaId === id);
+  const cinema = mockCinemas.find((c) => c.cinema_id === id);
 
   if (!cinema) {
     notFound();
   }
 
   // 1. Get all showtimes for this cinema
-  const cinemaShowtimes = mockShowtimes.filter((s) => s.cinemaId === id);
+  const cinemaShowtimes = mockShowtimes.filter((s) => s.cinema_id === id);
 
   // 2. Get unique dates
   const uniqueDates = Array.from(
@@ -47,10 +47,10 @@ export default function CinemaDetailPage({
 
   // 5. Group showtimes by Movie
   const showtimesByMovie = showtimesOnDate.reduce((acc, showtime) => {
-    if (!acc[showtime.movieId]) {
-      acc[showtime.movieId] = [];
+    if (!acc[showtime.movie_id]) {
+      acc[showtime.movie_id] = [];
     }
-    acc[showtime.movieId].push(showtime);
+    acc[showtime.movie_id].push(showtime);
     return acc;
   }, {} as Record<string, Showtime[]>);
 
@@ -143,18 +143,18 @@ export default function CinemaDetailPage({
             {/* Movies List */}
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {Object.keys(showtimesByMovie).length > 0 ? (
-                Object.entries(showtimesByMovie).map(([movieId, showtimes]) => {
-                  const movie = mockMovies.find((m) => m.movieId === movieId);
+                Object.entries(showtimesByMovie).map(([movie_id, showtimes]) => {
+                  const movie = mockMovies.find((m) => m.movie_id === movie_id);
                   if (!movie) return null;
 
                   return (
                     <div
-                      key={movieId}
+                      key={movie_id}
                       className="group relative overflow-hidden rounded-3xl border border-border/50 bg-card/40 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
                     >
                       <div className="flex flex-col md:flex-row gap-6">
                         {/* Movie Poster */}
-                        <Link href={`/movie/${movieId}`} className="shrink-0 relative group/poster">
+                        <Link href={`/movie/${movie_id}`} className="shrink-0 relative group/poster">
                           <div className="relative h-52 w-36 overflow-hidden rounded-2xl shadow-md">
                             <img
                               src={movie.image}
@@ -168,7 +168,7 @@ export default function CinemaDetailPage({
                         {/* Movie Info & Showtimes */}
                         <div className="flex-1 space-y-5">
                           <div>
-                            <Link href={`/movie/${movieId}`} className="inline-block">
+                            <Link href={`/movie/${movie_id}`} className="inline-block">
                               <h3 className="text-2xl font-bold hover:text-primary transition-colors duration-300">
                                 {movie.title}
                               </h3>
@@ -191,8 +191,8 @@ export default function CinemaDetailPage({
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                               {showtimes.map((showtime) => (
                                 <Link
-                                  key={showtime.showtimeId}
-                                  href={`/book-ticket/${showtime.showtimeId}`}
+                                  key={showtime.showtime_id}
+                                  href={`/book-ticket/${showtime.showtime_id}`}
                                   className="group/time relative flex flex-col items-center justify-center rounded-xl border border-border/50 bg-background/50 py-2.5 hover:border-primary hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 transition-all duration-300"
                                 >
                                   <span className="text-lg font-bold text-foreground group-hover/time:text-primary transition-colors">

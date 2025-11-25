@@ -34,7 +34,7 @@ export default function CinemasPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {mockCinemas.map((cinema) => (
             <Card
-              key={cinema.cinemaId}
+              key={cinema.cinema_id}
               className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full"
             >
               {/* Decorative Header instead of Image */}
@@ -61,7 +61,7 @@ export default function CinemasPage() {
                   className="w-full group/btn bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300"
                   asChild
                 >
-                  <Link href={`/cinemas/${cinema.cinemaId}`}>
+                  <Link href={`/cinemas/${cinema.cinema_id}`}>
                     <span>Xem Chi Tiết & Lịch Chiếu</span>
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
                   </Link>

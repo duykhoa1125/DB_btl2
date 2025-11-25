@@ -127,7 +127,7 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               {topMovies.map((item, index) => (
                 <div
-                  key={item.movie.movieId}
+                  key={item.movie.movie_id}
                   className="flex items-center gap-4 rounded-lg border border-border/50 bg-card/50 p-4 transition-colors hover:bg-card"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
           <div className="space-y-3">
             {mockBookings.slice(0, 5).map((booking) => (
               <div
-                key={booking.bookingId}
+                key={booking.booking_id}
                 className="flex items-center justify-between rounded-lg border border-border/50 bg-card/50 p-4"
               >
                 <div>

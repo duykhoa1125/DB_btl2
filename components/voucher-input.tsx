@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Ticket, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { type Voucher, mockVouchers } from "@/lib/mock-data";
+import { type Voucher, getVoucherWithDetails, type VoucherWithDetails } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 interface VoucherInputProps {
-  onVoucherApply?: (voucher: Voucher, discount: number) => void;
-  appliedVoucher?: Voucher | null;
+  onVoucherApply?: (voucher: VoucherWithDetails, discount: number) => void;
+  appliedVoucher?: VoucherWithDetails | null;
   appliedDiscount?: number;
 }
 
@@ -29,9 +29,7 @@ export function VoucherInput({
       return;
     }
 
-    const voucher = mockVouchers.find(
-      (v) => v.voucherCode.toUpperCase() === code.toUpperCase()
-    );
+    const voucher = getVoucherWithDetails(code.toUpperCase());
 
     if (!voucher) {
       setError("Mã khuyến mại không tồn tại");
@@ -43,7 +41,7 @@ export function VoucherInput({
       return;
     }
 
-    if (voucher.status !== "Active") {
+    if (voucher.state !== "active") {
       setError("Mã khuyến mại đã hết hạn");
       toast({
         title: "Lỗi",
@@ -54,10 +52,11 @@ export function VoucherInput({
     }
 
     setError("");
-    const discount =
-      voucher.discountType === "Percentage"
-        ? voucher.discountValue
-        : voucher.discountValue;
+    let discount = 0;
+    if (voucher.type === 'discount' && voucher.discountInfo) {
+        discount = voucher.discountInfo.percent_reduce;
+    }
+    
     onVoucherApply?.(voucher, discount);
 
     toast({
@@ -78,15 +77,13 @@ export function VoucherInput({
             </div>
             <div className="flex-1">
               <p className="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
-                {appliedVoucher.voucherCode}
+                {appliedVoucher.code}
                 <CheckCircle2 className="h-4 w-4" />
               </p>
               <p className="text-sm text-green-600/80 dark:text-green-400/80">
-                {appliedVoucher.discountType === "Percentage"
-                  ? `Giảm ${appliedVoucher.discountValue}%`
-                  : `Giảm ₫${appliedVoucher.discountValue.toLocaleString(
-                      "vi-VN"
-                    )}`}
+                {appliedVoucher.type === "discount" && appliedVoucher.discountInfo
+                  ? `Giảm ${appliedVoucher.discountInfo.percent_reduce}%`
+                  : `Quà tặng: ${appliedVoucher.giftInfo?.name || 'Quà tặng đặc biệt'}`}
               </p>
             </div>
             <Button
@@ -145,3 +142,4 @@ export function VoucherInput({
     </div>
   );
 }
+

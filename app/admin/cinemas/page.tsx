@@ -41,7 +41,7 @@ export default function CinemasPage() {
 
   const handleDeleteConfirm = () => {
     if (cinemaToDelete) {
-      const success = deleteCinema(cinemaToDelete.cinemaId);
+      const success = deleteCinema(cinemaToDelete.cinema_id);
       if (success) {
         setCinemas(getAllCinemas());
         toast({
@@ -100,7 +100,7 @@ export default function CinemasPage() {
         ) : (
           filteredCinemas.map((cinema) => (
             <div
-              key={cinema.cinemaId}
+              key={cinema.cinema_id}
               className="group overflow-hidden rounded-lg border border-border/50 bg-card transition-all hover:shadow-lg"
             >
               {/* Decorative Header */}
@@ -122,7 +122,7 @@ export default function CinemasPage() {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild className="flex-1">
-                    <Link href={`/admin/cinemas/${cinema.cinemaId}/edit`}>
+                    <Link href={`/admin/cinemas/${cinema.cinema_id}/edit`}>
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
                     </Link>
