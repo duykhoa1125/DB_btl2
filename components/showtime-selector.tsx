@@ -195,23 +195,7 @@ export function ShowtimeSelector({
                         >
                           <div className="p-5">
                             {/* Status Badge */}
-                            <div className="absolute right-3 top-3">
-                              <Badge
-                                variant={
-                                  showtime.status === "Available"
-                                    ? "secondary"
-                                    : "destructive"
-                                }
-                                className={cn(
-                                  "text-xs border-none backdrop-blur-sm",
-                                  showtime.status === "Available" 
-                                    ? "bg-green-500/10 text-green-600 dark:text-green-400" 
-                                    : ""
-                                )}
-                              >
-                                {showtime.status === "Available" ? "Còn vé" : "Hết vé"}
-                              </Badge>
-                            </div>
+
 
                             {/* Time Display */}
                             <div className="mb-4 flex items-baseline gap-2">
@@ -231,18 +215,9 @@ export function ShowtimeSelector({
                             </div>
 
                             {/* Price */}
-                            <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                              <div className="flex items-center gap-2">
-                                <Ticket className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-lg font-bold text-primary">
-                                  {showtime.ticketPrice.toLocaleString("vi-VN")}₫
-                                </span>
-                              </div>
-                              
-                              {isSelected && (
-                                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                              )}
-                            </div>
+                            {isSelected && (
+                              <div className="mt-4 h-1 w-full rounded-full bg-primary animate-pulse" />
+                            )}
                           </div>
 
                           {/* Book Button Overlay */}

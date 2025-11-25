@@ -53,12 +53,8 @@ export function MovieCard({ movie }: MovieCardProps) {
                           <Clock className="w-3 h-3 text-primary" />
                           <span>{movie.duration}′</span>
                        </div>
-                       <span className="text-white/20">|</span>
-                       <div className="flex items-center gap-1">
-                          <Tag className="w-3 h-3 text-primary" />
-                          <span className="truncate max-w-[100px]">{movie.genres[0]}</span>
-                       </div>
                     </div>
+
                   </div>
 
                   {/* Button - Revealed on hover */}

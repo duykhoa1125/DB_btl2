@@ -62,87 +62,70 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
         <h3 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Chọn đồ ăn thêm</h3>
       </div>
 
-      {Object.entries(groupedFoods).map(([category, foods]) => (
-        <div key={category} className="space-y-6">
-          <h4 className="font-bold text-lg flex items-center gap-2 text-muted-foreground uppercase tracking-wider text-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-            {categoryLabels[category]}
-          </h4>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {foods.map((food) => {
-              const selectedFood = selectedFoods.get(food.foodId);
-              const quantity = selectedFood?.quantity || 0;
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {mockFoods.map((food) => {
+          const selectedFood = selectedFoods.get(food.foodId);
+          const quantity = selectedFood?.quantity || 0;
 
-              return (
-                <div
-                  key={food.foodId}
-                  className={cn(
-                    "group relative overflow-hidden rounded-2xl border transition-all duration-300",
-                    quantity > 0
-                      ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/10"
-                      : "border-border/50 bg-card/50 hover:border-primary/30 hover:shadow-md hover:-translate-y-1"
-                  )}
-                >
-                  <div className="flex p-4 gap-4">
-                    {/* Image */}
-                    <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-muted">
-                      <img
-                        src={food.image || "/placeholder.svg"}
-                        alt={food.foodName}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex flex-1 flex-col justify-between">
-                      <div>
-                        <h5 className="font-bold text-foreground line-clamp-2 mb-1">{food.foodName}</h5>
-                        <p className="font-bold text-primary text-lg">
-                          {food.price.toLocaleString("vi-VN")}₫
-                        </p>
-                      </div>
-
-                      {/* Controls */}
-                      <div className="flex items-center gap-3 mt-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleQuantityChange(food, -1)}
-                          disabled={quantity === 0}
-                          className="h-8 w-8 rounded-full border-border/50 hover:border-primary hover:text-primary"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-6 text-center font-bold text-lg">
-                          {quantity}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleQuantityChange(food, 1)}
-                          className={cn(
-                            "h-8 w-8 rounded-full border-border/50 hover:border-primary hover:text-primary",
-                            quantity > 0 && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground border-primary"
-                          )}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
+          return (
+            <div
+              key={food.foodId}
+              className={cn(
+                "group relative overflow-hidden rounded-2xl border transition-all duration-300",
+                quantity > 0
+                  ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/10"
+                  : "border-border/50 bg-card/50 hover:border-primary/30 hover:shadow-md hover:-translate-y-1"
+              )}
+            >
+              <div className="flex p-4 gap-4">
+                {/* Content */}
+                <div className="flex flex-1 flex-col justify-between">
+                  <div>
+                    <h5 className="font-bold text-foreground line-clamp-2 mb-1">{food.foodName}</h5>
+                    <p className="font-bold text-primary text-lg">
+                      {food.price.toLocaleString("vi-VN")}₫
+                    </p>
                   </div>
-                  
-                  {/* Active Indicator */}
-                  {quantity > 0 && (
-                    <div className="absolute top-0 right-0 p-2">
-                      <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                    </div>
-                  )}
+
+                  {/* Controls */}
+                  <div className="flex items-center gap-3 mt-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleQuantityChange(food, -1)}
+                      disabled={quantity === 0}
+                      className="h-8 w-8 rounded-full border-border/50 hover:border-primary hover:text-primary"
+                    >
+                      <Minus className="h-3 w-3" />
+                    </Button>
+                    <span className="w-6 text-center font-bold text-lg">
+                      {quantity}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleQuantityChange(food, 1)}
+                      className={cn(
+                        "h-8 w-8 rounded-full border-border/50 hover:border-primary hover:text-primary",
+                        quantity > 0 && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground border-primary"
+                      )}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+              </div>
+              
+              {/* Active Indicator */}
+              {quantity > 0 && (
+                <div className="absolute top-0 right-0 p-2">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

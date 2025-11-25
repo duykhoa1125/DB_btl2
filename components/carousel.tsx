@@ -47,16 +47,7 @@ export function Carousel({ items }: CarouselProps) {
           
           <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
             <div className="max-w-3xl space-y-4 animate-in slide-in-from-bottom-10 fade-in duration-700">
-              <div className="flex flex-wrap gap-2 mb-4">
-                {item.genres.map((genre) => (
-                  <span
-                    key={genre}
-                    className="rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1 text-xs font-medium text-white shadow-sm"
-                  >
-                    {genre}
-                  </span>
-                ))}
-              </div>
+
               
               <h2 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
                 {item.title}

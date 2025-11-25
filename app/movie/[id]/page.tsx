@@ -90,12 +90,8 @@ export default async function MovieDetailPage({
                 <Badge variant={movie.status === "Now Showing" ? "default" : "outline"} className="bg-primary hover:bg-primary/90 text-primary-foreground border-none px-3 py-1">
                   {movie.status}
                 </Badge>
-                {movie.genres.slice(0, 3).map((genre) => (
-                  <Badge key={genre} variant="secondary" className="bg-white/10 hover:bg-white/20 text-foreground border border-border/50 backdrop-blur-sm">
-                    {genre}
-                  </Badge>
-                ))}
               </div>
+
               <h1 className="mb-3 text-4xl md:text-5xl font-bold leading-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 {movie.title}
               </h1>
@@ -130,14 +126,8 @@ export default async function MovieDetailPage({
                 <p className="font-bold text-lg truncate group-hover:text-primary transition-colors">{movie.director}</p>
               </div>
 
-              <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
-                <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
-                  <Factory className="h-3.5 w-3.5 text-primary" />
-                  <span>Nhà sản xuất</span>
-                </div>
-                <p className="font-bold text-lg truncate group-hover:text-primary transition-colors">{movie.producer}</p>
-              </div>
             </div>
+
 
             {/* Cast - Compact horizontal scroll */}
             <div className="rounded-xl bg-background/50 border border-border/50 p-4">

@@ -15,7 +15,7 @@ interface ReviewListProps {
 }
 
 export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
-  const [sortBy, setSortBy] = useState<"newest" | "helpful" | "highest">(
+  const [sortBy, setSortBy] = useState<"newest" | "highest">(
     "newest"
   );
   const [filterRating, setFilterRating] = useState<number | null>(null);
@@ -54,8 +54,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
             new Date(b.createdDate).getTime() -
             new Date(a.createdDate).getTime()
           );
-        case "helpful":
-          return b.likeCount - a.likeCount;
+
         case "highest":
           return b.rating - a.rating;
         default:
@@ -108,7 +107,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="newest">Mới nhất</SelectItem>
-              <SelectItem value="helpful">Hữu ích nhất</SelectItem>
+
               <SelectItem value="highest">Đánh giá cao nhất</SelectItem>
             </SelectContent>
           </Select>
@@ -153,43 +152,16 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                   </span>
                 </div>
 
-                <h4 className="mb-2 text-lg font-bold text-foreground group-hover:text-primary transition-colors">{review.title}</h4>
+
                 <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
                   {review.content}
                 </p>
 
-                <div className="mb-6 flex flex-wrap gap-2">
-                  {review.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="bg-primary/5 text-primary border border-primary/10 hover:bg-primary/10 transition-colors"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
+
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-4 border-t border-border/50 pt-4">
-                  <button
-                    onClick={() => toggleLike(review.reviewId)}
-                    className={cn(
-                      "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300",
-                      isLiked
-                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
-                        : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                    )}
-                  >
-                    <ThumbsUp
-                      className={cn(
-                        "h-4 w-4 transition-transform duration-300",
-                        isLiked && "scale-110 -rotate-12"
-                      )}
-                      fill={isLiked ? "currentColor" : "none"}
-                    />
-                    <span>{currentLikes} hữu ích</span>
-                  </button>
+
 
                   <button
                     onClick={() =>
