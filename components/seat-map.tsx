@@ -1,25 +1,25 @@
 "use client";
-import type { Seat } from "@/lib/types";
+import type { Seat } from "@/services/types";
 
 interface SeatMapProps {
   seats: Seat[];
-  selectedSeats: Array<{ rowNumber: string; columnNumber: number }>;
-  onSeatSelect: (rowNumber: string, columnNumber: number) => void;
+  selectedSeats: Array<{ seat_row: string; seat_column: number }>;
+  onSeatSelect: (seat_row: string, seat_column: number) => void;
 }
 
 export function SeatMap({ seats, selectedSeats, onSeatSelect }: SeatMapProps) {
   // Group seats by row
   const seatsByRow = seats.reduce((acc, seat) => {
-    if (!acc[seat.rowNumber]) {
-      acc[seat.rowNumber] = [];
+    if (!acc[seat.seat_row]) {
+      acc[seat.seat_row] = [];
     }
-    acc[seat.rowNumber].push(seat);
+    acc[seat.seat_row].push(seat);
     return acc;
   }, {} as Record<string, Seat[]>);
 
-  const isSelected = (rowNumber: string, columnNumber: number) => {
+  const isSelected = (seat_row: string, seat_column: number) => {
     return selectedSeats.some(
-      (s) => s.rowNumber === rowNumber && s.columnNumber === columnNumber
+      (s) => s.seat_row === seat_row && s.seat_column === seat_column
     );
   };
 
@@ -57,23 +57,25 @@ export function SeatMap({ seats, selectedSeats, onSeatSelect }: SeatMapProps) {
           {/* Seats */}
           {Object.entries(seatsByRow)
             .sort()
-            .map(([rowNumber, seats]) => (
-              <div key={rowNumber} className="flex items-center gap-4">
+            .map(([seat_row, seats]) => (
+              <div key={seat_row} className="flex items-center gap-4">
                 <div className="w-6 text-center text-sm font-semibold">
-                  {rowNumber}
+                  {seat_row}
                 </div>
                 <div className="flex gap-2">
                   {seats.map((seat) => {
-                    const isBooked = seat.status === "Booked";
-                    const selected = isSelected(rowNumber, seat.columnNumber);
-                    const isVIP = seat.seatType === "VIP";
+                    // Note: 'status' is not in Seat type, assuming all available for this component or handled externally
+                    // If we need status, we'd need a separate availability map passed as props
+                    const isBooked = false; 
+                    const selected = isSelected(seat_row, seat.seat_column);
+                    const isVIP = seat.seat_type === "vip";
 
                     return (
                       <button
-                        key={`${rowNumber}-${seat.columnNumber}`}
+                        key={`${seat_row}-${seat.seat_column}`}
                         onClick={() =>
                           !isBooked &&
-                          onSeatSelect(rowNumber, seat.columnNumber)
+                          onSeatSelect(seat_row, seat.seat_column)
                         }
                         disabled={isBooked}
                         className={`h-7 w-7 rounded text-xs font-semibold transition-all ${
@@ -86,13 +88,13 @@ export function SeatMap({ seats, selectedSeats, onSeatSelect }: SeatMapProps) {
                             : "bg-muted hover:bg-red-600 hover:text-white border border-border"
                         }`}
                       >
-                        {seat.columnNumber}
+                        {seat.seat_column}
                       </button>
                     );
                   })}
                 </div>
                 <div className="w-6 text-center text-sm font-semibold">
-                  {rowNumber}
+                  {seat_row}
                 </div>
               </div>
             ))}

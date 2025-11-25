@@ -4,7 +4,7 @@ import {
     MemberLevel, Gender, MovieLanguage, Director, Actor,
     Voucher, Event, Promotional, MovieReview, Food,
     SeatLayoutItem, BookingSeatState, MovieDetail,
-    Discount, Gift
+    Discount, Gift, Bill, Ticket, Staff
 } from './types';
 
 // --- HELPERS ---
@@ -343,6 +343,17 @@ for (let d = 0; d < 14; d++) {
     });
 }
 
+// Add static showtimes for Order History
+MOCK_SHOWTIMES.push(
+    { showtime_id: 'ST_PAST_001', room_id: 'CNM001_R1', movie_id: 'MV001', start_date: '2024-03-01', start_time: '10:00:00', end_time: '13:00:00' },
+    { showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', movie_id: 'MV002', start_date: '2024-03-05', start_time: '14:30:00', end_time: '16:30:00' },
+    { showtime_id: 'ST_PAST_003', room_id: 'CNM002_R2', movie_id: 'MV003', start_date: '2024-03-10', start_time: '18:00:00', end_time: '20:00:00' },
+    { showtime_id: 'ST_PAST_004', room_id: 'CNM003_R3', movie_id: 'MV006', start_date: '2024-04-15', start_time: '19:00:00', end_time: '21:00:00' },
+    { showtime_id: 'ST_PAST_005', room_id: 'CNM001_R1', movie_id: 'MV005', start_date: '2024-04-20', start_time: '20:00:00', end_time: '22:30:00' },
+    { showtime_id: 'ST_FUTURE_001', room_id: 'CNM004_R1', movie_id: 'MV008', start_date: '2024-05-01', start_time: '09:00:00', end_time: '11:30:00' },
+    { showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', movie_id: 'MV009', start_date: '2024-05-10', start_time: '15:00:00', end_time: '18:00:00' }
+);
+
 // --- 5. USERS ---
 
 export const MOCK_ACCOUNTS: Account[] = [
@@ -479,6 +490,30 @@ export const MOCK_VOUCHERS: Voucher[] = [
         end_date: '2024-08-31',
         state: 'active',
         phone_number: '0909876543'
+    },
+    {
+        code: 'VIPGIFT',
+        promotional_id: 'PROMO003',
+        start_date: '2024-05-01',
+        end_date: '2024-05-31',
+        state: 'used',
+        phone_number: '0912345678'
+    },
+    {
+        code: 'EXPIRED2023',
+        promotional_id: 'PROMO001',
+        start_date: '2023-01-01',
+        end_date: '2023-12-31',
+        state: 'expired',
+        phone_number: '0901234567'
+    },
+    {
+        code: 'NEWUSER2024',
+        promotional_id: 'PROMO001',
+        start_date: '2024-01-01',
+        end_date: '2024-12-31',
+        state: 'active',
+        phone_number: '0912345678'
     }
 ];
 
@@ -486,19 +521,49 @@ export const MOCK_VOUCHERS: Voucher[] = [
 export const MOCK_EVENTS: Event[] = [
     {
         event_id: 'EVT001',
-        name: 'Chào Hè Rực Rỡ',
-        description: 'Chuỗi sự kiện chào đón mùa hè với nhiều ưu đãi hấp dẫn.',
+        name: 'Chào Hè Rực Rỡ 2024',
+        description: 'Chuỗi sự kiện chào đón mùa hè với nhiều ưu đãi hấp dẫn cho học sinh, sinh viên. Giảm ngay 20% khi mua vé nhóm từ 4 người trở lên.',
         start_date: '2024-06-01',
         end_date: '2024-08-31'
     },
     {
         event_id: 'EVT002',
         name: 'Thứ 3 Vui Vẻ',
-        description: 'Giảm giá vé mọi suất chiếu vào thứ 3 hàng tuần.',
+        description: 'Đồng giá 50k cho mọi suất chiếu, mọi loại ghế vào ngày thứ 3 hàng tuần. Áp dụng cho tất cả các rạp trên toàn quốc.',
         start_date: '2024-01-01',
         end_date: '2024-12-31'
+    },
+    {
+        event_id: 'EVT003',
+        name: 'Đại Tiệc Điện Ảnh - Mừng Quốc Khánh',
+        description: 'Giảm 30% giá vé cho tất cả các phim Việt Nam nhân dịp 2/9. Tặng kèm cờ tổ quốc mini cho 100 khách hàng đầu tiên.',
+        start_date: '2024-08-25',
+        end_date: '2024-09-05'
+    },
+    {
+        event_id: 'EVT004',
+        name: 'Halloween Kinh Hoàng',
+        description: 'Tặng bắp nước miễn phí khi xem phim kinh dị vào khung giờ khuya (sau 22h). Trải nghiệm không gian rùng rợn tại rạp.',
+        start_date: '2024-10-25',
+        end_date: '2024-10-31'
+    },
+    {
+        event_id: 'EVT005',
+        name: 'Tháng Phim Bom Tấn',
+        description: 'Cơ hội trúng iPhone 15 Pro Max khi xem 3 phim bom tấn trong tháng. Tích lũy vé ngay hôm nay!',
+        start_date: '2024-05-01',
+        end_date: '2024-05-31'
+    },
+    {
+        event_id: 'EVT006',
+        name: 'Tuần Lễ Anime',
+        description: 'Chiếu lại các siêu phẩm Anime đình đám: Your Name, Spirited Away, Demon Slayer. Tặng poster giới hạn.',
+        start_date: '2024-07-15',
+        end_date: '2024-07-21'
     }
 ];
+
+// --- 10. PROMOTIONALS, DISCOUNTS, GIFTS ---
 
 // --- 10. PROMOTIONALS, DISCOUNTS, GIFTS ---
 
@@ -518,6 +583,22 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
         start_date: '2024-06-01',
         end_date: '2024-08-31',
         level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO003',
+        event_id: 'EVT005',
+        description: 'Tặng Combo Bắp Nước',
+        start_date: '2024-05-01',
+        end_date: '2024-05-31',
+        level: 'gold'
+    },
+    {
+        promotional_id: 'PROMO004',
+        event_id: 'EVT003',
+        description: 'Giảm giá VIP',
+        start_date: '2024-01-01',
+        end_date: '2024-12-31',
+        level: 'vip'
     }
 ];
 
@@ -531,10 +612,21 @@ export const MOCK_DISCOUNTS: Discount[] = [
         promotional_id: 'PROMO002',
         percent_reduce: 20,
         max_price_can_reduce: 50000
+    },
+    {
+        promotional_id: 'PROMO004',
+        percent_reduce: 15,
+        max_price_can_reduce: 200000
     }
 ];
 
-export const MOCK_GIFTS: Gift[] = [];
+export const MOCK_GIFTS: Gift[] = [
+    {
+        promotional_id: 'PROMO003',
+        name: 'Combo Solo (1 Bắp M + 1 Nước M)',
+        quantity: 100
+    }
+];
 
 export interface VoucherDetail extends Voucher {
     promotional?: Promotional;
@@ -559,7 +651,7 @@ export function getVoucherDetail(code: string): VoucherDetail | undefined {
 // --- HELPER FUNCTIONS ---
 
 /**
- * Get movie with aggregated directors and actors
+ * Get movie with details
  */
 export function getMovieWithDetails(movieId: string): MovieDetail | undefined {
     const movie = MOCK_MOVIES.find(m => m.movie_id === movieId);
@@ -642,4 +734,144 @@ export function getActiveEvents(): Event[] {
  */
 export function getReviewsByMovie(movieId: string): MovieReview[] {
     return MOCK_REVIEWS.filter(r => r.movie_id === movieId);
+}
+
+// --- 11. MEMBERSHIP ---
+
+import { Member } from './types';
+
+export const MOCK_MEMBERS: Member[] = [
+    { level: 'copper', minimum_point: 0 },
+    { level: 'gold', minimum_point: 1000 },
+    { level: 'diamond', minimum_point: 5000 },
+    { level: 'vip', minimum_point: 10000 }
+];
+
+export function getMembershipProgress(points: number) {
+    const sortedTiers = [...MOCK_MEMBERS].sort((a, b) => a.minimum_point - b.minimum_point);
+    let currentTier = sortedTiers[0];
+    let nextTier = sortedTiers[1];
+
+    for (let i = 0; i < sortedTiers.length; i++) {
+        if (points >= sortedTiers[i].minimum_point) {
+            currentTier = sortedTiers[i];
+            nextTier = sortedTiers[i + 1];
+        } else {
+            break;
+        }
+    }
+
+    let progress = 0;
+    let pointsToNext = 0;
+
+    if (nextTier) {
+        const range = nextTier.minimum_point - currentTier.minimum_point;
+        const currentProgress = points - currentTier.minimum_point;
+        progress = Math.min(100, Math.max(0, (currentProgress / range) * 100));
+        pointsToNext = nextTier.minimum_point - points;
+    } else {
+        progress = 100;
+        pointsToNext = 0;
+    }
+
+    return { currentTier, nextTier, progress, pointsToNext };
+}
+
+// --- 12. BILLS & TICKETS ---
+
+export const MOCK_BILLS: Bill[] = [
+    { bill_id: 'BILL001', phone_number: '0901234567', total_price: 150000, creation_date: '2024-03-01T10:00:00Z' },
+    { bill_id: 'BILL002', phone_number: '0901234567', total_price: 200000, creation_date: '2024-03-05T14:30:00Z' },
+    { bill_id: 'BILL003', phone_number: '0909876543', total_price: 300000, creation_date: '2024-03-10T18:00:00Z' },
+    { bill_id: 'BILL004', phone_number: '0912345678', total_price: 450000, creation_date: '2024-04-15T19:00:00Z' },
+    { bill_id: 'BILL005', phone_number: '0912345678', total_price: 180000, creation_date: '2024-04-20T20:00:00Z' },
+    { bill_id: 'BILL006', phone_number: '0901234567', total_price: 220000, creation_date: '2024-05-01T09:00:00Z' }, // Upcoming/Recent
+    { bill_id: 'BILL007', phone_number: '0912345678', total_price: 320000, creation_date: '2024-05-10T15:00:00Z' }  // Upcoming/Recent
+];
+
+export const MOCK_TICKETS: Ticket[] = [
+    // BILL001 - Dune (Past) - User 1
+    { ticket_id: 'T001', bill_id: 'BILL001', showtime_id: 'ST_PAST_001', room_id: 'CNM001_R1', seat_row: 'F', seat_column: 5, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2024-03-01T10:00:00Z', expiration_date: '2024-03-01T13:00:00Z' },
+    { ticket_id: 'T002', bill_id: 'BILL001', showtime_id: 'ST_PAST_001', room_id: 'CNM001_R1', seat_row: 'F', seat_column: 6, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2024-03-01T10:00:00Z', expiration_date: '2024-03-01T13:00:00Z' },
+
+    // BILL002 - Kung Fu Panda 4 (Past) - User 1
+    { ticket_id: 'T003', bill_id: 'BILL002', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'J', seat_column: 5, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2024-03-05T14:30:00Z', expiration_date: '2024-03-05T16:30:00Z' },
+    { ticket_id: 'T004', bill_id: 'BILL002', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'J', seat_column: 6, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2024-03-05T14:30:00Z', expiration_date: '2024-03-05T16:30:00Z' },
+
+    // BILL003 - Godzilla x Kong (Past) - User 2
+    { ticket_id: 'T005', bill_id: 'BILL003', showtime_id: 'ST_PAST_003', room_id: 'CNM002_R2', seat_row: 'H', seat_column: 10, price: 150000, movie_name: 'Godzilla x Kong: The New Empire', purchase_date: '2024-03-10T18:00:00Z', expiration_date: '2024-03-10T20:00:00Z' },
+    { ticket_id: 'T006', bill_id: 'BILL003', showtime_id: 'ST_PAST_003', room_id: 'CNM002_R2', seat_row: 'H', seat_column: 11, price: 150000, movie_name: 'Godzilla x Kong: The New Empire', purchase_date: '2024-03-10T18:00:00Z', expiration_date: '2024-03-10T20:00:00Z' },
+
+    // BILL004 - Civil War (Past) - VIP
+    { ticket_id: 'T007', bill_id: 'BILL004', showtime_id: 'ST_PAST_004', room_id: 'CNM003_R3', seat_row: 'E', seat_column: 5, price: 150000, movie_name: 'Civil War', purchase_date: '2024-04-15T19:00:00Z', expiration_date: '2024-04-15T21:00:00Z' },
+    { ticket_id: 'T008', bill_id: 'BILL004', showtime_id: 'ST_PAST_004', room_id: 'CNM003_R3', seat_row: 'E', seat_column: 6, price: 150000, movie_name: 'Civil War', purchase_date: '2024-04-15T19:00:00Z', expiration_date: '2024-04-15T21:00:00Z' },
+    { ticket_id: 'T009', bill_id: 'BILL004', showtime_id: 'ST_PAST_004', room_id: 'CNM003_R3', seat_row: 'E', seat_column: 7, price: 150000, movie_name: 'Civil War', purchase_date: '2024-04-15T19:00:00Z', expiration_date: '2024-04-15T21:00:00Z' },
+
+    // BILL005 - Mai (Past) - VIP
+    { ticket_id: 'T010', bill_id: 'BILL005', showtime_id: 'ST_PAST_005', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 8, price: 90000, movie_name: 'Mai', purchase_date: '2024-04-20T20:00:00Z', expiration_date: '2024-04-20T22:30:00Z' },
+    { ticket_id: 'T011', bill_id: 'BILL005', showtime_id: 'ST_PAST_005', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 9, price: 90000, movie_name: 'Mai', purchase_date: '2024-04-20T20:00:00Z', expiration_date: '2024-04-20T22:30:00Z' },
+
+    // BILL006 - Kingdom of the Planet of the Apes (Upcoming/Recent) - User 1
+    { ticket_id: 'T012', bill_id: 'BILL006', showtime_id: 'ST_FUTURE_001', room_id: 'CNM004_R1', seat_row: 'F', seat_column: 10, price: 110000, movie_name: 'Kingdom of the Planet of the Apes', purchase_date: '2024-05-01T09:00:00Z', expiration_date: '2024-06-01T11:30:00Z' }, // Future date for testing "Upcoming"
+    { ticket_id: 'T013', bill_id: 'BILL006', showtime_id: 'ST_FUTURE_001', room_id: 'CNM004_R1', seat_row: 'F', seat_column: 11, price: 110000, movie_name: 'Kingdom of the Planet of the Apes', purchase_date: '2024-05-01T09:00:00Z', expiration_date: '2024-06-01T11:30:00Z' },
+
+    // BILL007 - Furiosa (Upcoming) - VIP
+    { ticket_id: 'T014', bill_id: 'BILL007', showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', seat_row: 'D', seat_column: 5, price: 160000, movie_name: 'Furiosa: A Mad Max Saga', purchase_date: '2024-05-10T15:00:00Z', expiration_date: '2024-06-10T18:00:00Z' },
+    { ticket_id: 'T015', bill_id: 'BILL007', showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', seat_row: 'D', seat_column: 6, price: 160000, movie_name: 'Furiosa: A Mad Max Saga', purchase_date: '2024-05-10T15:00:00Z', expiration_date: '2024-06-10T18:00:00Z' }
+];
+
+export function getBillsByPhone(phone: string): Bill[] {
+    return MOCK_BILLS.filter(b => b.phone_number === phone);
+}
+
+export function getTicketsByBill(billId: string): Ticket[] {
+    return MOCK_TICKETS.filter(t => t.bill_id === billId);
+}
+
+// --- 13. STAFF ---
+
+export const MOCK_STAFFS: Staff[] = [
+    {
+        staff_id: 'STA00001',
+        cinema_id: 'CNM001',
+        name: 'Nguyễn Văn Quản Lý',
+        phone_number: '0909000001',
+        manage_id: null
+    },
+    {
+        staff_id: 'STA00002',
+        cinema_id: 'CNM001',
+        manage_id: 'STA00001',
+        name: 'Trần Thị Giám Sát',
+        phone_number: '0909000002'
+    },
+    {
+        staff_id: 'STA00003',
+        cinema_id: 'CNM001',
+        manage_id: 'STA00002',
+        name: 'Lê Văn Nhân Viên',
+        phone_number: '0909000003'
+    },
+    {
+        staff_id: 'STA00004',
+        cinema_id: 'CNM002',
+        name: 'Phạm Văn Kỹ Thuật',
+        phone_number: '0909000004',
+        manage_id: null
+    }
+];
+
+
+export function getStaffByCinema(cinemaId: string): Staff[] {
+    return MOCK_STAFFS.filter(s => s.cinema_id === cinemaId);
+}
+
+export function getStaffManager(staffId: string): Staff | undefined {
+    const staff = MOCK_STAFFS.find(s => s.staff_id === staffId);
+    if (!staff || !staff.manage_id) return undefined;
+    return MOCK_STAFFS.find(s => s.staff_id === staff.manage_id);
+}
+
+export function getSubordinates(managerId: string): Staff[] {
+    return MOCK_STAFFS.filter(s => s.manage_id === managerId);
 }

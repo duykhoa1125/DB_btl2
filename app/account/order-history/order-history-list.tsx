@@ -5,17 +5,19 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  mockBookings,
-} from "@/lib/mock-data";
-import { MOCK_SHOWTIMES, MOCK_CINEMAS, MOCK_ROOMS, getMovieWithDetails } from "@/services/mock-data";
+  getBillsByPhone,
+  getTicketsByBill,
+  MOCK_SHOWTIMES,
+  MOCK_CINEMAS,
+  MOCK_ROOMS,
+  getMovieWithDetails
+} from "@/services/mock-data";
 import { QrCode, MapPin, Calendar, Clock, Armchair } from "lucide-react";
 
 export function OrderHistoryList() {
   const { currentUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
-  const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
     if (!authLoading && !currentUser) {
@@ -31,27 +33,7 @@ export function OrderHistoryList() {
     );
   }
 
-  const userOrders = mockBookings.filter(
-    (order) => order.phone_number === currentUser.phone_number
-  );
-
-  const filteredOrders = userOrders.filter((order) => {
-    if (activeFilter === "all") return true;
-    return order.status === activeFilter;
-  });
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Confirmed":
-        return <Badge className="bg-gradient-to-r from-accent to-accent/90 text-accent-foreground shadow-sm">Đã xác nhận</Badge>;
-      case "Pending_Confirmation":
-        return <Badge className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-sm">Chờ xác nhận</Badge>;
-      case "Cancelled":
-        return <Badge className="bg-gradient-to-r from-destructive to-destructive/90 text-destructive-foreground shadow-sm">Đã hủy</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
-    }
-  };
+  const userBills = getBillsByPhone(currentUser.phone_number);
 
   const getShowtimeInfo = (showtime_id: string) => {
     const showtime = MOCK_SHOWTIMES.find((s) => s.showtime_id === showtime_id);
@@ -75,33 +57,7 @@ export function OrderHistoryList() {
           </p>
         </div>
 
-        <Tabs
-          value={activeFilter}
-          onValueChange={setActiveFilter}
-          className="mb-6"
-        >
-          <TabsList>
-            <TabsTrigger value="all">Tất cả ({userOrders.length})</TabsTrigger>
-            <TabsTrigger value="Confirmed">
-              Đã xác nhận (
-              {userOrders.filter((o) => o.status === "Confirmed").length})
-            </TabsTrigger>
-            <TabsTrigger value="Pending_Confirmation">
-              Chờ xác nhận (
-              {
-                userOrders.filter((o) => o.status === "Pending_Confirmation")
-                  .length
-              }
-              )
-            </TabsTrigger>
-            <TabsTrigger value="Cancelled">
-              Đã hủy (
-              {userOrders.filter((o) => o.status === "Cancelled").length})
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {filteredOrders.length === 0 ? (
+        {userBills.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">Không có đơn hàng nào</p>
@@ -109,16 +65,23 @@ export function OrderHistoryList() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {filteredOrders.map((order) => {
-              const info = getShowtimeInfo(order.showtime_id);
+            {userBills.map((bill) => {
+              const tickets = getTicketsByBill(bill.bill_id);
+              if (tickets.length === 0) return null;
+
+              // Assuming all tickets in a bill are for the same showtime for display purposes
+              const firstTicket = tickets[0];
+              const info = getShowtimeInfo(firstTicket.showtime_id);
               if (!info) return null;
 
               const { movie, showtime, cinema, room } = info;
-              const orderDate = new Date(order.bookingDate);
+              
+              // Seat list string
+              const seatList = tickets.map(t => `${t.seat_row}${t.seat_column}`).join(", ");
 
               return (
                 <div
-                  key={order.booking_id}
+                  key={bill.bill_id}
                   className="group relative flex flex-col md:flex-row bg-card rounded-3xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500"
                 >
                   {/* Left Part - Movie Info */}
@@ -146,7 +109,7 @@ export function OrderHistoryList() {
                           </div>
                         </div>
                         <div className="md:hidden">
-                           {getStatusBadge(order.status)}
+                           <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Đã thanh toán</Badge>
                         </div>
                       </div>
 
@@ -177,7 +140,7 @@ export function OrderHistoryList() {
                           <span className="flex items-center gap-1.5 text-xs text-muted-foreground mb-0.5">
                             <Armchair className="w-3 h-3" /> Ghế
                           </span>
-                          <span className="font-bold text-primary">{order.seatList.join(", ")}</span>
+                          <span className="font-bold text-primary">{seatList}</span>
                         </div>
                         <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border/50">
                           <span className="text-xs text-muted-foreground block mb-0.5">Phòng</span>
@@ -186,7 +149,7 @@ export function OrderHistoryList() {
                         <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border/50 ml-auto">
                           <span className="text-xs text-muted-foreground block mb-0.5">Tổng tiền</span>
                           <span className="font-bold text-primary text-lg">
-                            {order.totalAmount.toLocaleString("vi-VN")}₫
+                            {bill.total_price.toLocaleString("vi-VN")}₫
                           </span>
                         </div>
                       </div>
@@ -210,11 +173,11 @@ export function OrderHistoryList() {
                     
                     <div className="text-center w-full space-y-2">
                       <div>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Mã vé</p>
-                        <p className="text-xl font-mono font-bold tracking-widest text-foreground/80">{order.ticketCode}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Mã đơn</p>
+                        <p className="text-xl font-mono font-bold tracking-widest text-foreground/80">{bill.bill_id}</p>
                       </div>
                       <div className="hidden md:block">
-                        {getStatusBadge(order.status)}
+                        <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Đã thanh toán</Badge>
                       </div>
                     </div>
                   </div>

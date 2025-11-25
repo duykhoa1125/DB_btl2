@@ -1,6 +1,6 @@
 "use client";
 
-import { mockMovies, mockCinemas, mockBookings } from "@/lib/mock-data";
+import { MOCK_MOVIES, MOCK_CINEMAS, MOCK_BILLS } from "@/services/mock-data";
 import { getMovieWithDetails } from "@/services/mock-data";
 import {
   calculateMonthlyRevenue,
@@ -16,10 +16,10 @@ export default function AdminDashboard() {
   const currentMonth = currentDate.getMonth() + 1;
 
   const stats = {
-    totalMovies: mockMovies.length,
-    nowShowing: mockMovies.filter((m) => m.status === "Now Showing").length,
-    comingSoon: mockMovies.filter((m) => m.status === "Coming Soon").length,
-    totalCinemas: mockCinemas.length,
+    totalMovies: MOCK_MOVIES.length,
+    nowShowing: MOCK_MOVIES.filter((m) => m.status === "showing").length,
+    comingSoon: MOCK_MOVIES.filter((m) => m.status === "upcoming").length,
+    totalCinemas: MOCK_CINEMAS.length,
     totalBookingsThisMonth: getTotalBookingsThisMonth(),
     monthlyRevenue: calculateMonthlyRevenue(currentYear, currentMonth),
   };
@@ -28,7 +28,7 @@ export default function AdminDashboard() {
     const detail = getMovieWithDetails(item.movie.movie_id);
     return {
       ...item,
-      movie: detail || item.movie // Fallback to basic movie if detail not found (though detail has directors)
+      movie: detail || item.movie
     };
   });
 
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.movie.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {(item.movie as any).directors?.join(", ")} • {new Date(item.movie.release_date).getFullYear()}
+                      {new Date(item.movie.release_date).getFullYear()}
                     </p>
                   </div>
                   <div className="text-right">
@@ -164,38 +164,30 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
 
-      {/* Recent Bookings */}
+      {/* Recent Bookings (Bills) */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Bookings</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {mockBookings.slice(0, 5).map((booking) => (
+            {MOCK_BILLS.slice(0, 5).map((bill) => (
               <div
-                key={booking.booking_id}
+                key={bill.bill_id}
                 className="flex items-center justify-between rounded-lg border border-border/50 bg-card/50 p-4"
               >
                 <div>
-                  <p className="font-medium">Booking #{booking.ticketCode}</p>
+                  <p className="font-medium">Bill #{bill.bill_id}</p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(booking.bookingDate).toLocaleDateString("vi-VN")}
+                    {new Date(bill.creation_date).toLocaleDateString("vi-VN")}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold">
-                    {booking.totalAmount.toLocaleString("vi-VN")} VNĐ
+                    {bill.total_price.toLocaleString("vi-VN")} VNĐ
                   </p>
-                  <span
-                    className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
-                      booking.status === "Confirmed"
-                        ? "bg-green-500/10 text-green-600"
-                        : booking.status === "Pending_Confirmation"
-                          ? "bg-yellow-500/10 text-yellow-600"
-                          : "bg-red-500/10 text-red-600"
-                    }`}
-                  >
-                    {booking.status.replace("_", " ")}
+                  <span className="inline-block rounded-full px-2 py-1 text-xs font-medium bg-green-500/10 text-green-600">
+                    Paid
                   </span>
                 </div>
               </div>

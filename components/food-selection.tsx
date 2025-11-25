@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import { mockFoods } from "@/lib/mock-data";
-import type { Food } from "@/lib/mock-data";
+import { MOCK_FOODS } from "@/services/mock-data";
+import type { Food } from "@/services/types";
 import { cn } from "@/lib/utils";
 
 interface FoodItem extends Food {
@@ -39,20 +39,6 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
     onFoodChange(Array.from(newFoods.values()));
   };
 
-  const groupedFoods = mockFoods.reduce((acc, food) => {
-    if (!acc[food.category]) {
-      acc[food.category] = [];
-    }
-    acc[food.category].push(food);
-    return acc;
-  }, {} as Record<string, Food[]>);
-
-  const categoryLabels: Record<string, string> = {
-    Popcorn: "Bắp rang bơ",
-    Drinks: "Nước giải khát",
-    Special_Combo: "Combo đặc biệt",
-  };
-
   return (
     <div className="space-y-10">
       <div className="flex items-center gap-3">
@@ -63,7 +49,7 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {mockFoods.map((food) => {
+        {MOCK_FOODS.map((food) => {
           const selectedFood = selectedFoods.get(food.food_id);
           const quantity = selectedFood?.quantity || 0;
 
@@ -81,7 +67,10 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
                 {/* Content */}
                 <div className="flex flex-1 flex-col justify-between">
                   <div>
-                    <h5 className="font-bold text-foreground line-clamp-2 mb-1">{food.foodName}</h5>
+                    <h5 className="font-bold text-foreground line-clamp-2 mb-1">{food.name}</h5>
+                    {food.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{food.description}</p>
+                    )}
                     <p className="font-bold text-primary text-lg">
                       {food.price.toLocaleString("vi-VN")}₫
                     </p>

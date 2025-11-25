@@ -6,7 +6,7 @@ import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
-import type { Seat, Food } from "@/lib/mock-data";
+import type { Seat, Food } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
 import { MOCK_ROOMS, VoucherDetail } from "@/services/mock-data";
 import { calculateSeatsTotal } from "@/lib/pricing";
@@ -196,7 +196,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                     <div className="lg:col-span-2 flex justify-end items-center gap-4">
                       <div className="text-right hidden md:block">
                          <p className="text-sm text-muted-foreground">Ghế đang chọn</p>
-                         <p className="font-bold text-primary">{selectedSeats.length > 0 ? selectedSeats.map(s => s.seatName).join(", ") : "Chưa chọn"}</p>
+                         <p className="font-bold text-primary">{selectedSeats.length > 0 ? selectedSeats.map(s => `${s.seat_row}${s.seat_column}`).join(", ") : "Chưa chọn"}</p>
                       </div>
                       <Button
                         onClick={() => {
@@ -332,7 +332,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                     <span className="text-muted-foreground">Ghế đang chọn</span>
                     <div className="text-right">
                         <span className="font-bold text-primary text-lg block break-all max-w-[150px]">
-                        {selectedSeats.length > 0 ? selectedSeats.map(s => s.seatName).join(", ") : "Chưa chọn"}
+                        {selectedSeats.length > 0 ? selectedSeats.map(s => `${s.seat_row}${s.seat_column}`).join(", ") : "Chưa chọn"}
                         </span>
                     </div>
                   </div>
@@ -347,7 +347,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                       <div className="space-y-2">
                         {selectedFoods.map((food) => (
                           <div key={food.food_id} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{food.foodName} (x{food.quantity})</span>
+                            <span className="text-muted-foreground">{food.name} (x{food.quantity})</span>
                             <span className="font-medium">{(food.price * food.quantity).toLocaleString("vi-VN")}₫</span>
                           </div>
                         ))}

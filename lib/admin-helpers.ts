@@ -3,6 +3,8 @@ import {
     MOCK_MOVIES,
     MOCK_CINEMAS,
     MOCK_SHOWTIMES,
+    MOCK_BILLS,
+    MOCK_TICKETS,
 } from "@/services/mock-data";
 import type { Movie, Cinema, Showtime } from "@/services/types";
 
@@ -124,20 +126,16 @@ export function deleteShowtime(id: string): boolean {
 
 // ============ STATISTICS ============
 
-// Import mockBookings for statistics (Note: This uses old data structure for now)
-import { mockBookings } from "./mock-data";
-
 export function calculateMonthlyRevenue(year: number, month: number): number {
-    const bookingsInMonth = mockBookings.filter((booking) => {
-        const bookingDate = new Date(booking.bookingDate);
+    const billsInMonth = MOCK_BILLS.filter((bill) => {
+        const billDate = new Date(bill.creation_date);
         return (
-            bookingDate.getFullYear() === year &&
-            bookingDate.getMonth() + 1 === month &&
-            booking.status === "Confirmed"
+            billDate.getFullYear() === year &&
+            billDate.getMonth() + 1 === month
         );
     });
 
-    return bookingsInMonth.reduce((sum, booking) => sum + booking.totalAmount, 0);
+    return billsInMonth.reduce((sum, bill) => sum + bill.total_price, 0);
 }
 
 export function getTotalBookingsThisMonth(): number {
@@ -145,32 +143,29 @@ export function getTotalBookingsThisMonth(): number {
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1;
 
-    return mockBookings.filter((booking) => {
-        const bookingDate = new Date(booking.bookingDate);
+    return MOCK_BILLS.filter((bill) => {
+        const billDate = new Date(bill.creation_date);
         return (
-            bookingDate.getFullYear() === currentYear &&
-            bookingDate.getMonth() + 1 === currentMonth
+            billDate.getFullYear() === currentYear &&
+            billDate.getMonth() + 1 === currentMonth
         );
     }).length;
 }
 
 export function getTopMoviesByRevenue(limit: number = 5) {
-    // Group bookings by movie
+    // Group ticket revenue by movie
     const revenueByMovie = new Map<string, number>();
 
-    mockBookings
-        .filter((b) => b.status === "Confirmed")
-        .forEach((booking) => {
-            // Note: This lookup might fail if booking.showtime_id doesn't exist in MOCK_SHOWTIMES
-            // But we keep it for compilation. In real app, bookings should be migrated too.
-            const showtime = MOCK_SHOWTIMES.find(
-                (s) => s.showtime_id === booking.showtime_id
-            );
-            if (showtime) {
-                const current = revenueByMovie.get(showtime.movie_id) || 0;
-                revenueByMovie.set(showtime.movie_id, current + booking.totalAmount);
-            }
-        });
+    MOCK_TICKETS.forEach((ticket) => {
+        // Find showtime to get movie_id
+        const showtime = MOCK_SHOWTIMES.find(
+            (s) => s.showtime_id === ticket.showtime_id
+        );
+        if (showtime) {
+            const current = revenueByMovie.get(showtime.movie_id) || 0;
+            revenueByMovie.set(showtime.movie_id, current + ticket.price);
+        }
+    });
 
     // Convert to array and sort
     const sorted = Array.from(revenueByMovie.entries())
