@@ -59,10 +59,10 @@ export default async function MovieDetailPage({
       {/* Hero Section - Compact Modern Layout */}
       <section className="mx-auto max-w-6xl px-6 py-8">
         {/* Main Info - Horizontal Layout */}
-        <div className="mb-8 flex flex-col gap-6 rounded-2xl border border-border bg-gradient-to-br from-card via-card to-muted/20 p-6 shadow-lg md:flex-row">
+        <div className="mb-8 flex flex-col gap-6 rounded-2xl border border-border bg-gradient-to-br from-card via-card to-muted/20 p-6 shadow-lg lg:flex-row">
           {/* Poster - Compact */}
           <div className="shrink-0">
-            <div className="group relative h-[320px] w-[220px] overflow-hidden rounded-xl shadow-xl">
+            <div className="group relative h-[400px] w-[270px] overflow-hidden rounded-xl shadow-xl">
               <img
                 src={movie.image || "/placeholder.svg"}
                 alt={movie.title}
@@ -86,66 +86,76 @@ export default async function MovieDetailPage({
           <div className="flex-1 space-y-4">
             {/* Title & Status */}
             <div>
-              <div className="mb-2 flex flex-wrap items-center gap-2">
-                <Badge variant={movie.status === "Now Showing" ? "default" : "outline"}>
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <Badge variant={movie.status === "Now Showing" ? "default" : "outline"} className="bg-primary hover:bg-primary/90 text-primary-foreground border-none px-3 py-1">
                   {movie.status}
                 </Badge>
                 {movie.genres.slice(0, 3).map((genre) => (
-                  <Badge key={genre} variant="secondary" className="bg-primary/10 text-primary">
+                  <Badge key={genre} variant="secondary" className="bg-white/10 hover:bg-white/20 text-foreground border border-border/50 backdrop-blur-sm">
                     {genre}
                   </Badge>
                 ))}
               </div>
-              <h1 className="mb-2 text-3xl font-bold leading-tight">{movie.title}</h1>
-              <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
+              <h1 className="mb-3 text-4xl md:text-5xl font-bold leading-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                {movie.title}
+              </h1>
+              <p className="text-base md:text-lg leading-relaxed text-muted-foreground line-clamp-3 font-light">
                 {movie.description}
               </p>
             </div>
 
             {/* Quick Info Grid - Compact 4 columns */}
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <div className="rounded-lg bg-background/50 p-3">
-                <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" />
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
+                <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                  <Clock className="h-3.5 w-3.5 text-primary" />
                   <span>Thời lượng</span>
                 </div>
-                <p className="font-semibold text-sm">{movie.duration}′</p>
+                <p className="font-bold text-lg group-hover:text-primary transition-colors">{movie.duration}′</p>
               </div>
               
-              <div className="rounded-lg bg-background/50 p-3">
-                <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" />
+              <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
+                <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                  <Calendar className="h-3.5 w-3.5 text-primary" />
                   <span>Năm</span>
                 </div>
-                <p className="font-semibold text-sm">{movie.releaseYear}</p>
+                <p className="font-bold text-lg group-hover:text-primary transition-colors">{movie.releaseYear}</p>
               </div>
 
-              <div className="rounded-lg bg-background/50 p-3 lg:col-span-2">
-                <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <User className="h-3.5 w-3.5" />
+              <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
+                <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                  <User className="h-3.5 w-3.5 text-primary" />
                   <span>Đạo diễn</span>
                 </div>
-                <p className="font-semibold text-sm truncate">{movie.director}</p>
+                <p className="font-bold text-lg truncate group-hover:text-primary transition-colors">{movie.director}</p>
+              </div>
+
+              <div className="rounded-xl bg-background/50 border border-border/50 p-4 hover:border-primary/30 transition-colors group">
+                <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                  <Factory className="h-3.5 w-3.5 text-primary" />
+                  <span>Nhà sản xuất</span>
+                </div>
+                <p className="font-bold text-lg truncate group-hover:text-primary transition-colors">{movie.producer}</p>
               </div>
             </div>
 
             {/* Cast - Compact horizontal scroll */}
-            <div className="rounded-lg bg-background/50 p-3">
-              <div className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <User className="h-3.5 w-3.5" />
+            <div className="rounded-xl bg-background/50 border border-border/50 p-4">
+              <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                <User className="h-3.5 w-3.5 text-primary" />
                 <span>Diễn viên</span>
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-2">
                 {movie.actors.slice(0, 5).map((actor, index) => (
                   <span
                     key={index}
-                    className="rounded-md bg-muted px-2 py-1 text-xs font-medium"
+                    className="rounded-lg bg-muted/50 border border-border/50 px-3 py-1.5 text-sm font-medium hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all cursor-default"
                   >
                     {actor}
                   </span>
                 ))}
                 {movie.actors.length > 5 && (
-                  <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                  <span className="rounded-lg bg-muted/50 border border-border/50 px-3 py-1.5 text-sm font-medium text-muted-foreground">
                     +{movie.actors.length - 5}
                   </span>
                 )}
@@ -153,21 +163,22 @@ export default async function MovieDetailPage({
             </div>
           </div>
 
-          {/* Rating - Compact Side Panel */}
-          <div className="shrink-0 md:w-[200px]">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <RatingSummary movie={movie} reviewCount={reviewCount} />
-            </div>
-          </div>
+
         </div>
 
         {/* Secondary Content Row */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Trailer - Takes 2 columns */}
+          {/* Rating Summary - Left Side */}
+          <div className="lg:col-span-1">
+             <RatingSummary movie={movie} reviewCount={reviewCount} />
+          </div>
+
+          {/* Trailer - Right Side */}
           <div className="lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-border bg-card">
-              <div className="border-b border-border bg-muted/30 px-4 py-3">
-                <h2 className="font-semibold">Trailer</h2>
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg h-full">
+              <div className="border-b border-border bg-muted/30 px-6 py-4 flex items-center gap-2">
+                <Play className="h-4 w-4 text-primary" />
+                <h2 className="font-bold">Trailer Official</h2>
               </div>
               <div className="relative bg-black" style={{ paddingBottom: "56.25%" }}>
                 <iframe
@@ -178,44 +189,6 @@ export default async function MovieDetailPage({
                 />
               </div>
             </div>
-          </div>
-
-          {/* Additional Info - 1 column */}
-          <div className="space-y-4">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <h3 className="mb-3 text-sm font-semibold">Thông tin thêm</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Nhà sản xuất</span>
-                  <span className="font-medium">{movie.producer}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Đánh giá</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-yellow-500">★</span>
-                    <span className="font-medium">{(movie.rating / 2).toFixed(1)}/5</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Số đánh giá</span>
-                  <span className="font-medium">{reviewCount}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* All Genres */}
-            {movie.genres.length > 3 && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <h3 className="mb-3 text-sm font-semibold">Thể loại</h3>
-                <div className="flex flex-wrap gap-2">
-                  {movie.genres.map((genre) => (
-                    <Badge key={genre} variant="secondary" className="bg-primary/10 text-primary">
-                      {genre}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </section>

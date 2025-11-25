@@ -65,6 +65,10 @@ export interface Cinema {
   address: string;
   city: string;
   numberOfRooms: number;
+  description: string;
+  imageUrl: string;
+  facilities: string[];
+  phone: string;
 }
 
 export const mockMovies: Movie[] = [
@@ -602,48 +606,197 @@ export const mockShowtimes: Showtime[] = [
     ticketPrice: 120000,
     status: "Available",
   },
+  // Additional showtimes for movie_001 across multiple cinemas to test grouping
+  {
+    showtimeId: "st_047",
+    movieId: "movie_001",
+    cinemaId: "cinema_002",
+    startTime: "2025-11-01T10:00:00",
+    endTime: "2025-11-01T13:01:00",
+    room: "Room 1",
+    ticketPrice: 85000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_048",
+    movieId: "movie_001",
+    cinemaId: "cinema_002",
+    startTime: "2025-11-01T14:00:00",
+    endTime: "2025-11-01T17:01:00",
+    room: "Room 1",
+    ticketPrice: 85000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_049",
+    movieId: "movie_001",
+    cinemaId: "cinema_003",
+    startTime: "2025-11-01T11:00:00",
+    endTime: "2025-11-01T14:01:00",
+    room: "IMAX",
+    ticketPrice: 150000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_050",
+    movieId: "movie_001",
+    cinemaId: "cinema_003",
+    startTime: "2025-11-01T19:00:00",
+    endTime: "2025-11-01T22:01:00",
+    room: "IMAX",
+    ticketPrice: 160000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_051",
+    movieId: "movie_001",
+    cinemaId: "cinema_004",
+    startTime: "2025-11-01T09:00:00",
+    endTime: "2025-11-01T12:01:00",
+    room: "Gold Class",
+    ticketPrice: 200000,
+    status: "Available",
+  },
+  // Showtimes for new cinemas (Hanoi, Da Nang, Can Tho, Thu Duc)
+  // Cinema 005 (Hanoi)
+  {
+    showtimeId: "st_037",
+    movieId: "movie_002",
+    cinemaId: "cinema_005",
+    startTime: "2025-11-10T10:00:00",
+    endTime: "2025-11-10T12:22:00",
+    room: "IMAX 1",
+    ticketPrice: 150000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_038",
+    movieId: "movie_002",
+    cinemaId: "cinema_005",
+    startTime: "2025-11-10T14:00:00",
+    endTime: "2025-11-10T16:22:00",
+    room: "IMAX 1",
+    ticketPrice: 150000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_039",
+    movieId: "movie_003",
+    cinemaId: "cinema_005",
+    startTime: "2025-11-10T19:00:00",
+    endTime: "2025-11-10T21:28:00",
+    room: "Standard 2",
+    ticketPrice: 110000,
+    status: "Available",
+  },
+  // Cinema 006 (Da Nang)
+  {
+    showtimeId: "st_040",
+    movieId: "movie_001",
+    cinemaId: "cinema_006",
+    startTime: "2025-11-10T09:30:00",
+    endTime: "2025-11-10T12:31:00",
+    room: "Room 1",
+    ticketPrice: 90000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_041",
+    movieId: "movie_004",
+    cinemaId: "cinema_006",
+    startTime: "2025-11-10T13:00:00",
+    endTime: "2025-11-10T15:32:00",
+    room: "Room 2",
+    ticketPrice: 95000,
+    status: "Available",
+  },
+  // Cinema 007 (Can Tho)
+  {
+    showtimeId: "st_042",
+    movieId: "movie_005",
+    cinemaId: "cinema_007",
+    startTime: "2025-11-10T18:30:00",
+    endTime: "2025-11-10T21:19:00",
+    room: "Room 1",
+    ticketPrice: 85000,
+    status: "Available",
+  },
+  // Cinema 008 (Thu Duc)
+  {
+    showtimeId: "st_043",
+    movieId: "movie_006",
+    cinemaId: "cinema_008",
+    startTime: "2025-11-10T15:00:00",
+    endTime: "2025-11-10T17:22:00",
+    room: "ScreenX 1",
+    ticketPrice: 130000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_044",
+    movieId: "movie_001",
+    cinemaId: "cinema_008",
+    startTime: "2025-11-10T20:00:00",
+    endTime: "2025-11-10T23:01:00",
+    room: "Standard 3",
+    ticketPrice: 100000,
+    status: "Available",
+  },
+  // More dates for Cinema 005
+  {
+    showtimeId: "st_045",
+    movieId: "movie_002",
+    cinemaId: "cinema_005",
+    startTime: "2025-11-11T10:00:00",
+    endTime: "2025-11-11T12:22:00",
+    room: "IMAX 1",
+    ticketPrice: 150000,
+    status: "Available",
+  },
+  {
+    showtimeId: "st_046",
+    movieId: "movie_003",
+    cinemaId: "cinema_005",
+    startTime: "2025-11-11T19:00:00",
+    endTime: "2025-11-11T21:28:00",
+    room: "Standard 2",
+    ticketPrice: 110000,
+    status: "Available",
+  },
 ];
 
 export const mockSeats: Seat[] = [
-  // Row A
-  ...Array.from({ length: 10 }, (_, i) => ({
-    seatId: `seat_A${i + 1}`,
-    seatName: `A${i + 1}`,
-    row: "A",
-    column: i + 1,
-    seatType: "Standard" as const,
-  })),
-  // Row B (with couple seats)
-  ...Array.from({ length: 10 }, (_, i) => ({
-    seatId: `seat_B${i + 1}`,
-    seatName: `B${i + 1}`,
-    row: "B",
-    column: i + 1,
-    seatType: i >= 4 && i <= 5 ? ("Couple" as const) : ("Standard" as const),
-  })),
-  // Row C (VIP)
-  ...Array.from({ length: 10 }, (_, i) => ({
-    seatId: `seat_C${i + 1}`,
-    seatName: `C${i + 1}`,
-    row: "C",
-    column: i + 1,
-    seatType: "VIP" as const,
-  })),
-  // Row D (VIP)
-  ...Array.from({ length: 10 }, (_, i) => ({
-    seatId: `seat_D${i + 1}`,
-    seatName: `D${i + 1}`,
-    row: "D",
-    column: i + 1,
-    seatType: "VIP" as const,
-  })),
-  // Row E (Accessible)
-  ...Array.from({ length: 10 }, (_, i) => ({
-    seatId: `seat_E${i + 1}`,
-    seatName: `E${i + 1}`,
-    row: "E",
-    column: i + 1,
-    seatType: i <= 1 ? ("Accessible" as const) : ("Standard" as const),
+  // Standard Rows (A-D)
+  ...Array.from({ length: 4 }, (_, r) => {
+    const rowChar = String.fromCharCode(65 + r); // A, B, C, D
+    return Array.from({ length: 14 }, (_, c) => ({
+      seatId: `seat_${rowChar}${c + 1}`,
+      seatName: `${rowChar}${c + 1}`,
+      row: rowChar,
+      column: c + 1,
+      seatType: "Standard" as const,
+    }));
+  }).flat(),
+
+  // VIP Rows (E-H)
+  ...Array.from({ length: 4 }, (_, r) => {
+    const rowChar = String.fromCharCode(69 + r); // E, F, G, H
+    return Array.from({ length: 14 }, (_, c) => ({
+      seatId: `seat_${rowChar}${c + 1}`,
+      seatName: `${rowChar}${c + 1}`,
+      row: rowChar,
+      column: c + 1,
+      seatType: "VIP" as const,
+    }));
+  }).flat(),
+
+  // Couple Row (J) - Fewer seats, centered
+  ...Array.from({ length: 6 }, (_, c) => ({
+    seatId: `seat_J${c + 1}`,
+    seatName: `J${c + 1}`,
+    row: "J",
+    column: c + 1, // Will map to center columns visually
+    seatType: "Couple" as const,
   })),
 ];
 
@@ -727,6 +880,10 @@ export const mockCinemas: Cinema[] = [
     address: "123 Nguyễn Hữu Cảnh, Quận Tân Bình",
     city: "TP. Hồ Chí Minh",
     numberOfRooms: 4,
+    description: "Rạp chiếu phim hiện đại với công nghệ âm thanh Dolby Atmos và màn hình cong kích thước lớn, mang lại trải nghiệm điện ảnh sống động nhất.",
+    imageUrl: "https://images.unsplash.com/photo-1517604931442-710c8ef5ad25?q=80&w=2069&auto=format&fit=crop",
+    facilities: ["Dolby Atmos", "Ghế đôi", "Bắp nước ngon", "Giữ xe miễn phí"],
+    phone: "028 3812 3456",
   },
   {
     cinemaId: "cinema_002",
@@ -734,6 +891,10 @@ export const mockCinemas: Cinema[] = [
     address: "456 Nguyễn Văn Trỗi, Quận Bình Thạnh",
     city: "TP. Hồ Chí Minh",
     numberOfRooms: 3,
+    description: "Không gian sang trọng, ấm cúng, phù hợp cho các cặp đôi và gia đình. Hệ thống ghế ngồi êm ái, rộng rãi.",
+    imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop",
+    facilities: ["IMAX", "Ghế VIP", "Wifi miễn phí"],
+    phone: "028 3512 7890",
   },
   {
     cinemaId: "cinema_003",
@@ -741,6 +902,10 @@ export const mockCinemas: Cinema[] = [
     address: "789 Lê Lợi, Quận 1",
     city: "TP. Hồ Chí Minh",
     numberOfRooms: 5,
+    description: "Tọa lạc tại trung tâm thành phố, CinemaHub Quận 1 là điểm đến lý tưởng cho những tín đồ điện ảnh với các suất chiếu muộn.",
+    imageUrl: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?q=80&w=1779&auto=format&fit=crop",
+    facilities: ["4DX", "Dolby Atmos", "Nhà hàng", "Khu vui chơi trẻ em"],
+    phone: "028 3912 3456",
   },
   {
     cinemaId: "cinema_004",
@@ -748,8 +913,271 @@ export const mockCinemas: Cinema[] = [
     address: "321 Tô Vĩ Tử, Quận Đống Đa",
     city: "Hà Nội",
     numberOfRooms: 3,
+    description: "Rạp chiếu phim tiêu chuẩn quốc tế đầu tiên tại khu vực, mang đến trải nghiệm xem phim đỉnh cao cho khán giả thủ đô.",
+    imageUrl: "https://images.unsplash.com/photo-1586899028174-e7098604235b?q=80&w=2071&auto=format&fit=crop",
+    facilities: ["Dolby 7.1", "Ghế Sweetbox", "Cà phê"],
+    phone: "024 3812 9876",
+  },
+  {
+    cinemaId: "cinema_005",
+    cinemaName: "CinemaHub - Cầu Giấy",
+    address: "241 Xuân Thủy, Quận Cầu Giấy",
+    city: "Hà Nội",
+    numberOfRooms: 6,
+    description: "Tổ hợp giải trí cinema kết hợp với khu vui chơi, mua sắm. Hệ thống phòng chiếu hiện đại bậc nhất Hà Nội.",
+    imageUrl: "https://images.unsplash.com/photo-1513106580091-1d82408b8cd8?q=80&w=2076&auto=format&fit=crop",
+    facilities: ["IMAX Laser", "Dolby Atmos", "Ghế Massage", "Khu vui chơi"],
+    phone: "024 3754 1234",
+  },
+  {
+    cinemaId: "cinema_006",
+    cinemaName: "CinemaHub - Đà Nẵng",
+    address: "910 Ngô Quyền, Quận Sơn Trà",
+    city: "Đà Nẵng",
+    numberOfRooms: 4,
+    description: "Điểm đến giải trí hàng đầu tại thành phố biển Đà Nẵng. Không gian thoáng đãng, view đẹp.",
+    imageUrl: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2025&auto=format&fit=crop",
+    facilities: ["4DX", "Ghế đôi", "View biển"],
+    phone: "0236 3987 654",
+  },
+  {
+    cinemaId: "cinema_007",
+    cinemaName: "CinemaHub - Cần Thơ",
+    address: "209 Đường 30/4, Quận Ninh Kiều",
+    city: "Cần Thơ",
+    numberOfRooms: 3,
+    description: "Rạp chiếu phim hiện đại nhất khu vực Đồng bằng sông Cửu Long. Phục vụ khán giả miền Tây với chất lượng tốt nhất.",
+    imageUrl: "https://images.unsplash.com/photo-1524712245354-0c40c59b635f?q=80&w=2069&auto=format&fit=crop",
+    facilities: ["Dolby 7.1", "Bắp nước đặc biệt", "Wifi mạnh"],
+    phone: "0292 3812 345",
+  },
+  {
+    cinemaId: "cinema_008",
+    cinemaName: "CinemaHub - Thủ Đức",
+    address: "216 Võ Văn Ngân, TP. Thủ Đức",
+    city: "TP. Hồ Chí Minh",
+    numberOfRooms: 5,
+    description: "Rạp chiếu phim dành cho giới trẻ năng động tại thành phố mới Thủ Đức. Thiết kế trẻ trung, hiện đại.",
+    imageUrl: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?q=80&w=1779&auto=format&fit=crop",
+    facilities: ["ScreenX", "Ghế Beanbag", "Trà sữa"],
+    phone: "028 3722 8888",
   },
 ];
+
+// STAFF - Nhân viên rạp
+export interface Staff {
+  staff_id: string;
+  name: string;
+  phone_number: string;
+  email?: string;
+  position: "Manager" | "Supervisor" | "Staff" | "Technician";
+  manage_id?: string | null; // ID của người quản lý (self-reference)
+  cinema_id: string;
+  hire_date: string; // ISO date
+  salary?: number;
+  status: "active" | "inactive";
+}
+
+export const mockStaffs: Staff[] = [
+  // CIN00001 - CinemaHub Tân Bình
+  {
+    staff_id: "STA00001",
+    name: "Nguyễn Văn Minh",
+    phone_number: "0901111111",
+    email: "minh.nguyen@cinemahub.vn",
+    position: "Manager",
+    manage_id: null, // Manager không có người quản lý
+    cinema_id: "cinema_001",
+    hire_date: "2023-01-15",
+    salary: 25000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00002",
+    name: "Trần Thị Hương",
+    phone_number: "0902222222",
+    email: "huong.tran@cinemahub.vn",
+    position: "Supervisor",
+    manage_id: "STA00001", // Báo cáo cho Manager
+    cinema_id: "cinema_001",
+    hire_date: "2023-03-20",
+    salary: 18000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00003",
+    name: "Lê Văn Hùng",
+    phone_number: "0903333333",
+    email: "hung.le@cinemahub.vn",
+    position: "Staff",
+    manage_id: "STA00002", // Báo cáo cho Supervisor
+    cinema_id: "cinema_001",
+    hire_date: "2023-05-10",
+    salary: 12000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00004",
+    name: "Phạm Thị Lan",
+    phone_number: "0904444444",
+    email: "lan.pham@cinemahub.vn",
+    position: "Staff",
+    manage_id: "STA00002",
+    cinema_id: "cinema_001",
+    hire_date: "2023-06-15",
+    salary: 12000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00005",
+    name: "Hoàng Văn Đức",
+    phone_number: "0905555555",
+    email: "duc.hoang@cinemahub.vn",
+    position: "Technician",
+    manage_id: "STA00001",
+    cinema_id: "cinema_001",
+    hire_date: "2023-02-28",
+    salary: 15000000,
+    status: "active",
+  },
+
+  // CIN00002 - CinemaHub Bình Thạnh
+  {
+    staff_id: "STA00006",
+    name: "Võ Thị Mai",
+    phone_number: "0906666666",
+    email: "mai.vo@cinemahub.vn",
+    position: "Manager",
+    manage_id: null,
+    cinema_id: "cinema_002",
+    hire_date: "2023-02-01",
+    salary: 24000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00007",
+    name: "Đặng Văn Tùng",
+    phone_number: "0907777777",
+    email: "tung.dang@cinemahub.vn",
+    position: "Staff",
+    manage_id: "STA00006",
+    cinema_id: "cinema_002",
+    hire_date: "2023-04-12",
+    salary: 11000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00008",
+    name: "Bùi Thị Ngọc",
+    phone_number: "0908888888",
+    email: "ngoc.bui@cinemahub.vn",
+    position: "Staff",
+    manage_id: "STA00006",
+    cinema_id: "cinema_002",
+    hire_date: "2023-05-20",
+    salary: 11000000,
+    status: "active",
+  },
+
+  // CIN00003 - CinemaHub Quận 1
+  {
+    staff_id: "STA00009",
+    name: "Trương Văn Khoa",
+    phone_number: "0909999999",
+    email: "khoa.truong@cinemahub.vn",
+    position: "Manager",
+    manage_id: null,
+    cinema_id: "cinema_003",
+    hire_date: "2023-01-10",
+    salary: 28000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00010",
+    name: "Lý Thị Thu",
+    phone_number: "0910101010",
+    email: "thu.ly@cinemahub.vn",
+    position: "Supervisor",
+    manage_id: "STA00009",
+    cinema_id: "cinema_003",
+    hire_date: "2023-03-15",
+    salary: 19000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00011",
+    name: "Ngô Văn Bình",
+    phone_number: "0911111110",
+    email: "binh.ngo@cinemahub.vn",
+    position: "Staff",
+    manage_id: "STA00010",
+    cinema_id: "cinema_003",
+    hire_date: "2023-07-01",
+    salary: 13000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00012",
+    name: "Phan Thị Hoa",
+    phone_number: "0912121212",
+    position: "Staff",
+    manage_id: "STA00010",
+    cinema_id: "cinema_003",
+    hire_date: "2023-08-15",
+    salary: 13000000,
+    status: "inactive", // Đã nghỉ việc
+  },
+
+  // CIN00004 - CinemaHub Hà Nội
+  {
+    staff_id: "STA00013",
+    name: "Đinh Văn Nam",
+    phone_number: "0913131313",
+    email: "nam.dinh@cinemahub.vn",
+    position: "Manager",
+    manage_id: null,
+    cinema_id: "cinema_004",
+    hire_date: "2023-02-20",
+    salary: 26000000,
+    status: "active",
+  },
+  {
+    staff_id: "STA00014",
+    name: "Vũ Thị Linh",
+    phone_number: "0914141414",
+    email: "linh.vu@cinemahub.vn",
+    position: "Technician",
+    manage_id: "STA00013",
+    cinema_id: "cinema_004",
+    hire_date: "2023-04-25",
+    salary: 16000000,
+    status: "active",
+  },
+];
+
+// Helper function: Get staff by cinema
+export function getStaffByCinema(cinemaId: string): Staff[] {
+  return mockStaffs.filter((staff) => staff.cinema_id === cinemaId);
+}
+
+// Helper function: Get manager of a staff
+export function getStaffManager(staffId: string): Staff | null {
+  const staff = mockStaffs.find((s) => s.staff_id === staffId);
+  if (!staff || !staff.manage_id) return null;
+  return mockStaffs.find((s) => s.staff_id === staff.manage_id) || null;
+}
+
+// Helper function: Get subordinates of a manager
+export function getSubordinates(managerId: string): Staff[] {
+  return mockStaffs.filter((staff) => staff.manage_id === managerId);
+}
+
+// Helper function: Build staff hierarchy tree
+export function buildStaffHierarchy(cinemaId: string): Staff[] {
+  const cinemaStaff = getStaffByCinema(cinemaId);
+  // Return only top-level managers (no manage_id)
+  return cinemaStaff.filter((staff) => !staff.manage_id);
+}
 
 export interface User {
   userId: string;
@@ -760,6 +1188,9 @@ export interface User {
   avatar: string;
   birthDate: string; // ISO date
   createdDate: string; // ISO date
+  gender: "male" | "female" | "unknown";
+  membershipPoints: number; // Tích lũy điểm
+  registrationDate: string; // ISO datetime
 }
 
 export interface Booking {
@@ -785,6 +1216,9 @@ export const mockUsers: User[] = [
     avatar: "https://avatar.vercel.sh/john",
     birthDate: "1990-05-15",
     createdDate: "2025-10-01T10:00:00",
+    registrationDate: "2025-10-01T10:00:00",
+    gender: "male",
+    membershipPoints: 1560, // Gold tier (>= 1000)
   },
   {
     userId: "user_002",
@@ -795,6 +1229,9 @@ export const mockUsers: User[] = [
     avatar: "https://avatar.vercel.sh/jane",
     birthDate: "1992-08-22",
     createdDate: "2025-09-15T14:30:00",
+    registrationDate: "2025-09-15T14:30:00",
+    gender: "female",
+    membershipPoints: 3200, // Diamond tier (>= 2500)
   },
 ];
 
@@ -1023,3 +1460,195 @@ export const mockVouchers: Voucher[] = [
     status: "Active",
   },
 ];
+
+// ========================================
+// MEMBERSHIP SYSTEM (Based on SQL Schema)
+// ========================================
+
+export type MemberLevel = "copper" | "gold" | "diamond" | "vip";
+
+export interface Member {
+  level: MemberLevel;
+  minimum_point: number;
+  benefits: string[]; // Quyền lợi của hạng
+  discount_percent: number; // % giảm giá
+  priority_booking: boolean; // Đặt vé ưu tiên
+  free_items: string[]; // Quà tặng miễn phí
+  color: string; // Màu đại diện
+  badge_icon: string; // Icon huy hiệu
+}
+
+export interface AccountMembership {
+  phone_number: string;
+  level: MemberLevel;
+  join_date: string; // ISO date
+  upgrade_reason?: string; // Lý do thăng hạng
+}
+
+// Mock data cho cấu hình Member tiers (ánh xạ từ bảng MEMBER)
+export const mockMemberTiers: Member[] = [
+  {
+    level: "copper",
+    minimum_point: 0,
+    benefits: [
+      "Tích điểm mỗi giao dịch",
+      "Nhận tin khuyến mãi qua email",
+      "Sinh nhật tặng voucher 50K",
+    ],
+    discount_percent: 0,
+    priority_booking: false,
+    free_items: [],
+    color: "#CD7F32", // Bronze color
+    badge_icon: "🥉",
+  },
+  {
+    level: "gold",
+    minimum_point: 1000,
+    benefits: [
+      "Giảm 5% mọi đơn hàng",
+      "Đặt vé ưu tiên trước 24h",
+      "Tích điểm x1.5",
+      "Nước uống miễn phí size M",
+      "Voucher sinh nhật 100K",
+    ],
+    discount_percent: 5,
+    priority_booking: true,
+    free_items: ["Nước cam vừa"],
+    color: "#FFD700", // Gold color
+    badge_icon: "🥇",
+  },
+  {
+    level: "diamond",
+    minimum_point: 2500,
+    benefits: [
+      "Giảm 10% mọi đơn hàng",
+      "Đặt vé ưu tiên trước 48h",
+      "Tích điểm x2",
+      "Combo bắp nước miễn phí",
+      "Nâng hạng ghế miễn phí (Standard → VIP)",
+      "Voucher sinh nhật 200K",
+      "Phòng chờ VIP",
+    ],
+    discount_percent: 10,
+    priority_booking: true,
+    free_items: ["Combo tiết kiệm"],
+    color: "#B9F2FF", // Diamond color
+    badge_icon: "💎",
+  },
+  {
+    level: "vip",
+    minimum_point: 5000,
+    benefits: [
+      "Giảm 15% mọi đơn hàng",
+      "Đặt vé ưu tiên trước 72h",
+      "Tích điểm x3",
+      "Combo VIP miễn phí",
+      "Nâng hạng ghế miễn phí lên Couple",
+      "Voucher sinh nhật 500K",
+      "Phòng chờ VIP + Massage",
+      "Vé xem phim sớm (Early Access)",
+      "Đưa đón miễn phí (trong bán kính 5km)",
+    ],
+    discount_percent: 15,
+    priority_booking: true,
+    free_items: ["Combo VIP", "Nước cam lớn"],
+    color: "#9333EA", // Purple/VIP color
+    badge_icon: "👑",
+  },
+];
+
+// Mock data cho lịch sử thăng hạng (ánh xạ từ bảng ACCOUNT_MEMBERSHIP)
+export const mockAccountMemberships: AccountMembership[] = [
+  {
+    phone_number: "0912345678",
+    level: "copper",
+    join_date: "2025-10-01",
+    upgrade_reason: "Đăng ký tài khoản",
+  },
+  {
+    phone_number: "0912345678",
+    level: "gold",
+    join_date: "2025-10-15",
+    upgrade_reason: "Đạt 1000 điểm tích lũy",
+  },
+  {
+    phone_number: "0987654321",
+    level: "copper",
+    join_date: "2025-09-15",
+    upgrade_reason: "Đăng ký tài khoản",
+  },
+  {
+    phone_number: "0987654321",
+    level: "gold",
+    join_date: "2025-09-25",
+    upgrade_reason: "Đạt 1000 điểm tích lũy",
+  },
+  {
+    phone_number: "0987654321",
+    level: "diamond",
+    join_date: "2025-10-20",
+    upgrade_reason: "Đạt 2500 điểm tích lũy",
+  },
+];
+
+// Helper function: Lấy hạng thành viên hiện tại dựa trên điểm
+export function getCurrentMemberTier(points: number): Member {
+  const sortedTiers = [...mockMemberTiers].sort(
+    (a, b) => b.minimum_point - a.minimum_point
+  );
+
+  for (const tier of sortedTiers) {
+    if (points >= tier.minimum_point) {
+      return tier;
+    }
+  }
+
+  return mockMemberTiers[0]; // Default: copper
+}
+
+// Helper function: Lấy hạng tiếp theo
+export function getNextMemberTier(currentLevel: MemberLevel): Member | null {
+  const levels: MemberLevel[] = ["copper", "gold", "diamond", "vip"];
+  const currentIndex = levels.indexOf(currentLevel);
+
+  if (currentIndex >= levels.length - 1) {
+    return null; // Đã đạt hạng cao nhất
+  }
+
+  const nextLevel = levels[currentIndex + 1];
+  return mockMemberTiers.find((tier) => tier.level === nextLevel) || null;
+}
+
+// Helper function: Tính tiến độ đến hạng tiếp theo
+export function getMembershipProgress(points: number): {
+  currentTier: Member;
+  nextTier: Member | null;
+  progress: number; // 0-100
+  pointsToNext: number;
+} {
+  const currentTier = getCurrentMemberTier(points);
+  const nextTier = getNextMemberTier(currentTier.level);
+
+  if (!nextTier) {
+    return {
+      currentTier,
+      nextTier: null,
+      progress: 100,
+      pointsToNext: 0,
+    };
+  }
+
+  const pointsInCurrentTier = points - currentTier.minimum_point;
+  const pointsNeededForNext = nextTier.minimum_point - currentTier.minimum_point;
+  const progress = Math.min(
+    100,
+    Math.round((pointsInCurrentTier / pointsNeededForNext) * 100)
+  );
+
+  return {
+    currentTier,
+    nextTier,
+    progress,
+    pointsToNext: nextTier.minimum_point - points,
+  };
+}

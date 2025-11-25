@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import type { Showtime } from "@/lib/mock-data";
-import { Calendar, Clock, MapPin, Ticket } from "lucide-react";
+import { type Showtime, mockCinemas } from "@/lib/mock-data";
+import { Calendar, Clock, MapPin, Ticket, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ShowtimeSelectorProps {
@@ -66,11 +66,11 @@ export function ShowtimeSelector({
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-          <Calendar className="h-5 w-5 text-primary" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 text-primary shadow-sm">
+          <Calendar className="h-6 w-6" />
         </div>
         <div>
-          <h3 className="text-2xl font-bold">Lịch chiếu</h3>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Lịch chiếu</h3>
           <p className="text-sm text-muted-foreground">
             Chọn ngày và suất chiếu phù hợp
           </p>
@@ -79,7 +79,7 @@ export function ShowtimeSelector({
 
       {/* Date Selector - Premium Pills */}
       <div className="relative">
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide snap-x">
           {dateKeys.map((date) => {
             const dateObj = new Date(date);
             const dayName = dateObj.toLocaleDateString("vi-VN", {
@@ -97,27 +97,27 @@ export function ShowtimeSelector({
                   setSelectedShowtime(null);
                 }}
                 className={cn(
-                  "group relative flex shrink-0 flex-col items-center gap-1 rounded-xl border-2 px-6 py-4 transition-all duration-200",
+                  "group relative flex shrink-0 flex-col items-center gap-1 rounded-2xl border px-6 py-4 transition-all duration-300 snap-start min-w-[100px]",
                   isSelected
-                    ? "border-primary bg-primary shadow-lg shadow-primary/20"
-                    : "border-border bg-card hover:border-primary/50 hover:shadow-md"
+                    ? "border-primary/50 bg-gradient-to-b from-primary to-primary/80 shadow-lg shadow-primary/20 scale-105"
+                    : "border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card hover:shadow-md"
                 )}
               >
                 <span
                   className={cn(
-                    "text-xs font-medium uppercase tracking-wider",
+                    "text-xs font-bold uppercase tracking-wider",
                     isSelected
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground group-hover:text-foreground"
+                      ? "text-primary-foreground/90"
+                      : "text-muted-foreground group-hover:text-primary"
                   )}
                 >
                   {dayName}
                 </span>
                 <span
                   className={cn(
-                    "text-2xl font-bold",
+                    "text-3xl font-black",
                     isSelected
-                      ? "text-primary-foreground"
+                      ? "text-white"
                       : "text-foreground"
                   )}
                 >
@@ -125,7 +125,7 @@ export function ShowtimeSelector({
                 </span>
                 <span
                   className={cn(
-                    "text-xs",
+                    "text-xs font-medium",
                     isSelected
                       ? "text-primary-foreground/80"
                       : "text-muted-foreground"
@@ -141,101 +141,146 @@ export function ShowtimeSelector({
 
       {/* Showtimes for selected date */}
       {selectedDate && (
-        <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <p className="text-sm font-medium text-muted-foreground">
-              {formatDate(selectedDate)}
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center gap-2 px-1">
+            <Clock className="h-4 w-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">
+              Lịch chiếu ngày <span className="font-bold text-primary">{formatDate(selectedDate)}</span>
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {groupedShowtimes[selectedDate].map((showtime) => {
-              const isSelected = selectedShowtime === showtime.showtimeId;
+          {/* Group by Cinema */}
+          {(() => {
+            const showtimesForDate = groupedShowtimes[selectedDate];
+            const showtimesByCinema = showtimesForDate.reduce((acc, showtime) => {
+              if (!acc[showtime.cinemaId]) {
+                acc[showtime.cinemaId] = [];
+              }
+              acc[showtime.cinemaId].push(showtime);
+              return acc;
+            }, {} as Record<string, Showtime[]>);
 
+            return Object.entries(showtimesByCinema).map(([cinemaId, cinemaShowtimes]) => {
+              const cinema = mockCinemas.find((c) => c.cinemaId === cinemaId);
+              
               return (
-                <div
-                  key={showtime.showtimeId}
-                  onClick={() =>
-                    setSelectedShowtime(
-                      isSelected ? null : showtime.showtimeId
-                    )
-                  }
-                  className={cn(
-                    "group relative cursor-pointer overflow-hidden rounded-xl border-2 p-5 transition-all duration-200",
-                    isSelected
-                      ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
-                      : "border-border bg-card hover:border-primary/30 hover:shadow-md"
-                  )}
-                >
-                  {/* Status Badge */}
-                  <div className="absolute right-3 top-3">
-                    <Badge
-                      variant={
-                        showtime.status === "Available"
-                          ? "default"
-                          : "destructive"
-                      }
-                      className="text-xs"
-                    >
-                      {showtime.status === "Available" ? "Còn vé" : "Hết vé"}
-                    </Badge>
+                <div key={cinemaId} className="space-y-4">
+                  {/* Cinema Header */}
+                  <div className="flex items-center gap-2 border-l-4 border-primary pl-4 py-1 bg-muted/30 rounded-r-lg">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <h4 className="text-lg font-bold text-foreground">
+                      {cinema?.cinemaName || "Unknown Cinema"}
+                    </h4>
                   </div>
 
-                  {/* Time Display */}
-                  <div className="mb-4 flex items-baseline gap-2">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <span className="text-3xl font-bold">
-                      {formatTime(showtime.startTime)}
-                    </span>
+                  {/* Showtimes Grid */}
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 pl-4">
+                    {cinemaShowtimes.map((showtime) => {
+                      const isSelected = selectedShowtime === showtime.showtimeId;
+
+                      return (
+                        <div
+                          key={showtime.showtimeId}
+                          onClick={() =>
+                            setSelectedShowtime(
+                              isSelected ? null : showtime.showtimeId
+                            )
+                          }
+                          className={cn(
+                            "group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300",
+                            isSelected
+                              ? "border-primary bg-primary/5 shadow-xl shadow-primary/10 ring-1 ring-primary/50"
+                              : "border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card hover:shadow-lg hover:-translate-y-1"
+                          )}
+                        >
+                          <div className="p-5">
+                            {/* Status Badge */}
+                            <div className="absolute right-3 top-3">
+                              <Badge
+                                variant={
+                                  showtime.status === "Available"
+                                    ? "secondary"
+                                    : "destructive"
+                                }
+                                className={cn(
+                                  "text-xs border-none backdrop-blur-sm",
+                                  showtime.status === "Available" 
+                                    ? "bg-green-500/10 text-green-600 dark:text-green-400" 
+                                    : ""
+                                )}
+                              >
+                                {showtime.status === "Available" ? "Còn vé" : "Hết vé"}
+                              </Badge>
+                            </div>
+
+                            {/* Time Display */}
+                            <div className="mb-4 flex items-baseline gap-2">
+                              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                                <Clock className="h-6 w-6" />
+                              </div>
+                              <span className="text-3xl font-black tracking-tight text-foreground">
+                                {formatTime(showtime.startTime)}
+                              </span>
+                            </div>
+
+                            {/* Room Info (Cinema name removed as it's in header) */}
+                            <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+                              <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
+                                {showtime.room}
+                              </span>
+                            </div>
+
+                            {/* Price */}
+                            <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                              <div className="flex items-center gap-2">
+                                <Ticket className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-lg font-bold text-primary">
+                                  {showtime.ticketPrice.toLocaleString("vi-VN")}₫
+                                </span>
+                              </div>
+                              
+                              {isSelected && (
+                                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Book Button Overlay */}
+                          <div className={cn(
+                            "absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center transition-all duration-300",
+                            isSelected ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+                          )}>
+                            <Link
+                              href={`/book-ticket/${showtime.showtimeId}`}
+                              className="w-full px-6"
+                            >
+                              <Button
+                                className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg shadow-primary/25 text-lg font-bold h-12 rounded-xl group-hover:scale-105 transition-transform"
+                              >
+                                Đặt vé ngay <ChevronRight className="ml-2 h-5 w-5" />
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-
-                  {/* Room Info */}
-                  <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{showtime.room}</span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="mb-4 flex items-center gap-2">
-                    <Ticket className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-lg font-bold text-primary">
-                      {showtime.ticketPrice.toLocaleString("vi-VN")}₫
-                    </span>
-                  </div>
-
-                  {/* Book Button */}
-                  {isSelected && (
-                    <Link
-                      href={`/book-ticket/${showtime.showtimeId}`}
-                      className="block"
-                    >
-                      <Button
-                        className="w-full bg-primary shadow-md transition-all hover:scale-[1.02] hover:shadow-lg"
-                        size="lg"
-                      >
-                        Đặt vé ngay
-                      </Button>
-                    </Link>
-                  )}
-
-                  {/* Selection Indicator */}
-                  {isSelected && (
-                    <div className="absolute left-0 top-0 h-full w-1 bg-primary" />
-                  )}
                 </div>
               );
-            })}
-          </div>
+            });
+          })()}
         </div>
       )}
 
       {/* Empty State */}
       {dateKeys.length === 0 && (
-        <div className="rounded-xl border-2 border-dashed border-border bg-muted/20 py-16 text-center">
-          <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
-          <p className="text-lg font-medium text-muted-foreground">
-            Chưa có lịch chiếu
+        <div className="rounded-2xl border-2 border-dashed border-border/50 bg-muted/10 py-20 text-center">
+          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-muted/30 flex items-center justify-center">
+            <Calendar className="h-8 w-8 text-muted-foreground/50" />
+          </div>
+          <h4 className="text-xl font-bold text-foreground mb-2">Chưa có lịch chiếu</h4>
+          <p className="text-muted-foreground">
+            Vui lòng quay lại sau để xem lịch chiếu mới nhất
           </p>
         </div>
       )}

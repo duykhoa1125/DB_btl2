@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import { X, Ticket, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { type Voucher, mockVouchers } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 interface VoucherInputProps {
   onVoucherApply?: (voucher: Voucher, discount: number) => void;
@@ -69,53 +70,78 @@ export function VoucherInput({
 
   if (appliedVoucher) {
     return (
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
-          <div className="flex-1">
-            <p className="font-semibold text-green-900">
-              {appliedVoucher.voucherCode}
-            </p>
-            <p className="text-sm text-green-700">
-              {appliedVoucher.discountType === "Percentage"
-                ? `Giảm ${appliedVoucher.discountValue}%`
-                : `Giảm ₫${appliedVoucher.discountValue.toLocaleString(
-                    "vi-VN"
-                  )}`}
-            </p>
+      <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2">
+        <div className="relative overflow-hidden rounded-xl border border-green-500/30 bg-green-500/10 p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20 text-green-600 dark:text-green-400">
+              <Ticket className="h-6 w-6" />
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
+                {appliedVoucher.voucherCode}
+                <CheckCircle2 className="h-4 w-4" />
+              </p>
+              <p className="text-sm text-green-600/80 dark:text-green-400/80">
+                {appliedVoucher.discountType === "Percentage"
+                  ? `Giảm ${appliedVoucher.discountValue}%`
+                  : `Giảm ₫${appliedVoucher.discountValue.toLocaleString(
+                      "vi-VN"
+                    )}`}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onVoucherApply?.(null as any, 0)}
+              className="h-8 w-8 text-green-600 hover:bg-green-500/20 hover:text-green-700 dark:text-green-400"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onVoucherApply?.(null as any, 0)}
-            className="h-8 w-8"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          
+          {/* Decorative circles */}
+          <div className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-background border border-green-500/30" />
+          <div className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-background border border-green-500/30" />
         </div>
+        
         {appliedDiscount && (
-          <p className="text-sm text-green-600 font-semibold">
-            Tiết kiệm: ₫{appliedDiscount.toLocaleString("vi-VN")}
-          </p>
+          <div className="flex justify-between items-center px-2">
+            <span className="text-sm text-muted-foreground">Tiết kiệm được:</span>
+            <span className="text-sm font-bold text-green-600 dark:text-green-400">
+              -₫{appliedDiscount.toLocaleString("vi-VN")}
+            </span>
+          </div>
         )}
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex gap-2">
-        <Input
-          placeholder="Nhập mã khuyến mại"
-          value={code}
-          onChange={(e) => {
-            setCode(e.target.value);
-            setError("");
-          }}
-          className={error ? "border-red-500" : ""}
-        />
-        <Button onClick={handleApply}>Áp dụng</Button>
+        <div className="relative flex-1">
+          <Ticket className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Nhập mã khuyến mại"
+            value={code}
+            onChange={(e) => {
+              setCode(e.target.value);
+              setError("");
+            }}
+            className={cn(
+              "pl-9 bg-background/50 border-border/50 focus:ring-primary/20 transition-all",
+              error ? "border-destructive focus:ring-destructive/20" : ""
+            )}
+          />
+        </div>
+        <Button 
+          onClick={handleApply}
+          className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 font-bold"
+        >
+          Áp dụng
+        </Button>
       </div>
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-xs font-medium text-destructive animate-in slide-in-from-left-1">{error}</p>}
     </div>
   );
 }

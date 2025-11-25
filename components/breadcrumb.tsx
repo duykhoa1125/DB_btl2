@@ -15,48 +15,50 @@ interface BreadcrumbProps {
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
   return (
     <nav
-      className={cn("flex items-center gap-2 text-sm", className)}
+      className={cn("flex items-center text-sm", className)}
       aria-label="Breadcrumb"
     >
-      {/* Home Icon */}
-      <Link
-        href="/"
-        className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-muted-foreground transition-all hover:bg-primary/10 hover:text-foreground"
-      >
-        <Home className="h-4 w-4" />
-        <span className="sr-only">Trang chủ</span>
-      </Link>
+      <div className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border/50 shadow-sm">
+        {/* Home Icon */}
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 rounded-full px-2 py-1 text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
+        >
+          <Home className="h-3.5 w-3.5" />
+          <span className="sr-only">Trang chủ</span>
+        </Link>
 
-      {items.map((item, index) => {
-        const isLast = index === items.length - 1;
+        {items.map((item, index) => {
+          const isLast = index === items.length - 1;
 
-        return (
-          <div key={index} className="flex items-center gap-2">
-            <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
-            
-            {item.href && !isLast ? (
-              <Link
-                href={item.href}
-                className="rounded-lg px-2 py-1.5 text-muted-foreground transition-all hover:bg-primary/10 hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                className={cn(
-                  "rounded-lg px-2 py-1.5",
-                  isLast
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground"
-                )}
-                aria-current={isLast ? "page" : undefined}
-              >
-                {item.label}
-              </span>
-            )}
-          </div>
-        );
-      })}
+          return (
+            <div key={index} className="flex items-center gap-1">
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40" />
+              
+              {item.href && !isLast ? (
+                <Link
+                  href={item.href}
+                  className="rounded-full px-2 py-1 text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary whitespace-nowrap"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span
+                  className={cn(
+                    "rounded-full px-2 py-1 whitespace-nowrap",
+                    isLast
+                      ? "font-medium text-foreground bg-muted/50"
+                      : "text-muted-foreground"
+                  )}
+                  aria-current={isLast ? "page" : undefined}
+                >
+                  {item.label}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </nav>
   );
 }

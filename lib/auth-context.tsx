@@ -55,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return false;
     }
 
+    const now = new Date().toISOString();
     const newUser: User = {
       userId: `user_${Date.now()}`,
       email: email,
@@ -63,7 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phoneNumber: "",
       avatar: `https://avatar.vercel.sh/${email.split("@")[0]}`,
       birthDate: "",
-      createdDate: new Date().toISOString(),
+      createdDate: now,
+      gender: "unknown",
+      membershipPoints: 0, // Khởi tạo với 0 điểm (Copper tier)
+      registrationDate: now,
     };
 
     mockUsers.push(newUser);

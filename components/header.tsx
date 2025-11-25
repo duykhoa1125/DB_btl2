@@ -11,23 +11,23 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Film, Ticket, Gift, Phone, User, LogOut, Home } from "lucide-react";
+import { Film, Ticket, Gift, Phone, User, LogOut, Home, MapPin } from "lucide-react";
 
 export function Header() {
   const { currentUser, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link
           href="/"
           className="group flex items-center gap-2 transition-all"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md transition-transform group-hover:scale-105">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20 transition-all group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-primary/30">
             <Film className="h-6 w-6 text-primary-foreground" />
           </div>
-          <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold text-transparent">
+          <span className="bg-gradient-to-r from-primary via-foreground to-foreground/70 bg-clip-text text-2xl font-bold text-transparent">
             CinemaHub
           </span>
         </Link>
@@ -40,6 +40,15 @@ export function Header() {
           >
             <Home className="h-4 w-4" />
             <span className="relative z-10">Trang chủ</span>
+            <div className="absolute inset-0 rounded-lg bg-primary/10 opacity-0 transition-opacity group-hover:opacity-100" />
+          </Link>
+
+          <Link
+            href="/cinemas"
+            className="group relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground"
+          >
+            <MapPin className="h-4 w-4" />
+            <span className="relative z-10">Rạp chiếu</span>
             <div className="absolute inset-0 rounded-lg bg-primary/10 opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
           

@@ -5,22 +5,48 @@ import { Badge } from "@/components/ui/badge";
 import { mockSeats } from "@/lib/mock-data";
 import type { Seat } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { Armchair, Sofa } from "lucide-react";
 
 interface SeatSelectionProps {
   onSeatsChange: (seats: Seat[]) => void;
 }
 
-const SeatIcon = ({ className }: { className?: string }) => (
+// Icons for different seat types
+const StandardSeatIcon = ({ className }: { className?: string }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="currentColor"
     className={className}
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <path d="M4.5 19.5C4.5 20.3284 5.17157 21 6 21H18C18.8284 21 19.5 20.3284 19.5 19.5V16.5H4.5V19.5Z" />
-    <path d="M6 3C4.89543 3 4 3.89543 4 5V15H20V5C20 3.89543 19.1046 3 18 3H6Z" />
-    <path d="M2 14C2 12.8954 2.89543 12 4 12H5V15H3V18H2V14Z" />
-    <path d="M22 14C22 12.8954 21.1046 12 20 12H19V15H21V18H22V14Z" />
+    <path d="M4 18v3h3v-3h10v3h3v-6a4 4 0 0 0-4-4h-8a4 4 0 0 0-4 4v6z" />
+    <path d="M6 2h12v11H6z" opacity="0.8" />
+  </svg>
+);
+
+const VIPSeatIcon = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M3 18v3h3v-3h12v3h3v-6a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v6z" />
+    <path d="M5 2h14v12H5z" opacity="0.9" />
+    <path d="M12 4l1.5 3h3l-2.5 2 1 3-3-2-3 2 1-3-2.5-2h3z" fill="white" opacity="0.5" />
+  </svg>
+);
+
+const CoupleSeatIcon = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 48 24"
+    fill="currentColor"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M4 18v3h3v-3h34v3h3v-6a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v6z" />
+    <path d="M6 2h36v11H6z" opacity="0.8" />
+    <path d="M24 2v11" stroke="currentColor" strokeWidth="2" opacity="0.3" />
   </svg>
 );
 
@@ -52,146 +78,127 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
 
   const getSeatColor = (seat: Seat) => {
     if (selectedSeats.has(seat.seatId)) {
-      return "text-red-600 hover:text-red-700";
+      return "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)] scale-105";
     }
-    switch (seat.seatType) {
-      case "VIP":
-        return "text-yellow-500 hover:text-yellow-600";
-      case "Couple":
-        return "text-pink-500 hover:text-pink-600";
-      case "Accessible":
-        return "text-blue-500 hover:text-blue-600";
-      default:
-        return "text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400";
-    }
+    // Default unselected state - uniform color as requested, but hover effect remains
+    return "text-muted-foreground/40 hover:text-primary/80 hover:scale-105 transition-all duration-200";
   };
 
-  const getSeatLabel = (type: string) => {
-    switch (type) {
-      case "VIP":
-        return "Ghế VIP";
-      case "Couple":
-        return "Ghế Couple";
-      case "Accessible":
-        return "Khuyết tật";
-      default:
-        return "Ghế thường";
+  const renderSeat = (seat: Seat) => {
+    const isSelected = selectedSeats.has(seat.seatId);
+    
+    let Icon = StandardSeatIcon;
+    let width = "w-8";
+    
+    if (seat.seatType === "VIP") {
+      Icon = VIPSeatIcon;
+      width = "w-9";
+    } else if (seat.seatType === "Couple") {
+      Icon = CoupleSeatIcon;
+      width = "w-16";
     }
+
+    return (
+      <button
+        key={seat.seatId}
+        onClick={() => handleSeatClick(seat)}
+        className={cn(
+          "group relative flex flex-col items-center justify-center transition-all duration-300",
+          width,
+          "h-8",
+          getSeatColor(seat)
+        )}
+        title={`${seat.seatName} - ${seat.seatType}`}
+      >
+        <Icon className="h-full w-full" />
+        <span className={cn(
+          "absolute -bottom-6 text-[10px] font-bold opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 z-10 bg-background/80 px-1 rounded",
+          isSelected ? "text-primary" : "text-foreground"
+        )}>
+          {seat.seatName}
+        </span>
+      </button>
+    );
   };
 
   const rows = Object.keys(seatsByRow).sort();
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="mb-6 text-xl font-bold">Chọn ghế</h3>
+    <div className="space-y-10 w-full max-w-6xl mx-auto">
+      <div className="flex flex-col items-center">
+        <h3 className="mb-8 text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          Chọn vị trí ngồi
+        </h3>
 
         {/* Screen */}
-        <div className="mb-14 flex flex-col items-center justify-center">
-          <p className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            Màn hình
-          </p>
-          <div className="relative h-8 w-full max-w-2xl">
-            {/* Main glow - Darker and stronger */}
-            <div className="absolute -inset-4 rounded-[50%] bg-cyan-500/30 blur-2xl" />
+        <div className="relative mb-20 w-full max-w-4xl perspective-[1000px]">
+          <div className="relative flex flex-col items-center justify-center transform-style-3d rotate-x-12">
+             {/* Screen Glow */}
+            <div className="absolute -top-10 w-3/4 h-24 bg-primary/20 blur-[80px] rounded-full animate-pulse" />
             
-            {/* The Screen Body - Thicker and curved */}
-            <div className="absolute inset-x-0 top-0 h-4 rounded-[50%] border-t-[12px] border-cyan-600 shadow-[0_-4px_30px_rgba(8,145,178,0.6)]" />
+            {/* Screen Body */}
+            <div className="w-full h-20 border-t-[6px] border-primary/40 rounded-[50%] shadow-[0_-10px_60px_-10px_rgba(var(--primary),0.3)] bg-gradient-to-b from-primary/5 to-transparent backdrop-blur-sm" />
             
-            {/* Inner highlight for 3D effect */}
-            <div className="absolute inset-x-4 top-0 h-3 rounded-[50%] border-t-[4px] border-cyan-400/50 blur-[1px]" />
+            <p className="mt-6 text-xs font-bold uppercase tracking-[0.5em] text-primary/60">
+              Màn hình
+            </p>
           </div>
         </div>
 
         {/* Seats Grid */}
-        <div className="relative mx-auto max-w-5xl rounded-xl border border-border/50 bg-card/50 p-8 shadow-sm backdrop-blur-sm">
-          <div className="flex flex-col gap-2">
+        <div className="relative mx-auto w-full overflow-x-auto pb-12">
+          <div className="flex flex-col gap-4 min-w-[800px] items-center">
             {rows.map((row) => {
               const rowSeats = seatsByRow[row];
               
-              // Split seats into sections: left (1-3), center (4-7), right (8-10)
-              const leftSeats = rowSeats.filter(s => s.column >= 1 && s.column <= 3);
-              const centerSeats = rowSeats.filter(s => s.column >= 4 && s.column <= 7);
-              const rightSeats = rowSeats.filter(s => s.column >= 8 && s.column <= 10);
+              // For Couple row (J), we just render them centered
+              if (row === "J") {
+                 return (
+                  <div key={row} className="flex items-center justify-center gap-6 mt-4">
+                    <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">{row}</span>
+                    <div className="flex gap-4">
+                      {rowSeats.map(renderSeat)}
+                    </div>
+                    <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">{row}</span>
+                  </div>
+                 )
+              }
+
+              // For other rows, split into 3 sections: 1-4, 5-10, 11-14
+              const leftSeats = rowSeats.filter(s => s.column <= 4);
+              const centerSeats = rowSeats.filter(s => s.column >= 5 && s.column <= 10);
+              const rightSeats = rowSeats.filter(s => s.column >= 11);
 
               return (
-                <div key={row} className="flex items-center justify-center gap-2">
-                  {/* Row Label - Left */}
-                  <span className="w-8 text-center text-sm font-bold text-muted-foreground">
+                <div key={row} className="flex items-center justify-center gap-6">
+                  {/* Row Label */}
+                  <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">
                     {row}
                   </span>
 
                   {/* Left Section */}
                   <div className="flex gap-1.5">
-                    {leftSeats.map((seat) => (
-                      <button
-                        key={seat.seatId}
-                        onClick={() => handleSeatClick(seat)}
-                        className={cn(
-                          "group relative flex h-9 w-9 flex-col items-center justify-center rounded-t-lg transition-all duration-200 hover:scale-110",
-                          getSeatColor(seat)
-                        )}
-                        title={`${seat.seatName} - ${getSeatLabel(seat.seatType)}`}
-                        aria-label={`Seat ${seat.seatName}`}
-                      >
-                        <SeatIcon className="h-full w-full" />
-                        <span className="absolute -bottom-4 text-[9px] font-medium text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                          {seat.column}
-                        </span>
-                      </button>
-                    ))}
+                    {leftSeats.map(renderSeat)}
                   </div>
 
                   {/* Aisle Gap */}
-                  <div className="w-6" />
+                  <div className="w-8" />
 
                   {/* Center Section */}
                   <div className="flex gap-1.5">
-                    {centerSeats.map((seat) => (
-                      <button
-                        key={seat.seatId}
-                        onClick={() => handleSeatClick(seat)}
-                        className={cn(
-                          "group relative flex h-9 w-9 flex-col items-center justify-center rounded-t-lg transition-all duration-200 hover:scale-110",
-                          getSeatColor(seat)
-                        )}
-                        title={`${seat.seatName} - ${getSeatLabel(seat.seatType)}`}
-                        aria-label={`Seat ${seat.seatName}`}
-                      >
-                        <SeatIcon className="h-full w-full" />
-                        <span className="absolute -bottom-4 text-[9px] font-medium text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                          {seat.column}
-                        </span>
-                      </button>
-                    ))}
+                    {centerSeats.map(renderSeat)}
                   </div>
 
                   {/* Aisle Gap */}
-                  <div className="w-6" />
+                  <div className="w-8" />
 
                   {/* Right Section */}
                   <div className="flex gap-1.5">
-                    {rightSeats.map((seat) => (
-                      <button
-                        key={seat.seatId}
-                        onClick={() => handleSeatClick(seat)}
-                        className={cn(
-                          "group relative flex h-9 w-9 flex-col items-center justify-center rounded-t-lg transition-all duration-200 hover:scale-110",
-                          getSeatColor(seat)
-                        )}
-                        title={`${seat.seatName} - ${getSeatLabel(seat.seatType)}`}
-                        aria-label={`Seat ${seat.seatName}`}
-                      >
-                        <SeatIcon className="h-full w-full" />
-                        <span className="absolute -bottom-4 text-[9px] font-medium text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                          {seat.column}
-                        </span>
-                      </button>
-                    ))}
+                    {rightSeats.map(renderSeat)}
                   </div>
 
-                  {/* Row Label - Right */}
-                  <span className="w-8 text-center text-sm font-bold text-muted-foreground">
+                  {/* Row Label */}
+                  <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">
                     {row}
                   </span>
                 </div>
@@ -201,44 +208,40 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
         </div>
 
         {/* Legend */}
-        <div className="mt-8 flex flex-wrap justify-center gap-6">
+        <div className="mt-4 flex flex-wrap justify-center gap-8 p-6 rounded-2xl bg-muted/20 border border-border/30 backdrop-blur-sm">
           {[
-            { label: "Ghế thường", color: "text-gray-400 dark:text-gray-500" },
-            { label: "Ghế VIP", color: "text-yellow-500" },
-            { label: "Ghế Couple", color: "text-pink-500" },
-            { label: "Khuyết tật", color: "text-blue-500" },
-            { label: "Đã chọn", color: "text-red-600" },
+            { label: "Ghế thường", icon: StandardSeatIcon, price: "45k" },
+            { label: "Ghế VIP", icon: VIPSeatIcon, price: "65k" },
+            { label: "Ghế Couple", icon: CoupleSeatIcon, price: "110k" },
           ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2">
-              <SeatIcon className={cn("h-5 w-5", item.color)} />
-              <span className="text-sm text-muted-foreground">
-                {item.label}
-              </span>
+            <div key={item.label} className="flex items-center gap-3">
+              <item.icon className={cn("h-6 text-muted-foreground/70", item.label === "Ghế Couple" ? "w-10" : "w-6")} />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-foreground">
+                  {item.label}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {item.price}
+                </span>
+              </div>
             </div>
           ))}
+          
+          {/* Status Legend */}
+          <div className="w-px h-10 bg-border/50 mx-2" />
+          
+          <div className="flex items-center gap-3">
+             <div className="w-6 h-6 rounded bg-primary/20 border border-primary/50" />
+             <span className="text-sm font-medium">Đang chọn</span>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="w-6 h-6 rounded bg-muted-foreground/20 border border-muted-foreground/30" />
+             <span className="text-sm font-medium">Đã đặt</span>
+          </div>
         </div>
       </div>
 
-      {/* Selected Seats Summary */}
-      {selectedSeats.size > 0 && (
-        <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-          <p className="mb-2 font-semibold">Ghế đã chọn:</p>
-          <div className="flex flex-wrap gap-2">
-            {Array.from(selectedSeats).map((seatId) => {
-              const seat = mockSeats.find((s) => s.seatId === seatId);
-              return (
-                <Badge
-                  key={seatId}
-                  variant="secondary"
-                  className="bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
-                >
-                  {seat?.seatName}
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

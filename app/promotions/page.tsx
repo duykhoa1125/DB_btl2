@@ -60,48 +60,53 @@ export default function PromotionsPage() {
 
     return (
       <Card
-        className={`p-6 border border-border hover:shadow-lg transition-all duration-300 ${
-          isExpired ? "opacity-60 bg-gray-50" : "bg-card hover:bg-card/95"
+        className={`group relative overflow-hidden border border-border/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 ${
+          isExpired ? "opacity-60 bg-muted/50" : "bg-card/50 backdrop-blur-sm hover:border-primary/50"
         }`}
       >
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 space-y-3">
-            <div className="flex items-center gap-3">
+        {/* Glow Effect */}
+        {!isExpired && (
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
+        )}
+
+        <div className="relative p-6 flex items-start justify-between gap-6">
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center gap-4">
               <div
-                className={`p-2 rounded-lg ${
+                className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ${
                   voucher.discountType === "Percentage"
-                    ? "bg-green-100 text-green-600"
-                    : "bg-blue-100 text-blue-600"
+                    ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
+                    : "bg-gradient-to-br from-primary to-primary/80 text-white"
                 }`}
               >
                 {voucher.discountType === "Percentage" ? (
-                  <Percent className="w-5 h-5" />
+                  <Percent className="w-7 h-7" />
                 ) : (
-                  <DollarSign className="w-5 h-5" />
+                  <DollarSign className="w-7 h-7" />
                 )}
               </div>
               <div>
-                <span className="font-bold text-2xl text-foreground">
+                <span className="font-bold text-3xl text-foreground tracking-tight">
                   {formatDiscountValue(voucher)}
                 </span>
-                <p className="text-sm text-muted-foreground">giảm giá</p>
+                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">giảm giá</p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-semibold text-lg text-foreground">
+            <div className="space-y-1">
+              <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
                 {voucher.voucherName}
               </h3>
-              <p className="text-sm text-muted-foreground">
-                Mã:{" "}
-                <span className="font-mono font-medium">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Mã:</span>
+                <code className="rounded bg-muted px-2 py-0.5 font-mono font-bold text-foreground border border-border">
                   {voucher.voucherCode}
-                </span>
-              </p>
+                </code>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-none">
                 {voucher.scope === "All_Cinemas"
                   ? "🎬 Tất cả phim"
                   : voucher.scope === "Designated_Cinemas"
@@ -110,21 +115,23 @@ export default function PromotionsPage() {
               </Badge>
 
               {voucher.regions.length < 3 && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="border-border/50">
                   <MapPin className="w-3 h-3 mr-1" />
                   {voucher.regions.join(", ")}
                 </Badge>
               )}
 
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="border-border/50">
                 Còn {voucher.remainingQuantity} lượt
               </Badge>
 
               {daysLeft > 0 && !isExpired && (
                 <Badge
                   variant="outline"
-                  className={`text-xs ${
-                    isExpiringSoon ? "text-red-600 border-red-200" : ""
+                  className={`${
+                    isExpiringSoon 
+                      ? "text-destructive border-destructive/30 bg-destructive/5" 
+                      : "border-border/50"
                   }`}
                 >
                   <Calendar className="w-3 h-3 mr-1" />
@@ -133,38 +140,42 @@ export default function PromotionsPage() {
               )}
 
               {isExpired && (
-                <Badge variant="destructive" className="text-xs">
+                <Badge variant="destructive">
                   Đã hết hạn
                 </Badge>
               )}
             </div>
 
-            <div className="text-xs text-muted-foreground pt-2 border-t border-border">
+            <div className="text-xs text-muted-foreground pt-4 border-t border-border/50 flex flex-col gap-1">
               <p>
                 Hạn sử dụng:{" "}
-                {new Date(voucher.endDate).toLocaleDateString("vi-VN")}
+                <span className="font-medium text-foreground">
+                  {new Date(voucher.endDate).toLocaleDateString("vi-VN")}
+                </span>
               </p>
               <p>
                 Điều kiện:{" "}
-                {voucher.minPurchase
-                  ? `Đơn tối thiểu ₫${voucher.minPurchase.toLocaleString(
-                      "vi-VN"
-                    )}`
-                  : "Không yêu cầu"}
+                <span className="font-medium text-foreground">
+                  {voucher.minPurchase
+                    ? `Đơn tối thiểu ₫${voucher.minPurchase.toLocaleString("vi-VN")}`
+                    : "Không yêu cầu"}
+                </span>
               </p>
             </div>
           </div>
 
           {!isExpired && (
-            <Link href={`/book-ticket/st_001?voucher=${voucher.voucherCode}`}>
-              <Button
-                size="lg"
-                className="bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <Gift className="w-4 h-4 mr-2" />
-                Dùng Ngay
-              </Button>
-            </Link>
+            <div className="flex flex-col justify-center h-full pt-2">
+              <Link href={`/book-ticket/st_001?voucher=${voucher.voucherCode}`}>
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold"
+                >
+                  <Gift className="w-4 h-4 mr-2" />
+                  Dùng Ngay
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       </Card>
@@ -172,34 +183,42 @@ export default function PromotionsPage() {
   };
 
   return (
-    <div className="bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-12">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Ambient Background */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
+      
+      <div className="relative mx-auto max-w-7xl px-6 py-16">
         {/* Hero Section */}
-        <div className="mb-12 text-center">
-          <div className="inline-flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-medium mb-4">
+        <div className="mb-16 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Gift className="w-4 h-4" />
-            Khuyến Mãi Đặc Biệt
+            <span>Khuyến Mãi Đặc Biệt</span>
           </div>
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            Ưu Đãi & Voucher CinemaHub
+          
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
+            Ưu Đãi & Voucher
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
             Khám phá hàng ngàn ưu đãi hấp dẫn, voucher giảm giá và chương trình
             khuyến mãi đặc biệt chỉ dành cho bạn tại CinemaHub.
           </p>
         </div>
 
         {/* Search and Filter */}
-        <div className="mb-8 space-y-4">
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              type="text"
-              placeholder="Tìm kiếm voucher..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        <div className="mb-12 space-y-6 max-w-2xl mx-auto">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+            <div className="relative flex items-center bg-background rounded-xl border border-border/50 shadow-sm">
+              <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Tìm kiếm voucher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 border-none bg-transparent focus-visible:ring-0 text-lg"
+              />
+            </div>
           </div>
 
           <Tabs
@@ -207,59 +226,61 @@ export default function PromotionsPage() {
             onValueChange={setSelectedCategory}
             className="w-full"
           >
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3">
-              <TabsTrigger value="all">Tất cả</TabsTrigger>
-              <TabsTrigger value="movies">Phim</TabsTrigger>
-              <TabsTrigger value="food">Đồ ăn</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-xl h-12">
+              <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Tất cả</TabsTrigger>
+              <TabsTrigger value="movies" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Phim</TabsTrigger>
+              <TabsTrigger value="food" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Đồ ăn</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         {/* Active Promotions */}
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-1 h-8 bg-red-600 rounded-full"></div>
-            <h2 className="text-2xl font-bold text-foreground">
-              Khuyến Mãi Đang Diễn Ra
+        <section className="mb-20">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="h-10 w-1.5 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+            <h2 className="text-3xl font-bold text-foreground">
+              Đang Diễn Ra
             </h2>
-            <Badge variant="secondary" className="ml-auto">
+            <Badge variant="secondary" className="ml-auto bg-primary/10 text-primary">
               {filteredVouchers.length} voucher
             </Badge>
           </div>
 
           {filteredVouchers.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {filteredVouchers.map((voucher) => (
                 <VoucherCard key={voucher.voucherId} voucher={voucher} />
               ))}
             </div>
           ) : (
-            <Card className="p-12 text-center border-dashed">
-              <Gift className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
+            <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/20">
+              <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Gift className="w-10 h-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">
                 Không tìm thấy voucher nào
               </h3>
               <p className="text-muted-foreground">
                 Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
               </p>
-            </Card>
+            </div>
           )}
         </section>
 
         {/* Expired Promotions */}
         {expiredVouchers.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
-              <h2 className="text-2xl font-bold text-muted-foreground">
-                Khuyến Mãi Đã Kết Thúc
+          <section className="mb-20">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-10 w-1.5 bg-muted rounded-full"></div>
+              <h2 className="text-3xl font-bold text-muted-foreground">
+                Đã Kết Thúc
               </h2>
               <Badge variant="outline" className="ml-auto">
                 {expiredVouchers.length} voucher
               </Badge>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-60">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
               {expiredVouchers.slice(0, 4).map((voucher) => (
                 <VoucherCard key={voucher.voucherId} voucher={voucher} />
               ))}
@@ -268,28 +289,35 @@ export default function PromotionsPage() {
         )}
 
         {/* CTA Section */}
-        <div className="bg-linear-to-r from-red-600 to-red-700 rounded-lg p-8 text-center text-white">
-          <h3 className="text-2xl font-bold mb-4">Đăng Ký Thành Viên Ngay!</h3>
-          <p className="mb-6 text-red-100 max-w-2xl mx-auto">
-            Trở thành thành viên CinemaHub để nhận thêm nhiều ưu đãi độc quyền,
-            voucher giảm giá và thông tin về phim mới nhất.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-white text-red-600 hover:bg-gray-100 border-white"
-              asChild
-            >
-              <Link href="/account/register">Đăng Ký Ngay</Link>
-            </Button>
-            <Button
-              size="lg"
-              className="bg-white text-red-600 hover:bg-gray-100"
-              asChild
-            >
-              <Link href="/account/login">Đăng Nhập</Link>
-            </Button>
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-12 text-center text-primary-foreground shadow-2xl">
+          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+          <div className="absolute -top-24 -right-24 h-64 w-64 bg-white/20 blur-3xl rounded-full"></div>
+          <div className="absolute -bottom-24 -left-24 h-64 w-64 bg-white/20 blur-3xl rounded-full"></div>
+          
+          <div className="relative z-10 space-y-6">
+            <h3 className="text-3xl md:text-4xl font-bold">Đăng Ký Thành Viên Ngay!</h3>
+            <p className="text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto font-light">
+              Trở thành thành viên CinemaHub để nhận thêm nhiều ưu đãi độc quyền,
+              voucher giảm giá và thông tin về phim mới nhất.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-white text-primary hover:bg-white/90 font-bold shadow-lg h-12 px-8"
+                asChild
+              >
+                <Link href="/account/register">Đăng Ký Ngay</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/30 text-primary font-bold shadow-lg hover:bg-white/10 h-12 px-8"
+                asChild
+              >
+                <Link href="/account/login">Đăng Nhập</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

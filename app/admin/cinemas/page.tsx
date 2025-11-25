@@ -1,0 +1,223 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { getAllCinemas, deleteCinema } from "@/lib/admin-helpers";
+import type { Cinema } from "@/lib/mock-data";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
+
+export default function CinemasPage() {
+  const [cinemas, setCinemas] = useState<Cinema[]>(getAllCinemas());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [cityFilter, setCityFilter] = useState<string>("all");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [cinemaToDelete, setCinemaToDelete] = useState<Cinema | null>(null);
+  const { toast } = useToast();
+
+  // Get unique cities
+  const cities = Array.from(new Set(cinemas.map((c) => c.city)));
+
+  // Filter cinemas
+  const filteredCinemas = cinemas.filter((cinema) => {
+    const matchesSearch =
+      cinema.cinemaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cinema.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cinema.city.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCity = cityFilter === "all" || cinema.city === cityFilter;
+    return matchesSearch && matchesCity;
+  });
+
+  const handleDeleteClick = (cinema: Cinema) => {
+    setCinemaToDelete(cinema);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (cinemaToDelete) {
+      const success = deleteCinema(cinemaToDelete.cinemaId);
+      if (success) {
+        setCinemas(getAllCinemas());
+        toast({
+          title: "Cinema deleted",
+          description: `"${cinemaToDelete.cinemaName}" has been deleted successfully.`,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete cinema.",
+          variant: "destructive",
+        });
+      }
+    }
+    setDeleteDialogOpen(false);
+    setCinemaToDelete(null);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="mb-2 text-4xl font-bold">Cinemas Management</h1>
+          <p className="text-muted-foreground">
+            Manage all cinema locations in the system
+          </p>
+        </div>
+        <Button asChild className="gap-2">
+          <Link href="/admin/cinemas/new">
+            <Plus className="h-4 w-4" />
+            Add Cinema
+          </Link>
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:flex-row">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, address, or city..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select value={cityFilter} onValueChange={setCityFilter}>
+          <SelectTrigger className="w-full md:w-[200px]">
+            <SelectValue placeholder="Filter by city" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Cities</SelectItem>
+            {cities.map((city) => (
+              <SelectItem key={city} value={city}>
+                {city}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Cinemas Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {filteredCinemas.length === 0 ? (
+          <div className="col-span-full rounded-lg border border-border/50 bg-card p-12 text-center text-muted-foreground">
+            No cinemas found
+          </div>
+        ) : (
+          filteredCinemas.map((cinema) => (
+            <div
+              key={cinema.cinemaId}
+              className="group overflow-hidden rounded-lg border border-border/50 bg-card transition-all hover:shadow-lg"
+            >
+              {/* Image */}
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={cinema.imageUrl}
+                  alt={cinema.cinemaName}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="font-bold text-white">{cinema.cinemaName}</h3>
+                  <p className="text-sm text-white/80">{cinema.city}</p>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-4 p-4">
+                <div className="text-sm">
+                  <p className="text-muted-foreground">{cinema.address}</p>
+                  <p className="mt-1 text-muted-foreground">{cinema.phone}</p>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-sm font-medium">
+                    {cinema.numberOfRooms} Rooms
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {cinema.facilities.slice(0, 3).map((facility) => (
+                      <Badge key={facility} variant="secondary" className="text-xs">
+                        {facility}
+                      </Badge>
+                    ))}
+                    {cinema.facilities.length > 3 && (
+                      <Badge variant="secondary" className="text-xs">
+                        +{cinema.facilities.length - 3}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" asChild className="flex-1">
+                    <Link href={`/admin/cinemas/${cinema.cinemaId}/edit`}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteClick(cinema)}
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Results count */}
+      <div className="text-center text-sm text-muted-foreground">
+        Showing {filteredCinemas.length} of {cinemas.length} cinemas
+      </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete &quot;{cinemaToDelete?.cinemaName}&quot;.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
