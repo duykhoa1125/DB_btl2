@@ -11,30 +11,47 @@ import {
   Search,
   Gift,
   Calendar,
-  MapPin,
   Percent,
-  DollarSign,
+  Tag,
+  Sparkles,
 } from "lucide-react";
-import { type Voucher, mockVouchers } from "@/lib/mock-data";
+import {
+  type VoucherWithDetails,
+  getUserVouchers,
+  getActiveEvents,
+  getPromotionalsByEvent,
+  mockUsers,
+} from "@/lib/mock-data";
 
 export default function PromotionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedType, setSelectedType] = useState<"all" | "gift" | "discount">("all");
 
-  const activeVouchers = mockVouchers.filter((v) => v.status === "Active");
-  const expiredVouchers = mockVouchers.filter((v) => v.status === "Expired");
+  // Mock: Giả sử user hiện tại là user_001 (Gold tier - 1560 points)
+  const currentUser = mockUsers[0]; // John Doe
+  const userLevel = currentUser.membershipPoints >= 5000 ? "vip" :
+                   currentUser.membershipPoints >= 2500 ? "diamond" :
+                   currentUser.membershipPoints >= 1000 ? "gold" : "copper";
+
+  // Lấy vouchers của user theo level
+  const userVouchers = getUserVouchers(currentUser.phoneNumber, userLevel);
+  
+  // Filter vouchers
+  const activeVouchers = userVouchers.filter((v) => v.state === "active");
+  const usedVouchers = userVouchers.filter((v) => v.state === "used");
+  const expiredVouchers = userVouchers.filter((v) => v.state === "expired");
 
   const filteredVouchers = activeVouchers.filter((voucher) => {
     const matchesSearch =
-      voucher.voucherName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.voucherCode.toLowerCase().includes(searchTerm.toLowerCase());
+      voucher.event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      voucher.promotional.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      voucher.code.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategory =
-      selectedCategory === "all" ||
-      (selectedCategory === "movies" && voucher.scope !== "Food") ||
-      (selectedCategory === "food" && voucher.scope === "Food");
+    const matchesType =
+      selectedType === "all" ||
+      voucher.type === selectedType;
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesType;
   });
 
   const getDaysUntilExpiry = (endDate: string) => {
@@ -46,86 +63,101 @@ export default function PromotionsPage() {
     return days;
   };
 
-  const formatDiscountValue = (voucher: Voucher) => {
-    if (voucher.discountType === "Percentage") {
-      return `${voucher.discountValue}%`;
+  const formatDiscount = (voucher: VoucherWithDetails) => {
+    if (voucher.type === "discount" && voucher.discountInfo) {
+      return `${voucher.discountInfo.percent_reduce}% OFF`;
     }
-    return `₫${voucher.discountValue.toLocaleString("vi-VN")}`;
+    return "QUÀ TẶNG";
   };
 
-  const VoucherCard = ({ voucher }: { voucher: Voucher }) => {
-    const daysLeft = getDaysUntilExpiry(voucher.endDate);
-    const isExpiringSoon = daysLeft <= 3;
-    const isExpired = voucher.status === "Expired";
+  const getMemberLevelBadge = (level: string) => {
+    const badges: Record<string, { icon: string; color: string; label: string }> = {
+      copper: { icon: "🥉", color: "bg-amber-900/20 text-amber-700", label: "Đồng" },
+      gold: { icon: "🥇", color: "bg-yellow-500/20 text-yellow-600", label: "Vàng" },
+      diamond: { icon: "💎", color: "bg-cyan-500/20 text-cyan-600", label: "Kim Cương" },
+      vip: { icon: "👑", color: "bg-purple-500/20 text-purple-600", label: "VIP" },
+    };
+    const badge = badges[level] || badges.copper;
+    return (
+      <Badge variant="outline" className={`${badge.color} border-none font-semibold`}>
+        {badge.icon} {badge.label}
+      </Badge>
+    );
+  };
+
+  const VoucherCard = ({ voucher }: { voucher: VoucherWithDetails }) => {
+    const daysLeft = getDaysUntilExpiry(voucher.end_date);
+    const isExpiringSoon = daysLeft <= 3 && daysLeft > 0;
+    const isGift = voucher.type === "gift";
 
     return (
       <Card
-        className={`group relative overflow-hidden border border-border/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 ${
-          isExpired ? "opacity-60 bg-muted/50" : "bg-card/50 backdrop-blur-sm hover:border-primary/50"
-        }`}
+        className={`group relative overflow-hidden border border-border/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/50`}
       >
         {/* Glow Effect */}
-        {!isExpired && (
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
-        )}
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
 
         <div className="relative p-6 flex items-start justify-between gap-6">
           <div className="flex-1 space-y-4">
+            {/* Type Badge & Discount Value */}
             <div className="flex items-center gap-4">
               <div
                 className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ${
-                  voucher.discountType === "Percentage"
-                    ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
-                    : "bg-gradient-to-br from-primary to-primary/80 text-white"
+                  isGift
+                    ? "bg-gradient-to-br from-pink-500 to-rose-600 text-white"
+                    : "bg-gradient-to-br from-green-500 to-green-600 text-white"
                 }`}
               >
-                {voucher.discountType === "Percentage" ? (
-                  <Percent className="w-7 h-7" />
+                {isGift ? (
+                  <Gift className="w-7 h-7" />
                 ) : (
-                  <DollarSign className="w-7 h-7" />
+                  <Percent className="w-7 h-7" />
                 )}
               </div>
               <div>
                 <span className="font-bold text-3xl text-foreground tracking-tight">
-                  {formatDiscountValue(voucher)}
+                  {formatDiscount(voucher)}
                 </span>
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">giảm giá</p>
+                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                  {isGift ? "Quà Tặng" : "Giảm Giá"}
+                </p>
               </div>
             </div>
 
+            {/* Event & Promo Name */}
             <div className="space-y-1">
+              <div className="flex items-center gap-2 text-xs text-primary font-semibold">
+                <Sparkles className="w-4 h-4" />
+                {voucher.event.name}
+              </div>
               <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
-                {voucher.voucherName}
+                {voucher.promotional.description}
               </h3>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>Mã:</span>
+                <Tag className="w-3 h-3" />
                 <code className="rounded bg-muted px-2 py-0.5 font-mono font-bold text-foreground border border-border">
-                  {voucher.voucherCode}
+                  {voucher.code}
                 </code>
               </div>
             </div>
 
+            {/* Badges */}
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-none">
-                {voucher.scope === "All_Cinemas"
-                  ? "🎬 Tất cả phim"
-                  : voucher.scope === "Designated_Cinemas"
-                  ? "🎯 Phim chỉ định"
-                  : "🍿 Đồ ăn"}
-              </Badge>
+              {getMemberLevelBadge(voucher.promotional.level)}
 
-              {voucher.regions.length < 3 && (
-                <Badge variant="outline" className="border-border/50">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  {voucher.regions.join(", ")}
+              {isGift && voucher.giftInfo && (
+                <Badge variant="secondary" className="bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-none">
+                  🎁 {voucher.giftInfo.name}
                 </Badge>
               )}
 
-              <Badge variant="outline" className="border-border/50">
-                Còn {voucher.remainingQuantity} lượt
-              </Badge>
+              {!isGift && voucher.discountInfo && (
+                <Badge variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-none">
+                  💰 Tối đa ₫{voucher.discountInfo.max_price_can_reduce.toLocaleString("vi-VN")}
+                </Badge>
+              )}
 
-              {daysLeft > 0 && !isExpired && (
+              {daysLeft > 0 && (
                 <Badge
                   variant="outline"
                   className={`${
@@ -138,45 +170,43 @@ export default function PromotionsPage() {
                   Còn {daysLeft} ngày
                 </Badge>
               )}
-
-              {isExpired && (
-                <Badge variant="destructive">
-                  Đã hết hạn
-                </Badge>
-              )}
             </div>
 
+            {/* Details */}
             <div className="text-xs text-muted-foreground pt-4 border-t border-border/50 flex flex-col gap-1">
               <p>
                 Hạn sử dụng:{" "}
                 <span className="font-medium text-foreground">
-                  {new Date(voucher.endDate).toLocaleDateString("vi-VN")}
+                  {new Date(voucher.end_date).toLocaleDateString("vi-VN")}
                 </span>
               </p>
-              <p>
-                Điều kiện:{" "}
-                <span className="font-medium text-foreground">
-                  {voucher.minPurchase
-                    ? `Đơn tối thiểu ₫${voucher.minPurchase.toLocaleString("vi-VN")}`
-                    : "Không yêu cầu"}
-                </span>
+              <p className="text-muted-foreground/80 italic">
+                {voucher.event.description}
               </p>
             </div>
           </div>
 
-          {!isExpired && (
-            <div className="flex flex-col justify-center h-full pt-2">
-              <Link href={`/book-ticket/st_001?voucher=${voucher.voucherCode}`}>
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold"
-                >
-                  <Gift className="w-4 h-4 mr-2" />
-                  Dùng Ngay
-                </Button>
-              </Link>
-            </div>
-          )}
+          {/* Action Button */}
+          <div className="flex flex-col justify-center h-full pt-2">
+            <Link href={`/book-ticket/st_001?voucher=${voucher.code}`}>
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold"
+              >
+                {isGift ? (
+                  <>
+                    <Gift className="w-4 h-4 mr-2" />
+                    Nhận Ngay
+                  </>
+                ) : (
+                  <>
+                    <Percent className="w-4 h-4 mr-2" />
+                    Dùng Ngay
+                  </>
+                )}
+              </Button>
+            </Link>
+          </div>
         </div>
       </Card>
     );
@@ -192,17 +222,22 @@ export default function PromotionsPage() {
         <div className="mb-16 text-center space-y-6">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Gift className="w-4 h-4" />
-            <span>Khuyến Mãi Đặc Biệt</span>
+            <span>Ưu Đãi Dành Riêng Cho Bạn</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
-            Ưu Đãi & Voucher
+            Voucher & Quà Tặng
           </h1>
           
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            Khám phá hàng ngàn ưu đãi hấp dẫn, voucher giảm giá và chương trình
-            khuyến mãi đặc biệt chỉ dành cho bạn tại CinemaHub.
-          </p>
+          <div className="flex items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+            <p className="text-xl text-muted-foreground max-w-2xl font-light">
+              Bạn đang là thành viên
+            </p>
+            {getMemberLevelBadge(userLevel)}
+            <p className="text-xl text-muted-foreground">
+              với {currentUser.membershipPoints} điểm
+            </p>
+          </div>
         </div>
 
         {/* Search and Filter */}
@@ -222,24 +257,24 @@ export default function PromotionsPage() {
           </div>
 
           <Tabs
-            value={selectedCategory}
-            onValueChange={setSelectedCategory}
+            value={selectedType}
+            onValueChange={(value) => setSelectedType(value as typeof selectedType)}
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-xl h-12">
               <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Tất cả</TabsTrigger>
-              <TabsTrigger value="movies" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Phim</TabsTrigger>
-              <TabsTrigger value="food" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Đồ ăn</TabsTrigger>
+              <TabsTrigger value="discount" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Giảm Giá</TabsTrigger>
+              <TabsTrigger value="gift" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">Quà Tặng</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
-        {/* Active Promotions */}
+        {/* Active Vouchers */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-8">
             <div className="h-10 w-1.5 bg-gradient-to-b from-primary to-accent rounded-full"></div>
             <h2 className="text-3xl font-bold text-foreground">
-              Đang Diễn Ra
+              Voucher Khả Dụng
             </h2>
             <Badge variant="secondary" className="ml-auto bg-primary/10 text-primary">
               {filteredVouchers.length} voucher
@@ -249,7 +284,7 @@ export default function PromotionsPage() {
           {filteredVouchers.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {filteredVouchers.map((voucher) => (
-                <VoucherCard key={voucher.voucherId} voucher={voucher} />
+                <VoucherCard key={voucher.code} voucher={voucher} />
               ))}
             </div>
           ) : (
@@ -267,22 +302,22 @@ export default function PromotionsPage() {
           )}
         </section>
 
-        {/* Expired Promotions */}
-        {expiredVouchers.length > 0 && (
-          <section className="mb-20">
+        {/* Used Vouchers */}
+        {usedVouchers.length > 0 && (
+          <section className="mb-20 opacity-60">
             <div className="flex items-center gap-4 mb-8">
               <div className="h-10 w-1.5 bg-muted rounded-full"></div>
               <h2 className="text-3xl font-bold text-muted-foreground">
-                Đã Kết Thúc
+                Đã Sử Dụng
               </h2>
               <Badge variant="outline" className="ml-auto">
-                {expiredVouchers.length} voucher
+                {usedVouchers.length} voucher
               </Badge>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-              {expiredVouchers.slice(0, 4).map((voucher) => (
-                <VoucherCard key={voucher.voucherId} voucher={voucher} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 grayscale">
+              {usedVouchers.slice(0, 4).map((voucher) => (
+                <VoucherCard key={voucher.code} voucher={voucher} />
               ))}
             </div>
           </section>
@@ -295,10 +330,10 @@ export default function PromotionsPage() {
           <div className="absolute -bottom-24 -left-24 h-64 w-64 bg-white/20 blur-3xl rounded-full"></div>
           
           <div className="relative z-10 space-y-6">
-            <h3 className="text-3xl md:text-4xl font-bold">Đăng Ký Thành Viên Ngay!</h3>
+            <h3 className="text-3xl md:text-4xl font-bold">Nâng Hạng Thành Viên!</h3>
             <p className="text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto font-light">
-              Trở thành thành viên CinemaHub để nhận thêm nhiều ưu đãi độc quyền,
-              voucher giảm giá và thông tin về phim mới nhất.
+              Nâng cấp hạng thành viên để nhận thêm nhiều ưu đãi độc quyền,
+              voucher giảm giá và quà tặng đặc biệt.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button
@@ -307,15 +342,15 @@ export default function PromotionsPage() {
                 className="bg-white text-primary hover:bg-white/90 font-bold shadow-lg h-12 px-8"
                 asChild
               >
-                <Link href="/account/register">Đăng Ký Ngay</Link>
+                <Link href="/profile">Xem Hồ Sơ</Link>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white/30 text-primary font-bold shadow-lg hover:bg-white/10 h-12 px-8"
+                className="border-white/30 text-white font-bold shadow-lg hover:bg-white/10 h-12 px-8"
                 asChild
               >
-                <Link href="/account/login">Đăng Nhập</Link>
+                <Link href="/movies">Đặt Vé Ngay</Link>
               </Button>
             </div>
           </div>

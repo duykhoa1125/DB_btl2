@@ -145,10 +145,10 @@ export interface Food {
     food_id: string;
     bill_id: string;
     name: string;
-    description?: string;
+    description?: string | null;
     price: number;
-    production_date: string;
-    expiration_date: string;
+    production_date: string;  // ISO Date: "2024-11-25"
+    expiration_date: string;  // ISO Date: "2024-12-25"
 }
 
 // 6. MARKETING (Events, Vouchers, Reviews)

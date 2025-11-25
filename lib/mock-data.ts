@@ -873,6 +873,126 @@ export const mockFoods: Food[] = [
   },
 ];
 
+// ==========================================
+// FOOD CATALOG - Catalog món ăn với shelf life
+// ==========================================
+export interface FoodCatalogItem {
+  foodId: string;
+  foodName: string;
+  category: "Popcorn" | "Drink" | "Special";
+  price: number;
+  image: string;
+  description?: string;
+  shelfLifeDays: number; // Số ngày hết hạn kể từ ngày sản xuất
+}
+
+export const foodCatalog: FoodCatalogItem[] = [
+  {
+    foodId: "food_001",
+    foodName: "Bắp mặn vừa",
+    category: "Popcorn",
+    price: 45000,
+    image: "/popcorn-salty.jpg",
+    description: "Bỏng ngô rang mặn truyền thống",
+    shelfLifeDays: 3,
+  },
+  {
+    foodId: "food_002",
+    foodName: "Bắp mặn lớn",
+    category: "Popcorn",
+    price: 65000,
+    image: "/popcorn-large-salty.jpg",
+    description: "Bỏng ngô rang mặn size lớn",
+    shelfLifeDays: 3,
+  },
+  {
+    foodId: "food_003",
+    foodName: "Bắp bơ vừa",
+    category: "Popcorn",
+    price: 50000,
+    image: "/popcorn-butter.jpg",
+    description: "Bỏng ngô bơ thơm ngon",
+    shelfLifeDays: 3,
+  },
+  {
+    foodId: "food_004",
+    foodName: "Bắp bơ lớn",
+    category: "Popcorn",
+    price: 70000,
+    image: "/popcorn-large-butter.jpg",
+    description: "Bỏng ngô bơ size lớn",
+    shelfLifeDays: 3,
+  },
+  {
+    foodId: "food_005",
+    foodName: "Nước cam vừa",
+    category: "Drink",
+    price: 35000,
+    image: "/vibrant-orange-juice.png",
+    description: "Nước cam tươi 100%",
+    shelfLifeDays: 7,
+  },
+  {
+    foodId: "food_006",
+    foodName: "Nước cam lớn",
+    category: "Drink",
+    price: 45000,
+    image: "/orange-juice-large.jpg",
+    description: "Nước cam tươi 100% size lớn",
+    shelfLifeDays: 7,
+  },
+  {
+    foodId: "food_007",
+    foodName: "Coca-Cola vừa",
+    category: "Drink",
+    price: 30000,
+    image: "/classic-coca-cola.png",
+    description: "Coca-Cola nguyên bản",
+    shelfLifeDays: 365,
+  },
+  {
+    foodId: "food_008",
+    foodName: "Coca-Cola lớn",
+    category: "Drink",
+    price: 40000,
+    image: "/coca-cola-large.jpg",
+    description: "Coca-Cola nguyên bản size lớn",
+    shelfLifeDays: 365,
+  },
+  {
+    foodId: "food_009",
+    foodName: "Combo tiết kiệm",
+    category: "Special",
+    price: 120000,
+    image: "/combo-popcorn-drink.jpg",
+    description: "1 Bắp vừa + 2 Nước ngọt",
+    shelfLifeDays: 1,
+  },
+  {
+    foodId: "food_010",
+    foodName: "Combo VIP",
+    category: "Special",
+    price: 180000,
+    image: "/vip-combo.jpg",
+    description: "2 Bắp lớn + 2 Nước ngọt lớn + Snack",
+    shelfLifeDays: 1,
+  },
+];
+
+// Convert to Map for easy lookup
+export const foodCatalogMap = new Map(
+  foodCatalog.map((item) => [
+    item.foodId,
+    {
+      name: item.foodName,
+      description: item.description,
+      price: item.price,
+      shelfLifeDays: item.shelfLifeDays,
+    },
+  ])
+);
+
+
 export const mockCinemas: Cinema[] = [
   {
     cinemaId: "cinema_001",
@@ -1292,6 +1412,221 @@ export const mockBookings: Booking[] = [
   },
 ];
 
+// ==========================================
+// SQL SCHEMA COMPLIANT DATA
+// Bills, Tickets (per seat), Foods (with dates), Promotional Bills
+// ==========================================
+
+/**
+ * BILLS - Hóa đơn tổng (tương đương Booking trong SQL)
+ */
+export const mockBills: Bill[] = [
+  {
+    bill_id: "bill_001",
+    phone_number: "0912345678",
+    creation_date: "2025-10-25T15:30:00",
+    total_price: 245000, // 2 tickets (80k each) + foods (45k + 40k)
+  },
+  {
+    bill_id: "bill_002",
+    phone_number: "0912345678",
+    creation_date: "2025-10-20T10:15:00",
+    total_price: 295000, // 2 tickets (100k each) + foods (50k + 45k)
+  },
+  {
+    bill_id: "bill_003",
+    phone_number: "0987654321",
+    creation_date: "2025-10-18T16:45:00",
+    total_price: 280000, // 2 tickets (80k each) + combo (120k)
+  },
+  {
+    bill_id: "bill_004",
+    phone_number: "0912345678",
+    creation_date: "2025-10-31T11:00:00",
+    total_price: 80000, // 1 ticket only
+  },
+];
+
+/**
+ * TICKETS - Vé riêng lẻ cho TỪNG GHẾ
+ * Quan trọng: Mỗi ghế = 1 ticket (không gộp chung)
+ */
+export const mockTickets: Ticket[] = [
+  // Bill 001: 2 tickets for seats A1, A2
+  {
+    ticket_id: "ticket_001_A1",
+    movie_name: "Avengers: Endgame",
+    price: 80000,
+    purchase_date: "2025-10-25T15:30:00",
+    expiration_date: "2025-11-24T15:30:00", // 30 days validity
+    bill_id: "bill_001",
+    room_id: "room_001",
+    seat_row: "A",
+    seat_column: 1,
+    showtime_id: "st_001",
+  },
+  {
+    ticket_id: "ticket_001_A2",
+    movie_name: "Avengers: Endgame",
+    price: 80000,
+    purchase_date: "2025-10-25T15:30:00",
+    expiration_date: "2025-11-24T15:30:00",
+    bill_id: "bill_001",
+    room_id: "room_001",
+    seat_row: "A",
+    seat_column: 2,
+    showtime_id: "st_001",
+  },
+
+  // Bill 002: 2 tickets for seats C5, C6
+  {
+    ticket_id: "ticket_002_C5",
+    movie_name: "Avengers: Endgame",
+    price: 100000,
+    purchase_date: "2025-10-20T10:15:00",
+    expiration_date: "2025-11-19T10:15:00",
+    bill_id: "bill_002",
+    room_id: "room_001",
+    seat_row: "C",
+    seat_column: 5,
+    showtime_id: "st_003",
+  },
+  {
+    ticket_id: "ticket_002_C6",
+    movie_name: "Avengers: Endgame",
+    price: 100000,
+    purchase_date: "2025-10-20T10:15:00",
+    expiration_date: "2025-11-19T10:15:00",
+    bill_id: "bill_002",
+    room_id: "room_001",
+    seat_row: "C",
+    seat_column: 6,
+    showtime_id: "st_003",
+  },
+
+  // Bill 003: 2 tickets for seats B5, B6
+  {
+    ticket_id: "ticket_003_B5",
+    movie_name: "Avengers: Endgame",
+    price: 80000,
+    purchase_date: "2025-10-18T16:45:00",
+    expiration_date: "2025-11-17T16:45:00",
+    bill_id: "bill_003",
+    room_id: "room_002",
+    seat_row: "B",
+    seat_column: 5,
+    showtime_id: "st_002",
+  },
+  {
+    ticket_id: "ticket_003_B6",
+    movie_name: "Avengers: Endgame",
+    price: 80000,
+    purchase_date: "2025-10-18T16:45:00",
+    expiration_date: "2025-11-17T16:45:00",
+    bill_id: "bill_003",
+    room_id: "room_002",
+    seat_row: "B",
+    seat_column: 6,
+    showtime_id: "st_002",
+  },
+
+  // Bill 004: 1 ticket for seat A3
+  {
+    ticket_id: "ticket_004_A3",
+    movie_name: "The Shawshank Redemption",
+    price: 80000,
+    purchase_date: "2025-10-31T11:00:00",
+    expiration_date: "2025-11-30T11:00:00",
+    bill_id: "bill_004",
+    room_id: "room_002",
+    seat_row: "A",
+    seat_column: 3,
+    showtime_id: "st_005",
+  },
+];
+
+/**
+ * FOODS - Món ăn trong hóa đơn với NGÀY SẢN XUẤT & HẠN SỬ DỤNG
+ * LƯU Ý: Database KHÔNG có field quantity
+ * Mỗi món ăn = 1 record riêng (ví dụ: 2 Coca = 2 records)
+ */
+export const mockFoodTrackings: FoodTracking[] = [
+  // Bill 001 foods: 1x Bắp mặn vừa + 2x Coca-Cola vừa
+  {
+    food_id: "food_track_001_001_1",
+    bill_id: "bill_001",
+    name: "Bắp mặn vừa",
+    description: "Bỏng ngô rang mặn truyền thống",
+    price: 45000,
+    production_date: "2025-10-25",
+    expiration_date: "2025-10-28", // 3 days shelf life
+  },
+  // 2x Coca-Cola → 2 records riêng
+  {
+    food_id: "food_track_001_007_1",
+    bill_id: "bill_001",
+    name: "Coca-Cola vừa",
+    description: "Coca-Cola nguyên bản",
+    price: 30000,
+    production_date: "2025-10-25",
+    expiration_date: "2026-10-25", // 365 days shelf life
+  },
+  {
+    food_id: "food_track_001_007_2",
+    bill_id: "bill_001",
+    name: "Coca-Cola vừa",
+    description: "Coca-Cola nguyên bản",
+    price: 30000,
+    production_date: "2025-10-25",
+    expiration_date: "2026-10-25", // 365 days shelf life
+  },
+
+  // Bill 002 foods: 1x Bắp bơ vừa + 1x Nước cam lớn
+  {
+    food_id: "food_track_002_003_1",
+    bill_id: "bill_002",
+    name: "Bắp bơ vừa",
+    description: "Bỏng ngô bơ thơm ngon",
+    price: 50000,
+    production_date: "2025-10-20",
+    expiration_date: "2025-10-23", // 3 days
+  },
+  {
+    food_id: "food_track_002_006_1",
+    bill_id: "bill_002",
+    name: "Nước cam lớn",
+    description: "Nước cam tươi 100% size lớn",
+    price: 45000,
+    production_date: "2025-10-20",
+    expiration_date: "2025-10-27", // 7 days
+  },
+
+  // Bill 003 foods: 1x Combo tiết kiệm
+  {
+    food_id: "food_track_003_009_1",
+    bill_id: "bill_003",
+    name: "Combo tiết kiệm",
+    description: "1 Bắp vừa + 2 Nước ngọt",
+    price: 120000,
+    production_date: "2025-10-18",
+    expiration_date: "2025-10-19", // 1 day shelf life (combo)
+  },
+];
+
+// Helper functions for Bill, Ticket, Food tracking
+export function getBillById(billId: string): Bill | undefined {
+  return mockBills.find(b => b.bill_id === billId);
+}
+
+export function getTicketsByBillId(billId: string): Ticket[] {
+  return mockTickets.filter(t => t.bill_id === billId);
+}
+
+export function getFoodsByBillId(billId: string): FoodTracking[] {
+  return mockFoodTrackings.filter(f => f.bill_id === billId);
+}
+
+
 export interface Review {
   reviewId: string;
   movieId: string;
@@ -1304,21 +1639,19 @@ export interface Review {
   createdDate: string; // ISO datetime
 }
 
-export interface Voucher {
-  voucherId: string;
-  voucherCode: string;
-  voucherName: string;
-  discountType: "Percentage" | "Fixed_Amount";
-  discountValue: number; // percentage or fixed amount
-  maxDiscount: number; // max discount
-  minPurchase: number; // min purchase required
-  regions: string[]; // regions where applicable
-  scope: "All_Cinemas" | "Designated_Cinemas" | "Food";
-  startDate: string; // ISO date
-  endDate: string; // ISO date
-  remainingQuantity: number;
-  status: "Active" | "Expired" | "Out_Of_Stock";
-}
+// Import types from services/types.ts for Promotional-Event system
+import type {
+  Event,
+  Promotional,
+  Voucher,
+  Gift,
+  Discount,
+  PromotionalBill,
+  MemberLevel,
+  Bill,
+  Ticket,
+  Food as FoodTracking,
+} from "@/services/types";
 
 export const mockReviews: Review[] = [
   {
@@ -1383,89 +1716,403 @@ export const mockReviews: Review[] = [
   },
 ];
 
-export const mockVouchers: Voucher[] = [
+// ========================================
+// PROMOTIONAL-EVENT SYSTEM (SQL Schema)
+// ========================================
+
+// Mock Events - Sự kiện khuyến mãi lớn
+export const mockEvents: Event[] = [
   {
-    voucherId: "voucher_001",
-    voucherCode: "SUMMER20",
-    voucherName: "Giảm 20% giá vé",
-    discountType: "Percentage",
-    discountValue: 20,
-    maxDiscount: 100000,
-    minPurchase: 100000,
-    regions: ["TP. Hồ Chí Minh", "Hà Nội"],
-    scope: "All_Cinemas",
-    startDate: "2025-10-15",
-    endDate: "2025-11-15",
-    remainingQuantity: 250,
-    status: "Active",
+    event_id: "event_001",
+    name: "Lễ Hội Phim Mùa Hè 2025",
+    description: "Sự kiện lớn nhất năm với hàng trăm ưu đãi hấp dẫn dành cho thành viên",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31"
   },
   {
-    voucherId: "voucher_002",
-    voucherCode: "POPCORN50K",
-    voucherName: "Giảm 50K khi mua bắp",
-    discountType: "Fixed_Amount",
-    discountValue: 50000,
-    maxDiscount: 50000,
-    minPurchase: 100000,
-    regions: ["TP. Hồ Chí Minh"],
-    scope: "Food",
-    startDate: "2025-10-20",
-    endDate: "2025-11-05",
-    remainingQuantity: 100,
-    status: "Active",
+    event_id: "event_002",
+    name: "Black Friday Cinema 2025",
+    description: "Giảm giá sốc mọi suất chiếu - Cơ hội vàng không thể bỏ lỡ",
+    start_date: "2025-11-20",
+    end_date: "2025-11-30"
   },
   {
-    voucherId: "voucher_003",
-    voucherCode: "VIPWEEKEND15",
-    voucherName: "Giảm 15% vé VIP cuối tuần",
-    discountType: "Percentage",
-    discountValue: 15,
-    maxDiscount: 75000,
-    minPurchase: 200000,
-    regions: ["TP. Hồ Chí Minh", "Hà Nội", "Đà Nẵng"],
-    scope: "Designated_Cinemas",
-    startDate: "2025-10-25",
-    endDate: "2025-11-30",
-    remainingQuantity: 50,
-    status: "Active",
+    event_id: "event_003",
+    name: "Tết Nguyên Đán 2026",
+    description: "Chương trình ưu đãi đặc biệt mừng Xuân mới",
+    start_date: "2026-01-15",
+    end_date: "2026-02-15"
   },
   {
-    voucherId: "voucher_004",
-    voucherCode: "AUTUMN100",
-    voucherName: "Giảm 100K cho đơn trên 300K",
-    discountType: "Fixed_Amount",
-    discountValue: 100000,
-    maxDiscount: 100000,
-    minPurchase: 300000,
-    regions: ["TP. Hồ Chí Minh", "Hà Nội"],
-    scope: "All_Cinemas",
-    startDate: "2025-11-01",
-    endDate: "2025-11-10",
-    remainingQuantity: 15,
-    status: "Active",
-  },
-  {
-    voucherId: "voucher_005",
-    voucherCode: "COUPLE30",
-    voucherName: "Giảm 30% ghế Couple",
-    discountType: "Percentage",
-    discountValue: 30,
-    maxDiscount: 60000,
-    minPurchase: 160000,
-    regions: ["TP. Hồ Chí Minh"],
-    scope: "Designated_Cinemas",
-    startDate: "2025-10-25",
-    endDate: "2025-11-25",
-    remainingQuantity: 5,
-    status: "Active",
-  },
+    event_id: "event_004",
+    name: "Khuyến Mãi Cuối Năm",
+    description: "Tri ân khách hàng thân thiết dịp cuối năm",
+    start_date: "2025-11-01",
+    end_date: "2025-12-31"
+  }
 ];
+
+// Mock Promotionals - Chương trình ưu đãi trong event (phân theo level)
+export const mockPromotionals: Promotional[] = [
+  // EVENT 001 - Lễ Hội Phim Mùa Hè
+  {
+    promotional_id: "promo_001",
+    event_id: "event_001",
+    description: "Giảm 20% cho thành viên Đồng - Hè vui tẹt ga",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    level: "copper"
+  },
+  {
+    promotional_id: "promo_002",
+    event_id: "event_001",
+    description: "Giảm 30% cho thành viên Vàng - Ưu đãi đặc biệt",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    level: "gold"
+  },
+  {
+    promotional_id: "promo_003",
+    event_id: "event_001",
+    description: "Tặng Combo Bắp Nước cho Kim Cương",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    level: "diamond"
+  },
+  {
+    promotional_id: "promo_004",
+    event_id: "event_001",
+    description: "VIP - Giảm 50% + Tặng Gấu Bông Limited",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    level: "vip"
+  },
+  // EVENT 002 - Black Friday
+  {
+    promotional_id: "promo_005",
+    event_id: "event_002",
+    description: "Flash Sale 50% - Áp dụng cho tất cả thành viên",
+    start_date: "2025-11-20",
+    end_date: "2025-11-30",
+    level: "copper" // Tất cả đều được hưởng
+  },
+  {
+    promotional_id: "promo_006",
+    event_id: "event_002",
+    description: "Black Friday VIP - Giảm 60% + Quà tặng",
+    start_date: "2025-11-20",
+    end_date: "2025-11-30",
+    level: "vip"
+  },
+  // EVENT 004 - Cuối năm
+  {
+    promotional_id: "promo_007",
+    event_id: "event_004",
+    description: "Giảm 15% cho thành viên Đồng - Cuối năm sum vầy",
+    start_date: "2025-11-01",
+    end_date: "2025-12-31",
+    level: "copper"
+  },
+  {
+    promotional_id: "promo_008",
+    event_id: "event_004",
+    description: "Tặng vé xem phim miễn phí cho Diamond",
+    start_date: "2025-11-01",
+    end_date: "2025-12-31",
+    level: "diamond"
+  }
+];
+
+// Mock Gifts - Quà tặng (loại promotional)
+export const mockGifts: Gift[] = [
+  {
+    promotional_id: "promo_003",
+    name: "Combo Bắp Nước Size L",
+    quantity: 100
+  },
+  {
+    promotional_id: "promo_004",
+    name: "Gấu Bông Pikachu Limited Edition",
+    quantity: 50
+  },
+  {
+    promotional_id: "promo_006",
+    name: "Túi Tote Canvas CinemaHub",
+    quantity: 200
+  },
+  {
+    promotional_id: "promo_008",
+    name: "Vé Xem Phim Miễn Phí (1 vé)",
+    quantity: 75
+  }
+];
+
+// Mock Discounts - Giảm giá (loại promotional)
+export const mockDiscounts: Discount[] = [
+  {
+    promotional_id: "promo_001",
+    percent_reduce: 20,
+    max_price_can_reduce: 50000
+  },
+  {
+    promotional_id: "promo_002",
+    percent_reduce: 30,
+    max_price_can_reduce: 100000
+  },
+  {
+    promotional_id: "promo_004",
+    percent_reduce: 50,
+    max_price_can_reduce: 150000
+  },
+  {
+    promotional_id: "promo_005",
+    percent_reduce: 50,
+    max_price_can_reduce: 200000
+  },
+  {
+    promotional_id: "promo_006",
+    percent_reduce: 60,
+    max_price_can_reduce: 250000
+  },
+  {
+    promotional_id: "promo_007",
+    percent_reduce: 15,
+    max_price_can_reduce: 40000
+  }
+];
+
+// Mock Vouchers - Mã voucher (chuẩn SQL schema)
+export const mockVouchers: Voucher[] = [
+  // Vouchers cho promo_001 (Discount 20% - Copper)
+  {
+    code: "SUMMER20-COPPER-001",
+    promotional_id: "promo_001",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    state: "active",
+    phone_number: "0912345678"
+  },
+  {
+    code: "SUMMER20-COPPER-002",
+    promotional_id: "promo_001",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    state: "active",
+    phone_number: "0987654321"
+  },
+
+  // Vouchers cho promo_002 (Discount 30% - Gold)
+  {
+    code: "SUMMER30-GOLD-001",
+    promotional_id: "promo_002",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    state: "active",
+    phone_number: "0912345678"
+  },
+  {
+    code: "SUMMER30-GOLD-002",
+    promotional_id: "promo_002",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    state: "used",
+    phone_number: "0987654321"
+  },
+
+  // Vouchers cho promo_003 (Gift - Diamond)
+  {
+    code: "SUMMER-GIFT-DIAMOND-001",
+    promotional_id: "promo_003",
+    start_date: "2025-06-01",
+    end_date: "2025-08-31",
+    state: "active",
+    phone_number: "0987654321"
+  },
+
+  // Vouchers cho promo_005 (Black Friday 50% - All)
+  {
+    code: "BF50-ALL-001",
+    promotional_id: "promo_005",
+    start_date: "2025-11-20",
+    end_date: "2025-11-30",
+    state: "active",
+    phone_number: "0912345678"
+  },
+  {
+    code: "BF50-ALL-002",
+    promotional_id: "promo_005",
+    start_date: "2025-11-20",
+    end_date: "2025-11-30",
+    state: "active",
+    phone_number: "0987654321"
+  },
+
+  // Vouchers cho promo_007 (Cuối năm 15% - Copper)
+  {
+    code: "YEAREND15-COPPER-001",
+    promotional_id: "promo_007",
+    start_date: "2025-11-01",
+    end_date: "2025-12-31",
+    state: "active",
+    phone_number: "0912345678"
+  },
+
+  // Vouchers đã hết hạn (expired)
+  {
+    code: "OLD-PROMO-EXPIRED",
+    promotional_id: "promo_001",
+    start_date: "2025-01-01",
+    end_date: "2025-05-31",
+    state: "expired",
+    phone_number: "0912345678"
+  }
+];
+
+// Mock Promotional Bills
+export const mockPromotionalBills: PromotionalBill[] = [
+  {
+    promotional_bill_id: "pb_001",
+    bill_id: "bill_001" // Giả sử có bill_001 trong hệ thống
+  },
+  {
+    promotional_bill_id: "pb_002",
+    bill_id: "bill_002"
+  }
+];
+
+// ========================================
+// HELPER FUNCTIONS - Join data for UI
+// ========================================
+
+// Extended type for UI (with full details)
+export interface VoucherWithDetails extends Voucher {
+  promotional: Promotional;
+  event: Event;
+  discountInfo?: Discount;
+  giftInfo?: Gift;
+  type: 'gift' | 'discount';
+}
+
+/**
+ * Lấy voucher với đầy đủ thông tin (join Event, Promotional, Gift/Discount)
+ */
+export function getVoucherWithDetails(code: string): VoucherWithDetails | null {
+  const voucher = mockVouchers.find(v => v.code === code);
+  if (!voucher) return null;
+
+  const promotional = mockPromotionals.find(p => p.promotional_id === voucher.promotional_id);
+  if (!promotional) return null;
+
+  const event = mockEvents.find(e => e.event_id === promotional.event_id);
+  if (!event) return null;
+
+  const discount = mockDiscounts.find(d => d.promotional_id === promotional.promotional_id);
+  const gift = mockGifts.find(g => g.promotional_id === promotional.promotional_id);
+
+  return {
+    ...voucher,
+    promotional,
+    event,
+    discountInfo: discount,
+    giftInfo: gift,
+    type: discount ? 'discount' : 'gift'
+  };
+}
+
+/**
+ * Lấy tất cả vouchers của user với filter theo member level
+ * User chỉ thấy voucher của promotional có level <= level của user
+ */
+export function getUserVouchers(
+  phoneNumber: string,
+  userLevel: MemberLevel
+): VoucherWithDetails[] {
+  const memberLevels: MemberLevel[] = ['copper', 'gold', 'diamond', 'vip'];
+  const userLevelIndex = memberLevels.indexOf(userLevel);
+
+  return mockVouchers
+    .filter(v => v.phone_number === phoneNumber)
+    .map(v => getVoucherWithDetails(v.code))
+    .filter((v): v is VoucherWithDetails => v !== null)
+    .filter(v => {
+      const promoLevelIndex = memberLevels.indexOf(v.promotional.level);
+      return promoLevelIndex <= userLevelIndex; // User level >= promo level
+    });
+}
+
+/**
+ * Lấy tất cả vouchers available (active) cho user theo level
+ */
+export function getAvailableVouchersForUser(
+  phoneNumber: string,
+  userLevel: MemberLevel
+): VoucherWithDetails[] {
+  return getUserVouchers(phoneNumber, userLevel)
+    .filter(v => v.state === 'active')
+    .filter(v => {
+      const now = new Date();
+      const startDate = new Date(v.start_date);
+      const endDate = new Date(v.end_date);
+      return now >= startDate && now <= endDate;
+    });
+}
+
+/**
+ * Lấy tất cả events đang diễn ra
+ */
+export function getActiveEvents(): Event[] {
+  const now = new Date();
+  return mockEvents.filter(e => {
+    const startDate = new Date(e.start_date);
+    const endDate = new Date(e.end_date);
+    return now >= startDate && now <= endDate;
+  });
+}
+
+/**
+ * Lấy tất cả promotionals của một event
+ */
+export function getPromotionalsByEvent(eventId: string): Promotional[] {
+  return mockPromotionals.filter(p => p.event_id === eventId);
+}
+
+/**
+ * Lấy promotional info với type (gift or discount)
+ */
+export function getPromotionalWithType(promotionalId: string): {
+  promotional: Promotional;
+  type: 'gift' | 'discount';
+  info: Gift | Discount;
+} | null {
+  const promotional = mockPromotionals.find(p => p.promotional_id === promotionalId);
+  if (!promotional) return null;
+
+  const discount = mockDiscounts.find(d => d.promotional_id === promotionalId);
+  if (discount) {
+    return {
+      promotional,
+      type: 'discount',
+      info: discount
+    };
+  }
+
+  const gift = mockGifts.find(g => g.promotional_id === promotionalId);
+  if (gift) {
+    return {
+      promotional,
+      type: 'gift',
+      info: gift
+    };
+  }
+
+  return null;
+}
 
 // ========================================
 // MEMBERSHIP SYSTEM (Based on SQL Schema)
 // ========================================
+// Note: MemberLevel is imported from services/types.ts
 
-export type MemberLevel = "copper" | "gold" | "diamond" | "vip";
 
 export interface Member {
   level: MemberLevel;
