@@ -268,6 +268,461 @@ export const MOCK_MOVIES: Movie[] = [
         language: 'ja',
         status: 'upcoming',
         synopsis: 'Shoyo Hinata joins Karasuno High\'s volleyball club to be like his idol, a former Karasuno player known as the "Little Giant".'
+    },
+    {
+        movie_id: 'MV016',
+        name: 'The Garfield Movie',
+        image: 'https://image.tmdb.org/t/p/original/t9XkeE7HzOsdQcDDDapDYh8lrmt.jpg',
+        duration: 101,
+        release_date: '2024-05-24',
+        end_date: '2024-07-24',
+        age_rating: 0,
+        trailer: 'https://www.youtube.com/watch?v=IeFWNtMo1Fs',
+        language: 'en',
+        status: 'upcoming',
+        synopsis: 'Garfield, the world-famous, Monday-hating, lasagna-loving indoor cat, is about to have a wild outdoor adventure.'
+    },
+    {
+        movie_id: 'MV017',
+        name: 'IF',
+        image: 'https://image.tmdb.org/t/p/original/xbKFv4H3qIqGj1I3F5U38iI8.jpg',
+        duration: 104,
+        release_date: '2024-05-17',
+        end_date: '2024-07-17',
+        age_rating: 0,
+        trailer: 'https://www.youtube.com/watch?v=mb2187ZtPZM',
+        language: 'en',
+        status: 'upcoming',
+        synopsis: 'A young girl who goes through a difficult experience begins to see everyone\'s imaginary friends who have been left behind as their real-life friends have grown up.'
+    },
+    {
+        movie_id: 'MV018',
+        name: 'Challengers',
+        image: 'https://image.tmdb.org/t/p/original/H6vke7zGiuLsz4v4RPe2iyqe.jpg',
+        duration: 131,
+        release_date: '2024-04-26',
+        end_date: '2024-06-26',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=VobTZ-pA3c0',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Tashi, a tennis player turned coach, has taken her husband, Art, and transformed him from a mediocre player into a world-famous grand slam champion.'
+    },
+    {
+        movie_id: 'MV019',
+        name: 'Abigail',
+        image: 'https://image.tmdb.org/t/p/original/5Uq8P6MPj9Ppsns5tGSxUUNXUT.jpg',
+        duration: 109,
+        release_date: '2024-04-19',
+        end_date: '2024-06-19',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=3PsP8MfH8_0',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'After a group of would-be criminals kidnap the 12-year-old ballerina daughter of a powerful underworld figure, all they have to do to collect a $50 million ransom is watch the girl overnight.'
+    },
+    {
+        movie_id: 'MV020',
+        name: 'Monkey Man',
+        image: 'https://image.tmdb.org/t/p/original/4kxHB9pvMiMbCPZWpGtZfbh5.jpg',
+        duration: 121,
+        release_date: '2024-04-05',
+        end_date: '2024-06-05',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=g8zxiB5Qh_w',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Kid, an anonymous young man who ekes out a meager living in an underground fight club where, night after night, wearing a gorilla mask, he is beaten bloody by more popular fighters for cash.'
+    },
+    {
+        movie_id: 'MV021',
+        name: 'Ghostbusters: Frozen Empire',
+        image: 'https://image.tmdb.org/t/p/original/6FaXDX798y.jpg',
+        duration: 115,
+        release_date: '2024-03-22',
+        end_date: '2024-05-22',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=HpOBX.jpg',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'The Spengler family returns to where it all started – the iconic New York City firehouse – to team up with the original Ghostbusters.'
+    },
+    {
+        movie_id: 'MV022',
+        name: 'The First Omen',
+        image: 'https://image.tmdb.org/t/p/original/uQP7.jpg',
+        duration: 119,
+        release_date: '2024-04-05',
+        end_date: '2024-06-05',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A young American woman is sent to Rome to begin a life of service to the church.'
+    },
+    {
+        movie_id: 'MV023',
+        name: 'Late Night with the Devil',
+        image: 'https://image.tmdb.org/t/p/original/u3YQJctM.jpg',
+        duration: 93,
+        release_date: '2024-03-22',
+        end_date: '2024-05-22',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A live television broadcast in 1977 goes horribly wrong, unleashing evil into the nation\'s living rooms.'
+    },
+    {
+        movie_id: 'MV024',
+        name: 'Immaculate',
+        image: 'https://image.tmdb.org/t/p/original/fdZpvOD.jpg',
+        duration: 89,
+        release_date: '2024-03-22',
+        end_date: '2024-05-22',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Cecilia, a woman of devout faith, is warmly welcomed to the picture-perfect Italian countryside where she is offered a new role at an illustrious convent.'
+    },
+    {
+        movie_id: 'MV025',
+        name: 'Arthur the King',
+        image: 'https://image.tmdb.org/t/p/original/gxVcBc4.jpg',
+        duration: 107,
+        release_date: '2024-03-15',
+        end_date: '2024-05-15',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Over the course of ten days and 435 miles, an unbreakable bond is forged between pro adventure racer Michael Light and a scrappy street dog companion dubbed Arthur.'
+    },
+    {
+        movie_id: 'MV026',
+        name: 'Imaginary',
+        image: 'https://image.tmdb.org/t/p/original/9u6HE.jpg',
+        duration: 104,
+        release_date: '2024-03-08',
+        end_date: '2024-05-08',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A woman returns to her childhood home to discover that the imaginary friend she left behind is very real and unhappy that she abandoned him.'
+    },
+    {
+        movie_id: 'MV027',
+        name: 'Cabrini',
+        image: 'https://image.tmdb.org/t/p/original/5J2.jpg',
+        duration: 145,
+        release_date: '2024-03-08',
+        end_date: '2024-05-08',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'The story of Francesca Cabrini, a poor Italian immigrant who became one of the great entrepreneurs of the 19th century.'
+    },
+    {
+        movie_id: 'MV028',
+        name: 'Love Lies Bleeding',
+        image: 'https://image.tmdb.org/t/p/original/p7jy.jpg',
+        duration: 104,
+        release_date: '2024-03-08',
+        end_date: '2024-05-08',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Reclusive gym manager Lou falls hard for Jackie, an ambitious bodybuilder headed through town to Vegas in pursuit of her dream.'
+    },
+    {
+        movie_id: 'MV029',
+        name: 'One Life',
+        image: 'https://image.tmdb.org/t/p/original/yQ7.jpg',
+        duration: 110,
+        release_date: '2024-03-15',
+        end_date: '2024-05-15',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Sir Nicholas \'Nicky\' Winton, a young London broker, rescues 669 children from the Nazis in the months leading up to World War II.'
+    },
+    {
+        movie_id: 'MV030',
+        name: 'The American Society of Magical Negroes',
+        image: 'https://image.tmdb.org/t/p/original/xtP.jpg',
+        duration: 104,
+        release_date: '2024-03-15',
+        end_date: '2024-05-15',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A young man, Aren, is recruited into a secret society of magical Black people who dedicate their lives to a cause of utmost importance: making white people\'s lives easier.'
+    },
+    {
+        movie_id: 'MV031',
+        name: 'Snack Shack',
+        image: 'https://image.tmdb.org/t/p/original/5.jpg',
+        duration: 112,
+        release_date: '2024-03-15',
+        end_date: '2024-05-15',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Nebraska City, 1991. Two best friends get the chance to run the swimming pool snack shack, that later comes to be the perfect scenario for transgression, fun, personal discovery and romance.'
+    },
+    {
+        movie_id: 'MV032',
+        name: 'Wicked Little Letters',
+        image: 'https://image.tmdb.org/t/p/original/sc.jpg',
+        duration: 100,
+        release_date: '2024-03-29',
+        end_date: '2024-05-29',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'When people in Littlehampton begin receiving letters full of hilarious profanities, rowdy Irish migrant Rose Gooding is charged with the crime.'
+    },
+    {
+        movie_id: 'MV033',
+        name: 'Asphalt City',
+        image: 'https://image.tmdb.org/t/p/original/r.jpg',
+        duration: 125,
+        release_date: '2024-03-29',
+        end_date: '2024-05-29',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A young paramedic is paired with a seasoned partner on the night shift in New York City revealing a city in crisis.'
+    },
+    {
+        movie_id: 'MV034',
+        name: 'In the Land of Saints and Sinners',
+        image: 'https://image.tmdb.org/t/p/original/j.jpg',
+        duration: 106,
+        release_date: '2024-03-29',
+        end_date: '2024-05-29',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'In a remote Irish village, a damaged Finbar Murphy is forced to fight for redemption after a lifetime of sins.'
+    },
+    {
+        movie_id: 'MV035',
+        name: 'La Chimera',
+        image: 'https://image.tmdb.org/t/p/original/t.jpg',
+        duration: 130,
+        release_date: '2024-03-29',
+        end_date: '2024-05-29',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'it',
+        status: 'showing',
+        synopsis: 'A group of archaeologists and the black market of historical artifacts.'
+    },
+    {
+        movie_id: 'MV036',
+        name: 'The Beast',
+        image: 'https://image.tmdb.org/t/p/original/y.jpg',
+        duration: 146,
+        release_date: '2024-04-05',
+        end_date: '2024-06-05',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'fr',
+        status: 'showing',
+        synopsis: 'In the near future where emotions have become a threat, Gabrielle finally decides to purify her DNA in a machine that will immerse her in her past lives.'
+    },
+    {
+        movie_id: 'MV037',
+        name: 'Housekeeping for Beginners',
+        image: 'https://image.tmdb.org/t/p/original/i.jpg',
+        duration: 107,
+        release_date: '2024-04-05',
+        end_date: '2024-06-05',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'mk',
+        status: 'showing',
+        synopsis: 'A woman is forced to raise her girlfriend\'s two daughters, who don\'t want to be a family.'
+    },
+    {
+        movie_id: 'MV038',
+        name: 'Someone Like You',
+        image: 'https://image.tmdb.org/t/p/original/o.jpg',
+        duration: 118,
+        release_date: '2024-04-02',
+        end_date: '2024-06-02',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'After the tragic loss of his best friend, a young architect launches a search for her secret twin sister.'
+    },
+    {
+        movie_id: 'MV039',
+        name: 'The Long Game',
+        image: 'https://image.tmdb.org/t/p/original/p.jpg',
+        duration: 112,
+        release_date: '2024-04-12',
+        end_date: '2024-06-12',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'In 1955, five young Mexican-American caddies, out of the love for the game, were determined to learn how to play, so they created their own golf course in the middle of the South Texas brush country.'
+    },
+    {
+        movie_id: 'MV040',
+        name: 'Sasquatch Sunset',
+        image: 'https://image.tmdb.org/t/p/original/a.jpg',
+        duration: 89,
+        release_date: '2024-04-12',
+        end_date: '2024-06-12',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A year in the life of a singular family. Sasquatch Sunset.'
+    },
+    {
+        movie_id: 'MV041',
+        name: 'Sting',
+        image: 'https://image.tmdb.org/t/p/original/s.jpg',
+        duration: 91,
+        release_date: '2024-04-12',
+        end_date: '2024-06-12',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'After raising an unnervingly talented spider in secret, 12-year-old Charlotte must face the facts about her pet—and fight for her family\'s survival.'
+    },
+    {
+        movie_id: 'MV042',
+        name: 'Arcadian',
+        image: 'https://image.tmdb.org/t/p/original/d.jpg',
+        duration: 92,
+        release_date: '2024-04-12',
+        end_date: '2024-06-12',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'In a near future, normal life on Earth has been decimated. Paul and his two sons, Thomas and Joseph, have been living a half-life – tranquility by day and torment by night.'
+    },
+    {
+        movie_id: 'MV043',
+        name: 'Don\'t Tell Mom the Babysitter\'s Dead',
+        image: 'https://image.tmdb.org/t/p/original/f.jpg',
+        duration: 99,
+        release_date: '2024-04-12',
+        end_date: '2024-06-12',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Seventeen year old Tanya Crandell is looking forward to spending the summer with her friends in Europe, but her plans are cancelled when her mom decides to head to a wellness retreat in Thailand.'
+    },
+    {
+        movie_id: 'MV044',
+        name: 'Hard Miles',
+        image: 'https://image.tmdb.org/t/p/original/g.jpg',
+        duration: 108,
+        release_date: '2024-04-19',
+        end_date: '2024-06-19',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'A strong-willed social worker at a youth prison assembles a cycling team of teenage convicts and takes them on a transformative 1000-mile ride.'
+    },
+    {
+        movie_id: 'MV045',
+        name: 'We Grown Now',
+        image: 'https://image.tmdb.org/t/p/original/h.jpg',
+        duration: 93,
+        release_date: '2024-04-19',
+        end_date: '2024-06-19',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'In 1992 Chicago, as Michael Jordan cements himself as a champion, a story of two young legends in their own right begins.'
+    },
+    {
+        movie_id: 'MV046',
+        name: 'Stress Positions',
+        image: 'https://image.tmdb.org/t/p/original/j.jpg',
+        duration: 95,
+        release_date: '2024-04-19',
+        end_date: '2024-06-19',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Terry Goon is keeping strict quarantine in his ex-husband\'s Brooklyn brownstone while caring for his nephew Bahlul, a 19-year-old model from Morocco.'
+    },
+    {
+        movie_id: 'MV047',
+        name: 'Boy Kills World',
+        image: 'https://image.tmdb.org/t/p/original/k.jpg',
+        duration: 111,
+        release_date: '2024-04-26',
+        end_date: '2024-06-26',
+        age_rating: 18,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'When his family is murdered, a deaf-mute named Boy escapes to the jungle and is trained by a mysterious shaman to repress his childish imagination and become an instrument of death.'
+    },
+    {
+        movie_id: 'MV048',
+        name: 'Unsung Hero',
+        image: 'https://image.tmdb.org/t/p/original/l.jpg',
+        duration: 113,
+        release_date: '2024-04-26',
+        end_date: '2024-06-26',
+        age_rating: 0,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Based on a remarkable true story, a mom\'s faith stands against all odds; and inspires her husband and children to hold onto theirs.'
+    },
+    {
+        movie_id: 'MV049',
+        name: 'Breathe',
+        image: 'https://image.tmdb.org/t/p/original/z.jpg',
+        duration: 93,
+        release_date: '2024-04-26',
+        end_date: '2024-06-26',
+        age_rating: 13,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'Air-supply is scarce in the near future, forcing a mother and daughter to fight for survival when two strangers arrive desperate for an oxygenated haven.'
+    },
+    {
+        movie_id: 'MV050',
+        name: 'Humane',
+        image: 'https://image.tmdb.org/t/p/original/x.jpg',
+        duration: 93,
+        release_date: '2024-04-26',
+        end_date: '2024-06-26',
+        age_rating: 16,
+        trailer: 'https://www.youtube.com/watch?v=example',
+        language: 'en',
+        status: 'showing',
+        synopsis: 'In the wake of an environmental collapse that is forcing humanity to shed 20% of its population, a family dinner erupts into chaos when a father\'s plan to enlist in the government\'s new euthanasia program goes horribly awry.'
     }
 ];
 
@@ -386,6 +841,16 @@ export const MOCK_ACCOUNTS: Account[] = [
         membership_points: 15000,
         registration_date: '2021-01-01',
         avatar: 'https://i.pravatar.cc/150?u=vip'
+    },
+    {
+        phone_number: '0988888888',
+        email: 'john.doe@gmail.com',
+        fullname: 'John Doe',
+        birth_date: '1990-01-01',
+        gender: 'male',
+        membership_points: 2000,
+        registration_date: '2025-01-01',
+        avatar: 'https://i.pravatar.cc/150?u=johndoe'
     }
 ];
 
@@ -478,42 +943,67 @@ export const MOCK_VOUCHERS: Voucher[] = [
     {
         code: 'WELCOME50',
         promotional_id: 'PROMO001',
-        start_date: '2024-01-01',
-        end_date: '2024-12-31',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
         state: 'active',
         phone_number: '0901234567'
     },
     {
-        code: 'SUMMER2024',
+        code: 'SUMMER2025',
         promotional_id: 'PROMO002',
-        start_date: '2024-06-01',
-        end_date: '2024-08-31',
+        start_date: '2025-06-01',
+        end_date: '2025-08-31',
         state: 'active',
         phone_number: '0909876543'
     },
     {
         code: 'VIPGIFT',
         promotional_id: 'PROMO003',
-        start_date: '2024-05-01',
-        end_date: '2024-05-31',
+        start_date: '2025-05-01',
+        end_date: '2025-05-31',
         state: 'used',
         phone_number: '0912345678'
     },
     {
-        code: 'EXPIRED2023',
+        code: 'EXPIRED2024',
         promotional_id: 'PROMO001',
-        start_date: '2023-01-01',
-        end_date: '2023-12-31',
+        start_date: '2024-01-01',
+        end_date: '2024-12-31',
         state: 'expired',
         phone_number: '0901234567'
     },
     {
-        code: 'NEWUSER2024',
+        code: 'NEWUSER2025',
         promotional_id: 'PROMO001',
-        start_date: '2024-01-01',
-        end_date: '2024-12-31',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
         state: 'active',
         phone_number: '0912345678'
+    },
+    // John Doe's Vouchers
+    {
+        code: 'JOHNWELCOME',
+        promotional_id: 'PROMO001',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0988888888'
+    },
+    {
+        code: 'NEWBIEGIFT',
+        promotional_id: 'PROMO005',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0988888888'
+    },
+    {
+        code: 'WEEKEND10',
+        promotional_id: 'PROMO006',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0988888888'
     }
 ];
 
@@ -521,45 +1011,59 @@ export const MOCK_VOUCHERS: Voucher[] = [
 export const MOCK_EVENTS: Event[] = [
     {
         event_id: 'EVT001',
-        name: 'Chào Hè Rực Rỡ 2024',
+        name: 'Chào Hè Rực Rỡ 2025',
         description: 'Chuỗi sự kiện chào đón mùa hè với nhiều ưu đãi hấp dẫn cho học sinh, sinh viên. Giảm ngay 20% khi mua vé nhóm từ 4 người trở lên.',
-        start_date: '2024-06-01',
-        end_date: '2024-08-31'
+        start_date: '2025-06-01',
+        end_date: '2025-08-31'
     },
     {
         event_id: 'EVT002',
         name: 'Thứ 3 Vui Vẻ',
         description: 'Đồng giá 50k cho mọi suất chiếu, mọi loại ghế vào ngày thứ 3 hàng tuần. Áp dụng cho tất cả các rạp trên toàn quốc.',
-        start_date: '2024-01-01',
-        end_date: '2024-12-31'
+        start_date: '2025-01-01',
+        end_date: '2025-12-31'
     },
     {
         event_id: 'EVT003',
         name: 'Đại Tiệc Điện Ảnh - Mừng Quốc Khánh',
         description: 'Giảm 30% giá vé cho tất cả các phim Việt Nam nhân dịp 2/9. Tặng kèm cờ tổ quốc mini cho 100 khách hàng đầu tiên.',
-        start_date: '2024-08-25',
-        end_date: '2024-09-05'
+        start_date: '2025-08-25',
+        end_date: '2025-09-05'
     },
     {
         event_id: 'EVT004',
         name: 'Halloween Kinh Hoàng',
         description: 'Tặng bắp nước miễn phí khi xem phim kinh dị vào khung giờ khuya (sau 22h). Trải nghiệm không gian rùng rợn tại rạp.',
-        start_date: '2024-10-25',
-        end_date: '2024-10-31'
+        start_date: '2025-10-25',
+        end_date: '2025-10-31'
     },
     {
         event_id: 'EVT005',
         name: 'Tháng Phim Bom Tấn',
-        description: 'Cơ hội trúng iPhone 15 Pro Max khi xem 3 phim bom tấn trong tháng. Tích lũy vé ngay hôm nay!',
-        start_date: '2024-05-01',
-        end_date: '2024-05-31'
+        description: 'Cơ hội trúng iPhone 16 Pro Max khi xem 3 phim bom tấn trong tháng. Tích lũy vé ngay hôm nay!',
+        start_date: '2025-05-01',
+        end_date: '2025-05-31'
     },
     {
         event_id: 'EVT006',
         name: 'Tuần Lễ Anime',
         description: 'Chiếu lại các siêu phẩm Anime đình đám: Your Name, Spirited Away, Demon Slayer. Tặng poster giới hạn.',
-        start_date: '2024-07-15',
-        end_date: '2024-07-21'
+        start_date: '2025-07-15',
+        end_date: '2025-07-21'
+    },
+    {
+        event_id: 'EVT007',
+        name: 'Ngày Hội Thành Viên Mới',
+        description: 'Đăng ký thành viên ngay hôm nay để nhận ngay 1 bắp ngọt miễn phí.',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31'
+    },
+    {
+        event_id: 'EVT008',
+        name: 'Cuối Tuần Bùng Nổ',
+        description: 'Giảm 10% giá vé cho tất cả các suất chiếu vào thứ 7 và Chủ Nhật.',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31'
     }
 ];
 
@@ -572,33 +1076,49 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
         promotional_id: 'PROMO001',
         event_id: 'EVT002',
         description: 'Giảm giá chào mừng thành viên mới',
-        start_date: '2024-01-01',
-        end_date: '2024-12-31',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
         level: 'copper'
     },
     {
         promotional_id: 'PROMO002',
         event_id: 'EVT001',
         description: 'Giảm giá mùa hè',
-        start_date: '2024-06-01',
-        end_date: '2024-08-31',
+        start_date: '2025-06-01',
+        end_date: '2025-08-31',
         level: 'copper'
     },
     {
         promotional_id: 'PROMO003',
         event_id: 'EVT005',
         description: 'Tặng Combo Bắp Nước',
-        start_date: '2024-05-01',
-        end_date: '2024-05-31',
+        start_date: '2025-05-01',
+        end_date: '2025-05-31',
         level: 'gold'
     },
     {
         promotional_id: 'PROMO004',
         event_id: 'EVT003',
         description: 'Giảm giá VIP',
-        start_date: '2024-01-01',
-        end_date: '2024-12-31',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
         level: 'vip'
+    },
+    {
+        promotional_id: 'PROMO005',
+        event_id: 'EVT007',
+        description: 'Quà tặng thành viên mới',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO006',
+        event_id: 'EVT008',
+        description: 'Ưu đãi cuối tuần',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
     }
 ];
 
@@ -617,6 +1137,11 @@ export const MOCK_DISCOUNTS: Discount[] = [
         promotional_id: 'PROMO004',
         percent_reduce: 15,
         max_price_can_reduce: 200000
+    },
+    {
+        promotional_id: 'PROMO006',
+        percent_reduce: 10,
+        max_price_can_reduce: 50000
     }
 ];
 
@@ -625,6 +1150,11 @@ export const MOCK_GIFTS: Gift[] = [
         promotional_id: 'PROMO003',
         name: 'Combo Solo (1 Bắp M + 1 Nước M)',
         quantity: 100
+    },
+    {
+        promotional_id: 'PROMO005',
+        name: 'Bắp Ngọt (S)',
+        quantity: 500
     }
 ];
 
@@ -786,7 +1316,9 @@ export const MOCK_BILLS: Bill[] = [
     { bill_id: 'BILL004', phone_number: '0912345678', total_price: 450000, creation_date: '2024-04-15T19:00:00Z' },
     { bill_id: 'BILL005', phone_number: '0912345678', total_price: 180000, creation_date: '2024-04-20T20:00:00Z' },
     { bill_id: 'BILL006', phone_number: '0901234567', total_price: 220000, creation_date: '2024-05-01T09:00:00Z' }, // Upcoming/Recent
-    { bill_id: 'BILL007', phone_number: '0912345678', total_price: 320000, creation_date: '2024-05-10T15:00:00Z' }  // Upcoming/Recent
+    { bill_id: 'BILL007', phone_number: '0912345678', total_price: 320000, creation_date: '2024-05-10T15:00:00Z' },  // Upcoming/Recent
+    { bill_id: 'BILL008', phone_number: '0988888888', total_price: 150000, creation_date: '2025-01-15T10:00:00Z' },
+    { bill_id: 'BILL009', phone_number: '0988888888', total_price: 200000, creation_date: '2025-02-20T14:30:00Z' }
 ];
 
 export const MOCK_TICKETS: Ticket[] = [
@@ -817,7 +1349,15 @@ export const MOCK_TICKETS: Ticket[] = [
 
     // BILL007 - Furiosa (Upcoming) - VIP
     { ticket_id: 'T014', bill_id: 'BILL007', showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', seat_row: 'D', seat_column: 5, price: 160000, movie_name: 'Furiosa: A Mad Max Saga', purchase_date: '2024-05-10T15:00:00Z', expiration_date: '2024-06-10T18:00:00Z' },
-    { ticket_id: 'T015', bill_id: 'BILL007', showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', seat_row: 'D', seat_column: 6, price: 160000, movie_name: 'Furiosa: A Mad Max Saga', purchase_date: '2024-05-10T15:00:00Z', expiration_date: '2024-06-10T18:00:00Z' }
+    { ticket_id: 'T015', bill_id: 'BILL007', showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', seat_row: 'D', seat_column: 6, price: 160000, movie_name: 'Furiosa: A Mad Max Saga', purchase_date: '2024-05-10T15:00:00Z', expiration_date: '2024-06-10T18:00:00Z' },
+
+    // BILL008 - Dune (Past) - John Doe
+    { ticket_id: 'T016', bill_id: 'BILL008', showtime_id: 'ST_PAST_001', room_id: 'CNM001_R1', seat_row: 'E', seat_column: 5, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2025-01-15T10:00:00Z', expiration_date: '2025-01-15T13:00:00Z' },
+    { ticket_id: 'T017', bill_id: 'BILL008', showtime_id: 'ST_PAST_001', room_id: 'CNM001_R1', seat_row: 'E', seat_column: 6, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2025-01-15T10:00:00Z', expiration_date: '2025-01-15T13:00:00Z' },
+
+    // BILL009 - Kung Fu Panda 4 (Past) - John Doe
+    { ticket_id: 'T018', bill_id: 'BILL009', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'H', seat_column: 5, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-02-20T14:30:00Z', expiration_date: '2025-02-20T16:30:00Z' },
+    { ticket_id: 'T019', bill_id: 'BILL009', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'H', seat_column: 6, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-02-20T14:30:00Z', expiration_date: '2025-02-20T16:30:00Z' }
 ];
 
 export function getBillsByPhone(phone: string): Bill[] {

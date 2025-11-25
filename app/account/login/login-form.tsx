@@ -105,7 +105,7 @@ export function LoginForm() {
           <div className="mt-6 p-4 bg-muted rounded-lg text-sm text-muted-foreground">
             <p className="font-medium mb-2">Tài khoản demo:</p>
             <p>Email: john.doe@gmail.com</p>
-            <p>Mật khẩu: hashed_password_123</p>
+            <p>Mật khẩu: any_password</p>
           </div>
         </CardContent>
       </Card>
