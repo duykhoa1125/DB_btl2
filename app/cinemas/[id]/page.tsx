@@ -3,12 +3,8 @@
 import { useState, use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  mockCinemas,
-  mockShowtimes,
-  mockMovies,
-  type Showtime,
-} from "@/lib/mock-data";
+import { MOCK_CINEMAS, MOCK_SHOWTIMES, MOCK_ROOMS, getAllMoviesWithDetails } from "@/services/mock-data";
+import type { Showtime } from "@/services/types";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Clock, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,18 +17,21 @@ export default function CinemaDetailPage({
   const { id } = use(params);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const cinema = mockCinemas.find((c) => c.cinema_id === id);
+  const cinema = MOCK_CINEMAS.find((c) => c.cinema_id === id);
 
   if (!cinema) {
     notFound();
   }
 
-  // 1. Get all showtimes for this cinema
-  const cinemaShowtimes = mockShowtimes.filter((s) => s.cinema_id === id);
+  // 1. Get all showtimes for this cinema (via room_id)
+  const cinemaShowtimes = MOCK_SHOWTIMES.filter((s) => {
+    const room = MOCK_ROOMS.find(r => r.room_id === s.room_id);
+    return room?.cinema_id === id;
+  });
 
-  // 2. Get unique dates
+  // 2. Get unique dates from start_date
   const uniqueDates = Array.from(
-    new Set(cinemaShowtimes.map((s) => s.startTime.split("T")[0]))
+    new Set(cinemaShowtimes.map((s) => s.start_date))
   ).sort();
 
   // 3. Set default date if not set
@@ -42,7 +41,7 @@ export default function CinemaDetailPage({
 
   // 4. Filter showtimes by selected date
   const showtimesOnDate = selectedDate
-    ? cinemaShowtimes.filter((s) => s.startTime.startsWith(selectedDate))
+    ? cinemaShowtimes.filter((s) => s.start_date === selectedDate)
     : [];
 
   // 5. Group showtimes by Movie
@@ -69,11 +68,9 @@ export default function CinemaDetailPage({
     };
   };
 
-  const formatTime = (datetime: string) => {
-    return new Date(datetime).toLocaleTimeString("vi-VN", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':');
+    return `${hours}:${minutes}`;
   };
 
   return (
@@ -88,7 +85,7 @@ export default function CinemaDetailPage({
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
           <div className="mx-auto max-w-7xl space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-              {cinema.cinemaName}
+              {cinema.name}
             </h1>
             <div className="flex flex-wrap items-center gap-6 text-muted-foreground">
               <div className="flex items-center gap-2">
@@ -144,7 +141,8 @@ export default function CinemaDetailPage({
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {Object.keys(showtimesByMovie).length > 0 ? (
                 Object.entries(showtimesByMovie).map(([movie_id, showtimes]) => {
-                  const movie = mockMovies.find((m) => m.movie_id === movie_id);
+                  const allMovies = getAllMoviesWithDetails();
+                  const movie = allMovies.find((m) => m.movie_id === movie_id);
                   if (!movie) return null;
 
                   return (
@@ -158,7 +156,7 @@ export default function CinemaDetailPage({
                           <div className="relative h-52 w-36 overflow-hidden rounded-2xl shadow-md">
                             <img
                               src={movie.image}
-                              alt={movie.title}
+                              alt={movie.name}
                               className="h-full w-full object-cover transition-transform duration-700 group-hover/poster:scale-110"
                             />
                             <div className="absolute inset-0 bg-black/20 group-hover/poster:bg-transparent transition-colors" />
@@ -170,7 +168,7 @@ export default function CinemaDetailPage({
                           <div>
                             <Link href={`/movie/${movie_id}`} className="inline-block">
                               <h3 className="text-2xl font-bold hover:text-primary transition-colors duration-300">
-                                {movie.title}
+                                {movie.name}
                               </h3>
                             </Link>
                             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-2">
@@ -178,11 +176,6 @@ export default function CinemaDetailPage({
                                 <Clock className="h-3.5 w-3.5 text-primary" />
                                 <span>{movie.duration} phút</span>
                               </div>
-                              {movie.genres.slice(0, 3).map((genre) => (
-                                <Badge key={genre} variant="secondary" className="font-normal bg-muted/50 hover:bg-muted">
-                                  {genre}
-                                </Badge>
-                              ))}
                             </div>
                           </div>
 
@@ -196,10 +189,13 @@ export default function CinemaDetailPage({
                                   className="group/time relative flex flex-col items-center justify-center rounded-xl border border-border/50 bg-background/50 py-2.5 hover:border-primary hover:bg-primary/5 hover:shadow-md hover:shadow-primary/10 transition-all duration-300"
                                 >
                                   <span className="text-lg font-bold text-foreground group-hover/time:text-primary transition-colors">
-                                    {formatTime(showtime.startTime)}
+                                    {formatTime(showtime.start_time)}
                                   </span>
                                   <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                                    {showtime.room.replace("Room", "R").replace("Standard", "Std")}
+                                    {(() => {
+                                      const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+                                      return room?.name.replace("Room", "R") || showtime.room_id;
+                                    })()}
                                   </span>
                                   <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary opacity-0 group-hover/time:opacity-100 transition-opacity" />
                                 </Link>

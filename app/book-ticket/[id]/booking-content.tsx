@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Seat, Food, Voucher, VoucherWithDetails } from "@/lib/mock-data";
 import type { Showtime, MovieDetail } from "@/services/types";
 import { MOCK_ROOMS } from "@/services/mock-data";
+import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Calendar, Clock, MapPin, CreditCard, Wallet, Banknote, Building2, CheckCircle2 } from "lucide-react";
@@ -55,9 +56,8 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
   const roomName = room?.name || showtime.room_id;
 
-  // Calculate ticket price (base price, could be dynamic based on seat type)
-  const baseTicketPrice = 100000; // Default price per ticket
-  const ticketTotal = selectedSeats.length * baseTicketPrice;
+  // Calculate ticket price based on seat types (from lib/pricing.ts)
+  const ticketTotal = calculateSeatsTotal(selectedSeats);
   const foodTotal = selectedFoods.reduce(
     (sum, food) => sum + food.price * food.quantity,
     0

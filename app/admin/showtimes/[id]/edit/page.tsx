@@ -6,9 +6,9 @@ import {
   getShowtimeById,
   updateShowtime,
   getAllMovies,
-  getAllCinemas,
 } from "@/lib/admin-helpers";
-import type { Showtime } from "@/lib/mock-data";
+import type { Showtime } from "@/services/types";
+import { MOCK_ROOMS } from "@/services/mock-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Film, MapPin, Loader2 } from "lucide-react";
+import { ArrowLeft, Film, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function EditShowtimePage() {
@@ -31,17 +31,14 @@ export default function EditShowtimePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     movie_id: "",
-    cinema_id: "",
-    startTime: "",
-    endTime: "",
-    room: "",
-    ticketPrice: "",
-    status: "Available" as Showtime["status"],
+    room_id: "",
+    start_date: "",
+    start_time: "",
+    end_time: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const movies = getAllMovies();
-  const cinemas = getAllCinemas();
 
   useEffect(() => {
     const showtime_id = params.id as string;
@@ -59,12 +56,10 @@ export default function EditShowtimePage() {
 
     setFormData({
       movie_id: showtime.movie_id,
-      cinema_id: showtime.cinema_id,
-      startTime: showtime.startTime.replace("Z", "").slice(0, 16),
-      endTime: showtime.endTime.replace("Z", "").slice(0, 16),
-      room: showtime.room,
-      ticketPrice: showtime.ticketPrice.toString(),
-      status: showtime.status,
+      room_id: showtime.room_id,
+      start_date: showtime.start_date,
+      start_time: showtime.start_time,
+      end_time: showtime.end_time,
     });
     setIsLoading(false);
   }, [params.id, router, toast]);
@@ -73,20 +68,14 @@ export default function EditShowtimePage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.movie_id) newErrors.movie_id = "Movie is required";
-    if (!formData.cinema_id) newErrors.cinema_id = "Cinema is required";
-    if (!formData.startTime) newErrors.startTime = "Start time is required";
-    if (!formData.endTime) newErrors.endTime = "End time is required";
-    if (!formData.room.trim()) newErrors.room = "Room is required";
+    if (!formData.room_id) newErrors.room_id = "Room is required";
+    if (!formData.start_date) newErrors.start_date = "Start date is required";
+    if (!formData.start_time) newErrors.start_time = "Start time is required";
+    if (!formData.end_time) newErrors.end_time = "End time is required";
 
-    const price = Number(formData.ticketPrice);
-    if (!formData.ticketPrice || price <= 0)
-      newErrors.ticketPrice = "Price must be greater than 0";
-
-    if (formData.startTime && formData.endTime) {
-      const start = new Date(formData.startTime);
-      const end = new Date(formData.endTime);
-      if (start >= end) {
-        newErrors.endTime = "End time must be after start time";
+    if (formData.start_time && formData.end_time) {
+      if (formData.start_time >= formData.end_time) {
+        newErrors.end_time = "End time must be after start time";
       }
     }
 
@@ -112,12 +101,10 @@ export default function EditShowtimePage() {
       const showtime_id = params.id as string;
       const updates: Partial<Omit<Showtime, "showtime_id">> = {
         movie_id: formData.movie_id,
-        cinema_id: formData.cinema_id,
-        startTime: formData.startTime,
-        endTime: formData.endTime,
-        room: formData.room,
-        ticketPrice: Number(formData.ticketPrice),
-        status: formData.status,
+        room_id: formData.room_id,
+        start_date: formData.start_date,
+        start_time: formData.start_time,
+        end_time: formData.end_time,
       };
 
       updateShowtime(showtime_id, updates);
@@ -148,7 +135,7 @@ export default function EditShowtimePage() {
   }
 
   const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
-  const selectedCinema = cinemas.find((c) => c.cinema_id === formData.cinema_id);
+  const selectedRoom = MOCK_ROOMS.find((r) => r.room_id === formData.room_id);
 
   return (
     <div className="space-y-6">
@@ -171,7 +158,7 @@ export default function EditShowtimePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Film className="h-5 w-5" />
-              Movie & Cinema
+              Movie & Room
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -192,12 +179,7 @@ export default function EditShowtimePage() {
                 <SelectContent>
                   {movies.map((movie) => (
                     <SelectItem key={movie.movie_id} value={movie.movie_id}>
-                      <div className="flex items-center gap-2">
-                        <Film className="h-4 w-4" />
-                        <span>
-                          {movie.title} ({movie.releaseYear})
-                        </span>
-                      </div>
+                      {movie.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -205,52 +187,32 @@ export default function EditShowtimePage() {
               {errors.movie_id && (
                 <p className="text-sm text-destructive">{errors.movie_id}</p>
               )}
-              {selectedMovie && (
-                <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                  <p className="text-sm">
-                    <span className="font-medium">Selected:</span>{" "}
-                    {selectedMovie.title} • {selectedMovie.duration} min •{" "}
-                    {selectedMovie.genres.join(", ")}
-                  </p>
-                </div>
-              )}
             </div>
 
-            {/* Cinema Selection */}
+            {/* Room Selection */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                Cinema <span className="text-destructive">*</span>
+                Room <span className="text-destructive">*</span>
               </label>
               <Select
-                value={formData.cinema_id}
+                value={formData.room_id}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, cinema_id: value })
+                  setFormData({ ...formData, room_id: value })
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a cinema" />
+                  <SelectValue placeholder="Select a room" />
                 </SelectTrigger>
                 <SelectContent>
-                  {cinemas.map((cinema) => (
-                    <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        <span>{cinema.cinemaName}</span>
-                      </div>
+                  {MOCK_ROOMS.map((room) => (
+                    <SelectItem key={room.room_id} value={room.room_id}>
+                      {room.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors.cinema_id && (
-                <p className="text-sm text-destructive">{errors.cinema_id}</p>
-              )}
-              {selectedCinema && (
-                <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                  <p className="text-sm">
-                    <span className="font-medium">Selected:</span>{" "}
-                    {selectedCinema.cinemaName} • {selectedCinema.address}
-                  </p>
-                </div>
+              {errors.room_id && (
+                <p className="text-sm text-destructive">{errors.room_id}</p>
               )}
             </div>
           </CardContent>
@@ -261,101 +223,85 @@ export default function EditShowtimePage() {
             <CardTitle>Schedule Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Start Date */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Start Date <span className="text-destructive">*</span>
+              </label>
+              <Input
+                type="date"
+                value={formData.start_date}
+                onChange={(e) =>
+                  setFormData({ ...formData, start_date: e.target.value })
+                }
+              />
+              {errors.start_date && (
+                <p className="text-sm text-destructive">{errors.start_date}</p>
+              )}
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
+              {/* Start Time */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   Start Time <span className="text-destructive">*</span>
                 </label>
                 <Input
-                  type="datetime-local"
-                  value={formData.startTime}
+                  type="time"
+                  value={formData.start_time}
                   onChange={(e) =>
-                    setFormData({ ...formData, startTime: e.target.value })
+                    setFormData({ ...formData, start_time: e.target.value })
                   }
                 />
-                {errors.startTime && (
-                  <p className="text-sm text-destructive">{errors.startTime}</p>
+                {errors.start_time && (
+                  <p className="text-sm text-destructive">{errors.start_time}</p>
                 )}
               </div>
 
+              {/* End Time */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   End Time <span className="text-destructive">*</span>
                 </label>
                 <Input
-                  type="datetime-local"
-                  value={formData.endTime}
+                  type="time"
+                  value={formData.end_time}
                   onChange={(e) =>
-                    setFormData({ ...formData, endTime: e.target.value })
+                    setFormData({ ...formData, end_time: e.target.value })
                   }
                 />
-                {errors.endTime && (
-                  <p className="text-sm text-destructive">{errors.endTime}</p>
+                {errors.end_time && (
+                  <p className="text-sm text-destructive">{errors.end_time}</p>
                 )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Room <span className="text-destructive">*</span>
-              </label>
-              <Input
-                value={formData.room}
-                onChange={(e) =>
-                  setFormData({ ...formData, room: e.target.value })
-                }
-                placeholder="Room 1"
-              />
-              {errors.room && (
-                <p className="text-sm text-destructive">{errors.room}</p>
-              )}
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Ticket Price (VNĐ) <span className="text-destructive">*</span>
-                </label>
-                <Input
-                  type="number"
-                  value={formData.ticketPrice}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ticketPrice: e.target.value })
-                  }
-                  placeholder="80000"
-                  min="0"
-                  step="1000"
-                />
-                {errors.ticketPrice && (
-                  <p className="text-sm text-destructive">{errors.ticketPrice}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Status <span className="text-destructive">*</span>
-                </label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value: Showtime["status"]) =>
-                    setFormData({ ...formData, status: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Available">Available</SelectItem>
-                    <SelectItem value="Sold_Out">Sold Out</SelectItem>
-                    <SelectItem value="Coming_Soon">Coming Soon</SelectItem>
-                    <SelectItem value="Now_Showing">Now Showing</SelectItem>
-                    <SelectItem value="Ended">Ended</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Summary */}
+        {selectedMovie && selectedRoom && (
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="text-lg">Current Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <p>
+                <span className="font-medium">Movie:</span> {selectedMovie.title}
+              </p>
+              <p>
+                <span className="font-medium">Room:</span> {selectedRoom.name}
+              </p>
+              {formData.start_date && formData.start_time && (
+                <p>
+                  <span className="font-medium">Start:</span>{" "}
+                  {new Date(
+                    `${formData.start_date}T${formData.start_time}`
+                  ).toLocaleString("vi-VN")}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" asChild>

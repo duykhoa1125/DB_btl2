@@ -9,13 +9,13 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { 
   mockBookings, 
-  mockShowtimes, 
-  mockMovies, 
   mockSeats, 
   mockFoods,
   mockAccountMemberships,
   getMembershipProgress,
 } from "@/lib/mock-data";
+import { MOCK_SHOWTIMES, getMovieWithDetails } from "@/services/mock-data";
+import { getTicketPrice } from "@/lib/pricing";
 import { ChevronDown, Edit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -312,11 +312,11 @@ export function ProfileContent() {
                       </div>
                     ) : (
                       userBookings.map((booking) => {
-                        const showtime = mockShowtimes.find(
+                        const showtime = MOCK_SHOWTIMES.find(
                           (s) => s.showtime_id === booking.showtime_id
                         );
                         const movie = showtime
-                          ? mockMovies.find((m) => m.movie_id === showtime.movie_id)
+                          ? getMovieWithDetails(showtime.movie_id)
                           : null;
                         const isExpanded = expandedBooking === booking.booking_id;
 
@@ -331,7 +331,7 @@ export function ProfileContent() {
                               className="flex w-full items-center justify-between text-left transition-colors hover:text-primary"
                             >
                               <div className="flex-1">
-                                <h3 className="font-bold">{movie?.title}</h3>
+                                <h3 className="font-bold">{movie?.name}</h3>
                                 <p className="text-sm text-muted-foreground">
                                   {new Date(
                                     booking.bookingDate
@@ -377,7 +377,7 @@ export function ProfileContent() {
                                             {seat?.seatType}
                                           </span>
                                           <span>
-                                            ₫{((showtime?.ticketPrice || 0)).toLocaleString("vi-VN")}
+                                            ₫{getTicketPrice(seat?.seatType as any).toLocaleString("vi-VN")}
                                           </span>
                                         </div>
                                       );

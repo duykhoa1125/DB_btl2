@@ -8,10 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   mockBookings,
-  mockShowtimes,
-  mockMovies,
-  mockCinemas,
 } from "@/lib/mock-data";
+import { MOCK_SHOWTIMES, MOCK_CINEMAS, MOCK_ROOMS, getMovieWithDetails } from "@/services/mock-data";
 import { QrCode, MapPin, Calendar, Clock, Armchair } from "lucide-react";
 
 export function OrderHistoryList() {
@@ -56,13 +54,14 @@ export function OrderHistoryList() {
   };
 
   const getShowtimeInfo = (showtime_id: string) => {
-    const showtime = mockShowtimes.find((s) => s.showtime_id === showtime_id);
+    const showtime = MOCK_SHOWTIMES.find((s) => s.showtime_id === showtime_id);
     if (!showtime) return null;
 
-    const movie = mockMovies.find((p) => p.movie_id === showtime.movie_id);
-    const cinema = mockCinemas.find((r) => r.cinema_id === showtime.cinema_id);
+    const movie = getMovieWithDetails(showtime.movie_id);
+    const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+    const cinema = room ? MOCK_CINEMAS.find((c) => c.cinema_id === room.cinema_id) : null;
 
-    return { showtime, movie, cinema };
+    return { showtime, movie, cinema, room };
   };
 
   return (
@@ -114,7 +113,7 @@ export function OrderHistoryList() {
               const info = getShowtimeInfo(order.showtime_id);
               if (!info) return null;
 
-              const { movie, showtime, cinema } = info;
+              const { movie, showtime, cinema, room } = info;
               const orderDate = new Date(order.bookingDate);
 
               return (
@@ -128,7 +127,7 @@ export function OrderHistoryList() {
                     <div className="shrink-0 w-24 h-36 rounded-xl overflow-hidden shadow-md hidden sm:block">
                       <img
                         src={movie?.image || "/placeholder.svg"}
-                        alt={movie?.title}
+                        alt={movie?.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -138,11 +137,11 @@ export function OrderHistoryList() {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">
-                            {movie?.title}
+                            {movie?.name}
                           </h3>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" /> {cinema?.cinemaName}
+                              <MapPin className="w-3 h-3" /> {cinema?.name}
                             </span>
                           </div>
                         </div>
@@ -157,7 +156,7 @@ export function OrderHistoryList() {
                             <Calendar className="w-3 h-3" /> Ngày chiếu
                           </span>
                           <p className="font-medium">
-                            {new Date(showtime?.startTime || "").toLocaleDateString("vi-VN")}
+                            {showtime?.start_date ? new Date(showtime.start_date).toLocaleDateString("vi-VN") : ''}
                           </p>
                         </div>
                         <div className="space-y-1">
@@ -165,7 +164,10 @@ export function OrderHistoryList() {
                             <Clock className="w-3 h-3" /> Giờ chiếu
                           </span>
                           <p className="font-medium">
-                            {new Date(showtime?.startTime || "").toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })}
+                            {showtime?.start_time ? (() => {
+                              const [hours, minutes] = showtime.start_time.split(':');
+                              return `${hours}:${minutes}`;
+                            })() : ''}
                           </p>
                         </div>
                       </div>
@@ -179,7 +181,7 @@ export function OrderHistoryList() {
                         </div>
                         <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border/50">
                           <span className="text-xs text-muted-foreground block mb-0.5">Phòng</span>
-                          <span className="font-bold">{showtime?.room}</span>
+                          <span className="font-bold">{room?.name || showtime?.room_id}</span>
                         </div>
                         <div className="bg-muted/50 rounded-lg px-3 py-2 border border-border/50 ml-auto">
                           <span className="text-xs text-muted-foreground block mb-0.5">Tổng tiền</span>

@@ -2,12 +2,12 @@
 import {
     mockMovies,
     mockCinemas,
-    mockShowtimes,
     mockBookings,
     type Movie,
     type Cinema,
-    type Showtime,
 } from "./mock-data";
+import { MOCK_SHOWTIMES } from "@/services/mock-data";
+import type { Showtime } from "@/services/types";
 
 // ============ MOVIES CRUD ============
 
@@ -88,11 +88,11 @@ export function deleteCinema(id: string): boolean {
 // ============ SHOWTIMES CRUD ============
 
 export function getAllShowtimes(): Showtime[] {
-    return [...mockShowtimes];
+    return [...MOCK_SHOWTIMES];
 }
 
 export function getShowtimeById(id: string): Showtime | undefined {
-    return mockShowtimes.find((s) => s.showtime_id === id);
+    return MOCK_SHOWTIMES.find((s) => s.showtime_id === id);
 }
 
 export function createShowtime(
@@ -102,7 +102,7 @@ export function createShowtime(
         ...showtimeData,
         showtime_id: `st_${Date.now()}`,
     };
-    mockShowtimes.push(newShowtime);
+    MOCK_SHOWTIMES.push(newShowtime);
     return newShowtime;
 }
 
@@ -110,18 +110,18 @@ export function updateShowtime(
     id: string,
     updates: Partial<Omit<Showtime, "showtime_id">>
 ): Showtime | null {
-    const index = mockShowtimes.findIndex((s) => s.showtime_id === id);
+    const index = MOCK_SHOWTIMES.findIndex((s) => s.showtime_id === id);
     if (index === -1) return null;
 
-    mockShowtimes[index] = { ...mockShowtimes[index], ...updates };
-    return mockShowtimes[index];
+    MOCK_SHOWTIMES[index] = { ...MOCK_SHOWTIMES[index], ...updates };
+    return MOCK_SHOWTIMES[index];
 }
 
 export function deleteShowtime(id: string): boolean {
-    const index = mockShowtimes.findIndex((s) => s.showtime_id === id);
+    const index = MOCK_SHOWTIMES.findIndex((s) => s.showtime_id === id);
     if (index === -1) return false;
 
-    mockShowtimes.splice(index, 1);
+    MOCK_SHOWTIMES.splice(index, 1);
     return true;
 }
 
@@ -161,7 +161,7 @@ export function getTopMoviesByRevenue(limit: number = 5) {
     mockBookings
         .filter((b) => b.status === "Confirmed")
         .forEach((booking) => {
-            const showtime = mockShowtimes.find(
+            const showtime = MOCK_SHOWTIMES.find(
                 (s) => s.showtime_id === booking.showtime_id
             );
             if (showtime) {

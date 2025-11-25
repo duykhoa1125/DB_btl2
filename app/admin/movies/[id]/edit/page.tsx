@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { getMovieById, updateMovie } from "@/lib/admin-helpers";
-import type { Movie } from "@/lib/mock-data";
+import { updateMovie } from "@/lib/admin-helpers";
+import { getMovieWithDetails } from "@/services/mock-data";
+import type { Movie } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,19 +20,6 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-const GENRE_OPTIONS = [
-  "Hành động",
-  "Drama",  
-  "Viễn tưởng",
-  "Phiêu lưu",
-  "Tội phạm",
-  "Tâm lý",
-  "Lãng mạn",
-  "Lịch sử",
-  "Kinh dị",
-  "Hài",
-];
-
 export default function EditMoviePage() {
   const router = useRouter();
   const params = useParams();
@@ -39,24 +27,22 @@ export default function EditMoviePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    name: "",
+    synopsis: "",
     image: "",
-    status: "Now Showing" as "Now Showing" | "Coming Soon",
-    producer: "",
-    director: "",
-    actors: "",
-    genres: [] as string[],
+    status: "showing" as "showing" | "upcoming" | "ended",
     duration: "",
-    releaseYear: "",
-    rating: "",
-    trailerUrl: "",
+    release_date: "",
+    end_date: "",
+    age_rating: "",
+    language: "en" as "en" | "vi" | "ko" | "ja",
+    trailer: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const movie_id = params.id as string;
-    const movie = getMovieById(movie_id);
+    const movie = getMovieWithDetails(movie_id);
 
     if (!movie) {
       toast({
@@ -69,55 +55,43 @@ export default function EditMoviePage() {
     }
 
     setFormData({
-      title: movie.title,
-      description: movie.description,
+      name: movie.name,
+      synopsis: movie.synopsis || "",
       image: movie.image,
       status: movie.status,
-      producer: movie.producer,
-      director: movie.director,
-      actors: movie.actors.join(", "),
-      genres: movie.genres,
       duration: movie.duration.toString(),
-      releaseYear: movie.releaseYear.toString(),
-      rating: movie.rating.toString(),
-      trailerUrl: movie.trailerUrl || "",
+      release_date: movie.release_date,
+      end_date: movie.end_date,
+      age_rating: movie.age_rating.toString(),
+      language: movie.language as "en" | "vi" | "ko" | "ja",
+      trailer: movie.trailer || "",
     });
     setIsLoading(false);
   }, [params.id, router, toast]);
 
-  const handleGenreToggle = (genre: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      genres: prev.genres.includes(genre)
-        ? prev.genres.filter((g) => g !== genre)
-        : [...prev.genres, genre],
-    }));
-  };
-
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.title.trim()) newErrors.title = "Title is required";
-    if (!formData.description.trim())
-      newErrors.description = "Description is required";
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.synopsis.trim()) newErrors.synopsis = "Synopsis is required";
     if (!formData.image.trim()) newErrors.image = "Image URL is required";
-    if (!formData.producer.trim()) newErrors.producer = "Producer is required";
-    if (!formData.director.trim()) newErrors.director = "Director is required";
-    if (!formData.actors.trim()) newErrors.actors = "Actors are required";
-    if (formData.genres.length === 0)
-      newErrors.genres = "At least one genre is required";
 
     const duration = Number(formData.duration);
     if (!formData.duration || duration <= 0)
       newErrors.duration = "Duration must be greater than 0";
 
-    const year = Number(formData.releaseYear);
-    if (!formData.releaseYear || year < 1900 || year > 2030)
-      newErrors.releaseYear = "Release year must be between 1900 and 2030";
+    if (!formData.release_date) newErrors.release_date = "Release date is required";
+    if (!formData.end_date) newErrors.end_date = "End date is required";
 
-    const rating = Number(formData.rating);
-    if (!formData.rating || rating < 0 || rating > 10)
-      newErrors.rating = "Rating must be between 0 and 10";
+    if (formData.release_date && formData.end_date) {
+      if (formData.end_date <= formData.release_date) {
+        newErrors.end_date = "End date must be after release date";
+      }
+    }
+
+    const ageRating = Number(formData.age_rating);
+    if (formData.age_rating && (ageRating < 0 || ageRating > 18))
+      newErrors.age_rating = "Age rating must be between 0 and 18";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -140,18 +114,16 @@ export default function EditMoviePage() {
     try {
       const movie_id = params.id as string;
       const updates: Partial<Omit<Movie, "movie_id">> = {
-        title: formData.title,
-        description: formData.description,
+        name: formData.name,
+        synopsis: formData.synopsis,
         image: formData.image,
         status: formData.status,
-        producer: formData.producer,
-        director: formData.director,
-        actors: formData.actors.split(",").map((a) => a.trim()),
-        genres: formData.genres,
         duration: Number(formData.duration),
-        releaseYear: Number(formData.releaseYear),
-        rating: Number(formData.rating),
-        trailerUrl: formData.trailerUrl,
+        release_date: formData.release_date,
+        end_date: formData.end_date,
+        age_rating: Number(formData.age_rating) || 0,
+        language: formData.language,
+        trailer: formData.trailer || null,
       };
 
       updateMovie(movie_id, updates);
@@ -196,44 +168,47 @@ export default function EditMoviePage() {
         </div>
       </div>
 
-      {/* Form - Same as create form */}
+      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Name */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                Title <span className="text-destructive">*</span>
+                Movie Name <span className="text-destructive">*</span>
               </label>
               <Input
-                value={formData.title}
+                value={formData.name}
                 onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
               />
-              {errors.title && (
-                <p className="text-sm text-destructive">{errors.title}</p>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
               )}
             </div>
 
+            {/* Synopsis */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                Description <span className="text-destructive">*</span>
+                Synopsis <span className="text-destructive">*</span>
               </label>
               <Textarea
-                value={formData.description}
+                value={formData.synopsis}
                 onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
+                  setFormData({ ...formData, synopsis: e.target.value })
                 }
                 rows={4}
               />
-              {errors.description && (
-                <p className="text-sm text-destructive">{errors.description}</p>
+              {errors.synopsis && (
+                <p className="text-sm text-destructive">{errors.synopsis}</p>
               )}
             </div>
 
+            {/* Image URL */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 Poster Image URL <span className="text-destructive">*</span>
@@ -249,100 +224,51 @@ export default function EditMoviePage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Status <span className="text-destructive">*</span>
-              </label>
-              <Select
-                value={formData.status}
-                onValueChange={(value: "Now Showing" | "Coming Soon") =>
-                  setFormData({ ...formData, status: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Now Showing">Now Showing</SelectItem>
-                  <SelectItem value="Coming Soon">Coming Soon</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Production Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Producer <span className="text-destructive">*</span>
-              </label>
-              <Input
-                value={formData.producer}
-                onChange={(e) =>
-                  setFormData({ ...formData, producer: e.target.value })
-                }
-              />
-              {errors.producer && (
-                <p className="text-sm text-destructive">{errors.producer}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Director <span className="text-destructive">*</span>
-              </label>
-              <Input
-                value={formData.director}
-                onChange={(e) =>
-                  setFormData({ ...formData, director: e.target.value })
-                }
-              />
-              {errors.director && (
-                <p className="text-sm text-destructive">{errors.director}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Actors (comma-separated) <span className="text-destructive">*</span>
-              </label>
-              <Input
-                value={formData.actors}
-                onChange={(e) =>
-                  setFormData({ ...formData, actors: e.target.value })
-                }
-              />
-              {errors.actors && (
-                <p className="text-sm text-destructive">{errors.actors}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Genres <span className="text-destructive">*</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {GENRE_OPTIONS.map((genre) => (
-                  <Button
-                    key={genre}
-                    type="button"
-                    variant={
-                      formData.genres.includes(genre) ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => handleGenreToggle(genre)}
-                  >
-                    {genre}
-                  </Button>
-                ))}
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* Status */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Status <span className="text-destructive">*</span>
+                </label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value: "showing" | "upcoming" | "ended") =>
+                    setFormData({ ...formData, status: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="showing">Showing</SelectItem>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="ended">Ended</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {errors.genres && (
-                <p className="text-sm text-destructive">{errors.genres}</p>
-              )}
+
+              {/* Language */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Language <span className="text-destructive">*</span>
+                </label>
+                <Select
+                  value={formData.language}
+                  onValueChange={(value: "en" | "vi" | "ko" | "ja") =>
+                    setFormData({ ...formData, language: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="vi">Vietnamese</SelectItem>
+                    <SelectItem value="ko">Korean</SelectItem>
+                    <SelectItem value="ja">Japanese</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -353,6 +279,7 @@ export default function EditMoviePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
+              {/* Duration */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   Duration (minutes) <span className="text-destructive">*</span>
@@ -370,56 +297,79 @@ export default function EditMoviePage() {
                 )}
               </div>
 
+              {/* Release Date */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  Release Year <span className="text-destructive">*</span>
+                  Release Date <span className="text-destructive">*</span>
                 </label>
                 <Input
-                  type="number"
-                  value={formData.releaseYear}
+                  type="date"
+                  value={formData.release_date}
                   onChange={(e) =>
-                    setFormData({ ...formData, releaseYear: e.target.value })
+                    setFormData({ ...formData, release_date: e.target.value })
                   }
-                  min="1900"
-                  max="2030"
                 />
-                {errors.releaseYear && (
-                  <p className="text-sm text-destructive">{errors.releaseYear}</p>
+                {errors.release_date && (
+                  <p className="text-sm text-destructive">{errors.release_date}</p>
                 )}
               </div>
 
+              {/* End Date */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  Rating (0-10) <span className="text-destructive">*</span>
+                  End Date <span className="text-destructive">*</span>
                 </label>
                 <Input
-                  type="number"
-                  step="0.1"
-                  value={formData.rating}
+                  type="date"
+                  value={formData.end_date}
                   onChange={(e) =>
-                    setFormData({ ...formData, rating: e.target.value })
+                    setFormData({ ...formData, end_date: e.target.value })
                   }
-                  min="0"
-                  max="10"
                 />
-                {errors.rating && (
-                  <p className="text-sm text-destructive">{errors.rating}</p>
+                {errors.end_date && (
+                  <p className="text-sm text-destructive">{errors.end_date}</p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Trailer URL (YouTube Embed)</label>
-              <Input
-                value={formData.trailerUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, trailerUrl: e.target.value })
-                }
-              />
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* Age Rating */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Age Rating (0, 13, 16, 18)
+                </label>
+                <Input
+                  type="number"
+                  value={formData.age_rating}
+                  onChange={(e) =>
+                    setFormData({ ...formData, age_rating: e.target.value })
+                  }
+                  min="0"
+                  max="18"
+                />
+                {errors.age_rating && (
+                  <p className="text-sm text-destructive">{errors.age_rating}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  0 = All ages, 13+ = Teen, 16+ = Mature, 18+ = Adult
+                </p>
+              </div>
+
+              {/* Trailer URL */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Trailer URL (YouTube)</label>
+                <Input
+                  value={formData.trailer}
+                  onChange={(e) =>
+                    setFormData({ ...formData, trailer: e.target.value })
+                  }
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
 
+        {/* Actions */}
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/movies">Cancel</Link>

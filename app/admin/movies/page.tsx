@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { getAllMovies, deleteMovie } from "@/lib/admin-helpers";
-import type { Movie } from "@/lib/mock-data";
+import { deleteMovie } from "@/lib/admin-helpers";
+import { getAllMoviesWithDetails } from "@/services/mock-data";
+import type { MovieDetail } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,41 +29,38 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
 
 export default function MoviesPage() {
-  const [movies, setMovies] = useState<Movie[]>(getAllMovies());
+  const [movies, setMovies] = useState<MovieDetail[]>(getAllMoviesWithDetails());
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("title");
+  const [sortBy, setSortBy] = useState<string>("name");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [movieToDelete, setMovieToDelete] = useState<Movie | null>(null);
+  const [movieToDelete, setMovieToDelete] = useState<MovieDetail | null>(null);
   const { toast } = useToast();
 
   // Filter and sort movies
   const filteredMovies = movies
     .filter((movie) => {
       const matchesSearch =
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.director.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movie.genres.some((g) =>
-          g.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        movie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (movie.directors && movie.directors.some((d) => d.toLowerCase().includes(searchTerm.toLowerCase())));
       const matchesStatus =
         statusFilter === "all" || movie.status === statusFilter;
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case "title":
-          return a.title.localeCompare(b.title);
+        case "name":
+          return a.name.localeCompare(b.name);
         case "year":
-          return b.releaseYear - a.releaseYear;
+          return new Date(b.release_date).getTime() - new Date(a.release_date).getTime();
         case "rating":
-          return b.rating - a.rating;
+          return (b.avg_rating || 0) - (a.avg_rating || 0);
         default:
           return 0;
       }
     });
 
-  const handleDeleteClick = (movie: Movie) => {
+  const handleDeleteClick = (movie: MovieDetail) => {
     setMovieToDelete(movie);
     setDeleteDialogOpen(true);
   };
@@ -71,10 +69,10 @@ export default function MoviesPage() {
     if (movieToDelete) {
       const success = deleteMovie(movieToDelete.movie_id);
       if (success) {
-        setMovies(getAllMovies());
+        setMovies(getAllMoviesWithDetails());
         toast({
           title: "Movie deleted",
-          description: `"${movieToDelete.title}" has been deleted successfully.`,
+          description: `"${movieToDelete.name}" has been deleted successfully.`,
         });
       } else {
         toast({
@@ -123,8 +121,9 @@ export default function MoviesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="Now Showing">Now Showing</SelectItem>
-            <SelectItem value="Coming Soon">Coming Soon</SelectItem>
+            <SelectItem value="showing">Showing</SelectItem>
+            <SelectItem value="upcoming">Upcoming</SelectItem>
+            <SelectItem value="ended">Ended</SelectItem>
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={setSortBy}>
@@ -132,8 +131,8 @@ export default function MoviesPage() {
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="title">Title (A-Z)</SelectItem>
-            <SelectItem value="year">Release Year</SelectItem>
+            <SelectItem value="name">Name (A-Z)</SelectItem>
+            <SelectItem value="year">Release Date</SelectItem>
             <SelectItem value="rating">Rating</SelectItem>
           </SelectContent>
         </Select>
@@ -147,8 +146,8 @@ export default function MoviesPage() {
               <tr className="border-b border-border/50">
                 <th className="p-4 text-left text-sm font-medium">Poster</th>
                 <th className="p-4 text-left text-sm font-medium">Title</th>
-                <th className="p-4 text-left text-sm font-medium">Director</th>
-                <th className="p-4 text-left text-sm font-medium">Genres</th>
+                <th className="p-4 text-left text-sm font-medium">Directors</th>
+                <th className="p-4 text-left text-sm font-medium">Lang/Rating</th>
                 <th className="p-4 text-left text-sm font-medium">Duration</th>
                 <th className="p-4 text-left text-sm font-medium">Rating</th>
                 <th className="p-4 text-left text-sm font-medium">Status</th>
@@ -171,27 +170,27 @@ export default function MoviesPage() {
                     <td className="p-4">
                       <img
                         src={movie.image}
-                        alt={movie.title}
+                        alt={movie.name}
                         className="h-20 w-14 rounded object-cover"
                       />
                     </td>
                     <td className="p-4">
-                      <p className="font-medium">{movie.title}</p>
+                      <p className="font-medium">{movie.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {movie.releaseYear}
+                        {new Date(movie.release_date).getFullYear()}
                       </p>
                     </td>
-                    <td className="p-4 text-sm">{movie.director}</td>
+                    <td className="p-4 text-sm">
+                      {movie.directors && movie.directors.length > 0 ? movie.directors.join(", ") : "N/A"}
+                    </td>
                     <td className="p-4">
                       <div className="flex flex-wrap gap-1">
-                        {movie.genres.slice(0, 2).map((genre) => (
-                          <Badge key={genre} variant="secondary" className="text-xs">
-                            {genre}
-                          </Badge>
-                        ))}
-                        {movie.genres.length > 2 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{movie.genres.length - 2}
+                        <Badge variant="secondary" className="text-xs">
+                          {movie.language.toUpperCase()}
+                        </Badge>
+                        {movie.age_rating > 0 && (
+                          <Badge variant="outline" className="text-xs">
+                            {movie.age_rating}+
                           </Badge>
                         )}
                       </div>
@@ -199,17 +198,17 @@ export default function MoviesPage() {
                     <td className="p-4 text-sm">{movie.duration} min</td>
                     <td className="p-4">
                       <div className="flex items-center gap-1">
-                        <span className="font-medium">{movie.rating}</span>
-                        <span className="text-xs text-muted-foreground">/10</span>
+                        <span className="font-medium">{movie.avg_rating ? movie.avg_rating.toFixed(1) : "N/A"}</span>
+                        {movie.avg_rating && <span className="text-xs text-muted-foreground">/5</span>}
                       </div>
                     </td>
                     <td className="p-4">
                       <Badge
                         variant={
-                          movie.status === "Now Showing" ? "default" : "secondary"
+                          movie.status === "showing" ? "default" : "secondary"
                         }
                       >
-                        {movie.status}
+                        {movie.status === "showing" ? "Showing" : movie.status === "upcoming" ? "Upcoming" : "Ended"}
                       </Badge>
                     </td>
                     <td className="p-4">
@@ -263,7 +262,7 @@ export default function MoviesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete &quot;{movieToDelete?.title}&quot;. This
+              This will permanently delete &quot;{movieToDelete?.name}&quot;. This
               action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>

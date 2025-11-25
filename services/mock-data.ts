@@ -71,6 +71,7 @@ MOCK_CINEMAS.forEach(cinema => {
 
 // --- 3. MOVIES ---
 
+
 export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV001',

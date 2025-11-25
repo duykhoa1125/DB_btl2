@@ -4,11 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   getAllShowtimes,
-  getAllMovies,
-  getAllCinemas,
   deleteShowtime,
 } from "@/lib/admin-helpers";
-import type { Showtime } from "@/lib/mock-data";
+import { getAllMoviesWithDetails, MOCK_CINEMAS } from "@/services/mock-data";
+import type { Showtime } from "@/services/types";
+import { MOCK_ROOMS } from "@/services/mock-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,25 +42,27 @@ export default function ShowtimesPage() {
   const [showtimeToDelete, setShowtimeToDelete] = useState<Showtime | null>(null);
   const { toast } = useToast();
 
-  const movies = getAllMovies();
-  const cinemas = getAllCinemas();
+  // Use services data for movies and cinemas to match showtime movie_ids/cinema_ids
+  const movies = getAllMoviesWithDetails();
+  const cinemas = MOCK_CINEMAS;
 
   // Filter showtimes
   const filteredShowtimes = showtimes.filter((showtime) => {
     const movie = movies.find((m) => m.movie_id === showtime.movie_id);
-    const cinema = cinemas.find((c) => c.cinema_id === showtime.cinema_id);
+    const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+    const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
 
     const matchesSearch =
-      movie?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cinema?.cinemaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      showtime.room.toLowerCase().includes(searchTerm.toLowerCase());
+      movie?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cinema?.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      room?.name.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesMovie =
       movieFilter === "all" || showtime.movie_id === movieFilter;
     const matchesCinema =
-      cinemaFilter === "all" || showtime.cinema_id === cinemaFilter;
-    const matchesStatus =
-      statusFilter === "all" || showtime.status === statusFilter;
+      cinemaFilter === "all" || room?.cinema_id === cinemaFilter;
+    // Note: status field removed from services schema
+    const matchesStatus = statusFilter === "all"; // Always true for new schema
 
     return matchesSearch && matchesMovie && matchesCinema && matchesStatus;
   });
@@ -92,13 +94,17 @@ export default function ShowtimesPage() {
   };
 
   const getMovieName = (movie_id: string) => {
-    return movies.find((m) => m.movie_id === movie_id)?.title || "Unknown";
+    return movies.find((m) => m.movie_id === movie_id)?.name || "Unknown";
   };
 
-  const getCinemaName = (cinema_id: string) => {
-    return (
-      cinemas.find((c) => c.cinema_id === cinema_id)?.cinemaName || "Unknown"
-    );
+  const getCinemaName = (room_id: string) => {
+    const room = MOCK_ROOMS.find(r => r.room_id === room_id);
+    const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
+    return cinema?.name || "Unknown";
+  };
+
+  const getRoomName = (room_id: string) => {
+    return MOCK_ROOMS.find(r => r.room_id === room_id)?.name || room_id;
   };
 
   return (
@@ -138,7 +144,7 @@ export default function ShowtimesPage() {
             <SelectItem value="all">All Movies</SelectItem>
             {movies.slice(0, 10).map((movie) => (
               <SelectItem key={movie.movie_id} value={movie.movie_id}>
-                {movie.title}
+                {movie.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -151,7 +157,7 @@ export default function ShowtimesPage() {
             <SelectItem value="all">All Cinemas</SelectItem>
             {cinemas.map((cinema) => (
               <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
-                {cinema.cinemaName}
+                {cinema.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -204,41 +210,33 @@ export default function ShowtimesPage() {
                       <p className="font-medium">{getMovieName(showtime.movie_id)}</p>
                     </td>
                     <td className="p-4 text-sm">
-                      {getCinemaName(showtime.cinema_id)}
+                      {getCinemaName(showtime.room_id)}
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                         <div className="text-sm">
                           <p className="font-medium">
-                            {new Date(showtime.startTime).toLocaleDateString("vi-VN")}
+                            {new Date(showtime.start_date).toLocaleDateString("vi-VN")}
                           </p>
                           <p className="text-muted-foreground">
-                            {new Date(showtime.startTime).toLocaleTimeString("vi-VN", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {(() => {
+                              const [hours, minutes] = showtime.start_time.split(':');
+                              return `${hours}:${minutes}`;
+                            })()}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="p-4 text-sm">{showtime.room}</td>
+                    <td className="p-4 text-sm">{getRoomName(showtime.room_id)}</td>
                     <td className="p-4">
-                      <p className="font-medium">
-                        {showtime.ticketPrice.toLocaleString("vi-VN")} VNĐ
+                      <p className="font-medium text-muted-foreground text-sm">
+                        Seat-based
                       </p>
                     </td>
                     <td className="p-4">
-                      <Badge
-                        variant={
-                          showtime.status === "Available"
-                            ? "default"
-                            : showtime.status === "Sold_Out"
-                              ? "secondary"
-                              : "outline"
-                        }
-                      >
-                        {showtime.status.replace("_", " ")}
+                      <Badge variant="default">
+                        Active
                       </Badge>
                     </td>
                     <td className="p-4">
