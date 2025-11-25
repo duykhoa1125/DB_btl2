@@ -5,7 +5,6 @@ import Link from "next/link";
 import { getAllCinemas, deleteCinema } from "@/lib/admin-helpers";
 import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +16,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, Edit, Trash2, Film } from "lucide-react";
+import { Edit, Trash2, Film, MapPin } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminSearch } from "@/components/admin/search";
 
 export default function CinemasPage() {
   const [cinemas, setCinemas] = useState<Cinema[]>(getAllCinemas());
@@ -45,13 +46,13 @@ export default function CinemasPage() {
       if (success) {
         setCinemas(getAllCinemas());
         toast({
-          title: "Cinema deleted",
-          description: `"${cinemaToDelete.name}" has been deleted successfully.`,
+          title: "Đã xóa rạp",
+          description: `"${cinemaToDelete.name}" đã được xóa thành công.`,
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to delete cinema.",
+          title: "Lỗi",
+          description: "Không thể xóa rạp.",
           variant: "destructive",
         });
       }
@@ -62,31 +63,20 @@ export default function CinemasPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="mb-2 text-4xl font-bold">Cinemas Management</h1>
-          <p className="text-muted-foreground">
-            Manage all cinema locations in the system
-          </p>
-        </div>
-        <Button asChild className="gap-2">
-          <Link href="/admin/cinemas/new">
-            <Plus className="h-4 w-4" />
-            Add Cinema
-          </Link>
-        </Button>
-      </div>
+      <AdminPageHeader
+        title="Quản lý Rạp chiếu"
+        description="Quản lý danh sách các chi nhánh rạp chiếu phim"
+        actionLabel="Thêm rạp mới"
+        actionLink="/admin/cinemas/new"
+      />
 
       {/* Filters */}
-      <div className="flex flex-col gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:flex-row">
+      <div className="flex flex-col gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:flex-row backdrop-blur-sm">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by name or address..."
+          <AdminSearch
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            onChange={setSearchTerm}
+            placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
           />
         </div>
       </div>
@@ -94,44 +84,45 @@ export default function CinemasPage() {
       {/* Cinemas Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredCinemas.length === 0 ? (
-          <div className="col-span-full rounded-lg border border-border/50 bg-card p-12 text-center text-muted-foreground">
-            No cinemas found
+          <div className="col-span-full rounded-lg border border-border/50 bg-card/50 p-12 text-center text-muted-foreground">
+            Không tìm thấy rạp nào
           </div>
         ) : (
           filteredCinemas.map((cinema) => (
             <div
               key={cinema.cinema_id}
-              className="group overflow-hidden rounded-lg border border-border/50 bg-card transition-all hover:shadow-lg"
+              className="group overflow-hidden rounded-xl border border-border/50 bg-card transition-all hover:shadow-lg hover:border-primary/50"
             >
               {/* Decorative Header */}
-              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10">
+              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 group-hover:from-primary/20 transition-colors duration-500">
                  <div className="absolute inset-0 flex items-center justify-center">
-                  <Film className="w-12 h-12 text-primary/20" />
+                  <Film className="w-12 h-12 text-primary/20 group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="font-bold text-foreground">{cinema.name}</h3>
+                  <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors">{cinema.name}</h3>
                 </div>
               </div>
 
               {/* Content */}
               <div className="space-y-4 p-4">
-                <div className="text-sm">
-                  <p className="text-muted-foreground">{cinema.address}</p>
+                <div className="text-sm flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                  <p className="text-muted-foreground line-clamp-2">{cinema.address}</p>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" asChild className="flex-1">
+                <div className="flex gap-2 pt-2">
+                  <Button variant="outline" size="sm" asChild className="flex-1 hover:bg-primary/10 hover:text-primary border-border/50">
                     <Link href={`/admin/cinemas/${cinema.cinema_id}/edit`}>
                       <Edit className="mr-2 h-4 w-4" />
-                      Edit
+                      Chỉnh sửa
                     </Link>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleDeleteClick(cinema)}
-                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border/50"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -144,26 +135,26 @@ export default function CinemasPage() {
 
       {/* Results count */}
       <div className="text-center text-sm text-muted-foreground">
-        Showing {filteredCinemas.length} of {cinemas.length} cinemas
+        Hiển thị {filteredCinemas.length} / {cinemas.length} rạp
       </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete &quot;{cinemaToDelete?.name}&quot;.
-              This action cannot be undone.
+              Hành động này sẽ xóa vĩnh viễn rạp &quot;{cinemaToDelete?.name}&quot;.
+              Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

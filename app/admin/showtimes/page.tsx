@@ -10,7 +10,6 @@ import { getAllMoviesWithDetails, MOCK_CINEMAS } from "@/services/mock-data";
 import type { Showtime } from "@/services/types";
 import { MOCK_ROOMS } from "@/services/mock-data";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -30,14 +29,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, Edit, Trash2, Calendar } from "lucide-react";
+import { Edit, Trash2, Calendar } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminSearch } from "@/components/admin/search";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function ShowtimesPage() {
   const [showtimes, setShowtimes] = useState<Showtime[]>(getAllShowtimes());
   const [searchTerm, setSearchTerm] = useState("");
   const [movieFilter, setMovieFilter] = useState<string>("all");
   const [cinemaFilter, setCinemaFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [showtimeToDelete, setShowtimeToDelete] = useState<Showtime | null>(null);
   const { toast } = useToast();
@@ -61,10 +69,8 @@ export default function ShowtimesPage() {
       movieFilter === "all" || showtime.movie_id === movieFilter;
     const matchesCinema =
       cinemaFilter === "all" || room?.cinema_id === cinemaFilter;
-    // Note: status field removed from services schema
-    const matchesStatus = statusFilter === "all"; // Always true for new schema
 
-    return matchesSearch && matchesMovie && matchesCinema && matchesStatus;
+    return matchesSearch && matchesMovie && matchesCinema;
   });
 
   const handleDeleteClick = (showtime: Showtime) => {
@@ -78,13 +84,13 @@ export default function ShowtimesPage() {
       if (success) {
         setShowtimes(getAllShowtimes());
         toast({
-          title: "Showtime deleted",
-          description: "Showtime has been deleted successfully.",
+          title: "Đã xóa suất chiếu",
+          description: "Suất chiếu đã được xóa thành công.",
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to delete showtime.",
+          title: "Lỗi",
+          description: "Không thể xóa suất chiếu.",
           variant: "destructive",
         });
       }
@@ -94,13 +100,13 @@ export default function ShowtimesPage() {
   };
 
   const getMovieName = (movie_id: string) => {
-    return movies.find((m) => m.movie_id === movie_id)?.name || "Unknown";
+    return movies.find((m) => m.movie_id === movie_id)?.name || "Không xác định";
   };
 
   const getCinemaName = (room_id: string) => {
     const room = MOCK_ROOMS.find(r => r.room_id === room_id);
     const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
-    return cinema?.name || "Unknown";
+    return cinema?.name || "Không xác định";
   };
 
   const getRoomName = (room_id: string) => {
@@ -109,39 +115,28 @@ export default function ShowtimesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="mb-2 text-4xl font-bold">Showtimes Management</h1>
-          <p className="text-muted-foreground">
-            Manage movie showtimes across all cinemas
-          </p>
-        </div>
-        <Button asChild className="gap-2">
-          <Link href="/admin/showtimes/new">
-            <Plus className="h-4 w-4" />
-            Add Showtime
-          </Link>
-        </Button>
-      </div>
+      <AdminPageHeader
+        title="Quản lý Suất chiếu"
+        description="Quản lý lịch chiếu phim tại tất cả các rạp"
+        actionLabel="Thêm suất chiếu"
+        actionLink="/admin/showtimes/new"
+      />
 
       {/* Filters */}
-      <div className="grid gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:grid-cols-2 lg:grid-cols-4 backdrop-blur-sm">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search showtimes..."
+          <AdminSearch
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            onChange={setSearchTerm}
+            placeholder="Tìm kiếm suất chiếu..."
           />
         </div>
         <Select value={movieFilter} onValueChange={setMovieFilter}>
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by movie" />
+          <SelectTrigger className="bg-background/50 border-border/50">
+            <SelectValue placeholder="Lọc theo phim" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Movies</SelectItem>
+            <SelectItem value="all">Tất cả phim</SelectItem>
             {movies.slice(0, 10).map((movie) => (
               <SelectItem key={movie.movie_id} value={movie.movie_id}>
                 {movie.name}
@@ -150,11 +145,11 @@ export default function ShowtimesPage() {
           </SelectContent>
         </Select>
         <Select value={cinemaFilter} onValueChange={setCinemaFilter}>
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by cinema" />
+          <SelectTrigger className="bg-background/50 border-border/50">
+            <SelectValue placeholder="Lọc theo rạp" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Cinemas</SelectItem>
+            <SelectItem value="all">Tất cả rạp</SelectItem>
             {cinemas.map((cinema) => (
               <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                 {cinema.name}
@@ -162,135 +157,115 @@ export default function ShowtimesPage() {
             ))}
           </SelectContent>
         </Select>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="Available">Available</SelectItem>
-            <SelectItem value="Sold_Out">Sold Out</SelectItem>
-            <SelectItem value="Coming_Soon">Coming Soon</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Showtimes Table */}
-      <div className="rounded-lg border border-border/50 bg-card">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border/50">
-                <th className="p-4 text-left text-sm font-medium">Movie</th>
-                <th className="p-4 text-left text-sm font-medium">Cinema</th>
-                <th className="p-4 text-left text-sm font-medium">Date & Time</th>
-                <th className="p-4 text-left text-sm font-medium">Room</th>
-                <th className="p-4 text-left text-sm font-medium">Price</th>
-                <th className="p-4 text-left text-sm font-medium">Status</th>
-                <th className="p-4 text-right text-sm font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredShowtimes.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="p-12 text-center text-muted-foreground"
-                  >
-                    No showtimes found
-                  </td>
-                </tr>
-              ) : (
-                filteredShowtimes.map((showtime) => (
-                  <tr
-                    key={showtime.showtime_id}
-                    className="border-b border-border/50 transition-colors hover:bg-card/50"
-                  >
-                    <td className="p-4">
-                      <p className="font-medium">{getMovieName(showtime.movie_id)}</p>
-                    </td>
-                    <td className="p-4 text-sm">
-                      {getCinemaName(showtime.room_id)}
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <div className="text-sm">
-                          <p className="font-medium">
-                            {new Date(showtime.start_date).toLocaleDateString("vi-VN")}
-                          </p>
-                          <p className="text-muted-foreground">
-                            {(() => {
-                              const [hours, minutes] = showtime.start_time.split(':');
-                              return `${hours}:${minutes}`;
-                            })()}
-                          </p>
-                        </div>
+      <div className="rounded-lg border border-border/50 bg-card overflow-hidden">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow>
+              <TableHead>Phim</TableHead>
+              <TableHead>Rạp</TableHead>
+              <TableHead>Ngày & Giờ</TableHead>
+              <TableHead>Phòng</TableHead>
+              <TableHead>Loại vé</TableHead>
+              <TableHead>Trạng thái</TableHead>
+              <TableHead className="text-right">Thao tác</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredShowtimes.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                  Không tìm thấy suất chiếu nào
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredShowtimes.map((showtime) => (
+                <TableRow key={showtime.showtime_id} className="hover:bg-muted/50">
+                  <TableCell className="font-medium">
+                    {getMovieName(showtime.movie_id)}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {getCinemaName(showtime.room_id)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <div className="text-sm">
+                        <p className="font-medium">
+                          {new Date(showtime.start_date).toLocaleDateString("vi-VN")}
+                        </p>
+                        <p className="text-muted-foreground">
+                          {(() => {
+                            const [hours, minutes] = showtime.start_time.split(':');
+                            return `${hours}:${minutes}`;
+                          })()}
+                        </p>
                       </div>
-                    </td>
-                    <td className="p-4 text-sm">{getRoomName(showtime.room_id)}</td>
-                    <td className="p-4">
-                      <p className="font-medium text-muted-foreground text-sm">
-                        Seat-based
-                      </p>
-                    </td>
-                    <td className="p-4">
-                      <Badge variant="default">
-                        Active
-                      </Badge>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          asChild
-                          className="h-8 w-8 p-0"
-                        >
-                          <Link href={`/admin/showtimes/${showtime.showtime_id}/edit`}>
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteClick(showtime)}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{getRoomName(showtime.room_id)}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-xs">
+                      Ghế ngồi
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+                      Đang bán
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8 hover:text-primary hover:bg-primary/10"
+                      >
+                        <Link href={`/admin/showtimes/${showtime.showtime_id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteClick(showtime)}
+                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
 
       {/* Results count */}
       <div className="text-center text-sm text-muted-foreground">
-        Showing {filteredShowtimes.length} of {showtimes.length} showtimes
+        Hiển thị {filteredShowtimes.length} / {showtimes.length} suất chiếu
       </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete this showtime. This action cannot be
-              undone.
+              Hành động này sẽ xóa vĩnh viễn suất chiếu này. Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

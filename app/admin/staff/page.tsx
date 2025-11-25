@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
   Select,
@@ -29,7 +28,6 @@ import {
 import type { Staff } from "@/services/types";
 import {
   Plus,
-  Search,
   Users,
   Building2,
   Phone,
@@ -37,7 +35,8 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AdminPageHeader } from "@/components/admin/page-header";
+import { AdminSearch } from "@/components/admin/search";
 
 export default function StaffManagementPage() {
   const [staffs, setStaffs] = useState<Staff[]>(MOCK_STAFFS);
@@ -125,18 +124,15 @@ export default function StaffManagementPage() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Quản lý Nhân viên</h1>
-        <p className="text-muted-foreground">
-          Quản lý nhân viên và phân cấp
-        </p>
-      </div>
+    <div className="space-y-6">
+      <AdminPageHeader
+        title="Quản lý Nhân viên"
+        description="Quản lý danh sách nhân viên và phân cấp quản lý"
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6">
+        <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-xl bg-primary/10">
               <Users className="w-6 h-6 text-primary" />
@@ -148,7 +144,7 @@ export default function StaffManagementPage() {
           </div>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-xl bg-orange-500/10">
               <Building2 className="w-6 h-6 text-orange-600" />
@@ -162,21 +158,19 @@ export default function StaffManagementPage() {
       </div>
 
       {/* Filters and Actions */}
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4 p-4 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Tìm kiếm theo tên, SĐT..."
+          <AdminSearch
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            onChange={setSearchTerm}
+            placeholder="Tìm kiếm theo tên, SĐT..."
           />
         </div>
 
         {/* Cinema Filter */}
         <Select value={selectedCinema} onValueChange={setSelectedCinema}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full md:w-[200px] bg-background/50 border-border/50">
             <SelectValue placeholder="Tất cả rạp" />
           </SelectTrigger>
           <SelectContent>
@@ -192,7 +186,7 @@ export default function StaffManagementPage() {
         {/* Add Button */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm}>
+            <Button onClick={resetForm} className="shadow-lg hover:shadow-primary/20">
               <Plus className="w-4 h-4 mr-2" />
               Thêm nhân viên
             </Button>
@@ -293,7 +287,7 @@ export default function StaffManagementPage() {
           </p>
         </div>
 
-        <div className="grid gap-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredStaffs.map((staff) => {
             const manager = staff.manage_id ? staffs.find(s => s.staff_id === staff.manage_id) : null;
             const subordinates = staffs.filter(s => s.manage_id === staff.staff_id);
@@ -302,12 +296,12 @@ export default function StaffManagementPage() {
             return (
               <Card
                 key={staff.staff_id}
-                className="p-6 transition-all hover:shadow-md"
+                className="p-6 transition-all hover:shadow-lg hover:border-primary/50 group"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
                     {/* Avatar */}
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl group-hover:scale-110 transition-transform">
                       <User className="w-6 h-6 text-primary" />
                     </div>
 
@@ -315,10 +309,10 @@ export default function StaffManagementPage() {
                     <div className="flex-1 space-y-3">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-bold text-lg">{staff.name}</h3>
+                          <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{staff.name}</h3>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div className="space-y-1 text-sm">
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <Phone className="w-4 h-4" />
                             <span>{staff.phone_number}</span>
@@ -331,20 +325,19 @@ export default function StaffManagementPage() {
                       </div>
 
                       {/* Hierarchy Info */}
-                      <div className="flex flex-wrap items-center gap-4 text-sm">
+                      <div className="flex flex-wrap items-center gap-2 text-xs">
                         {manager && (
-                          <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5">
-                            <span className="text-muted-foreground">Quản lý:</span>
+                          <div className="flex items-center gap-1 rounded-full bg-muted/50 px-2 py-1">
+                            <span className="text-muted-foreground">QL:</span>
                             <span className="font-medium">{manager.name}</span>
                           </div>
                         )}
 
                         {subordinates.length > 0 && (
-                          <div className="flex items-center gap-2 rounded-lg bg-primary/5 px-3 py-1.5">
-                            <Users className="w-4 h-4 text-primary" />
-                            <span className="text-muted-foreground">Quản lý:</span>
+                          <div className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1">
+                            <Users className="w-3 h-3 text-primary" />
                             <span className="font-medium text-primary">
-                              {subordinates.length} nhân viên
+                              {subordinates.length} NV
                             </span>
                           </div>
                         )}
@@ -353,15 +346,15 @@ export default function StaffManagementPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => handleEdit(staff)}>
-                    <Edit className="h-4 w-4" />
+                  <div className="flex flex-col gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => handleEdit(staff)} className="h-8 w-8 hover:text-primary hover:bg-primary/10">
+                      <Edit className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleDelete(staff.staff_id)}
-                      className="text-destructive hover:bg-destructive/10"
+                      className="h-8 w-8 text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -373,7 +366,7 @@ export default function StaffManagementPage() {
         </div>
 
         {filteredStaffs.length === 0 && (
-          <Card className="p-12">
+          <Card className="p-12 border-dashed">
             <div className="text-center text-muted-foreground">
               <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>Không tìm thấy nhân viên nào</p>
