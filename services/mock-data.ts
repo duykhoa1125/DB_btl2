@@ -1296,6 +1296,15 @@ export const MOCK_MEMBERS: Member[] = [
     { level: 'vip', minimum_point: 10000 }
 ];
 
+import { AccountMembership } from './types';
+
+export const MOCK_ACCOUNTS_MEMBERSHIP: AccountMembership[] = [
+    { phone_number: '0901234567', level: 'copper', join_date: '2023-01-01' },
+    { phone_number: '0909876543', level: 'gold', join_date: '2022-06-15' },
+    { phone_number: '0912345678', level: 'vip', join_date: '2021-01-01' },
+    { phone_number: '0988888888', level: 'copper', join_date: '2025-01-01' }
+];
+
 export function getMembershipProgress(points: number) {
     const sortedTiers = [...MOCK_MEMBERS].sort((a, b) => a.minimum_point - b.minimum_point);
     let currentTier = sortedTiers[0];

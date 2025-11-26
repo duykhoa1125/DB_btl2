@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import { MOCK_VOUCHERS } from '@/services/mock-data';
 
-// GET /api/vouchers/:id
+// GET /api/vouchers/[code]
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ code: string }> }
 ) {
     try {
-        const { id } = await params;
-        const voucher = MOCK_VOUCHERS.find(v => v.code === id);
+        await new Promise(resolve => setTimeout(resolve, 300));
+        const { code } = await params;
+
+        const voucher = MOCK_VOUCHERS.find(v => v.code === code);
 
         if (!voucher) {
             return NextResponse.json(

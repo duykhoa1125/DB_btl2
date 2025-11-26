@@ -4,6 +4,8 @@ import { MovieTabs } from "@/components/movie-tabs";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Film } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const allMovies = await movieService.getAllWithDetails();
   const nowShowingMovies = allMovies.filter((m) => m.status === "showing");

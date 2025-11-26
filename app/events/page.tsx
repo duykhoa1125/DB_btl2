@@ -77,8 +77,10 @@ export default function EventsPage() {
           </div>
 
           <div className="pt-4 flex items-center justify-between border-t border-border/50">
-             <Button variant="ghost" className="group/btn p-0 hover:bg-transparent hover:text-primary">
-                Xem chi tiết <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+             <Button variant="ghost" className="group/btn p-0 hover:bg-transparent hover:text-primary" asChild>
+                <Link href={`/events/${event.event_id}`}>
+                  Xem chi tiết <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
              </Button>
           </div>
         </div>

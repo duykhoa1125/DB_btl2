@@ -8,7 +8,7 @@ import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
 import type { Seat, Food, Room } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
-import { roomService, ticketService } from "@/services";
+import { roomService, ticketService, type FoodMenuItem } from "@/services";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -44,7 +44,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const searchParams = useSearchParams();
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
   const [selectedFoods, setSelectedFoods] = useState<
-    (Food & { quantity: number })[]
+    (FoodMenuItem & { quantity: number })[]
   >([]);
   const [bookingStep, setBookingStep] = useState<"seats" | "food" | "payment">(
     "seats"

@@ -48,12 +48,19 @@ const TIER_CONFIG: Record<MemberLevel, {
   },
 };
 
+interface MembershipProgress {
+  currentTier: Member;
+  nextTier?: Member;
+  progress: number;
+  pointsToNext: number;
+}
+
 export function MembershipBenefits({
   membershipPoints,
   phoneNumber,
   membershipHistory = [],
 }: MembershipBenefitsProps) {
-  const [membershipData, setMembershipData] = useState<any>(null);
+  const [membershipData, setMembershipData] = useState<MembershipProgress | null>(null);
   const [allTiers, setAllTiers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
 
