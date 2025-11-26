@@ -33,7 +33,7 @@ export default function PromotionsPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Vui lòng đăng nhập</h1>
           <Button asChild>
-            <Link href="/login">Đăng nhập</Link>
+            <Link href="/account/login">Đăng nhập</Link>
           </Button>
         </div>
       </div>
