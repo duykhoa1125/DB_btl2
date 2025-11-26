@@ -34,7 +34,13 @@ export default function NewShowtimePage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    roomService.getAll().then(setRooms).catch(console.error);
+    roomService
+      .getAll()
+      .then((data) => setRooms(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error(err);
+        setRooms([]);
+      });
   }, []);
 
   const movies = getAllMovies();
@@ -57,7 +63,9 @@ export default function NewShowtimePage() {
 
     // Validate start date/time is in the future
     if (formData.start_date && formData.start_time) {
-      const startDateTime = new Date(`${formData.start_date}T${formData.start_time}`);
+      const startDateTime = new Date(
+        `${formData.start_date}T${formData.start_time}`
+      );
       const now = new Date();
       if (startDateTime < now) {
         newErrors.start_date = "Start date/time must be in the future";
@@ -111,7 +119,7 @@ export default function NewShowtimePage() {
   };
 
   const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
-  const selectedRoom = rooms.find(r => r.room_id === formData.room_id);
+  const selectedRoom = rooms.find((r) => r.room_id === formData.room_id);
 
   return (
     <div className="space-y-6">
@@ -232,7 +240,9 @@ export default function NewShowtimePage() {
                   }
                 />
                 {errors.start_time && (
-                  <p className="text-sm text-destructive">{errors.start_time}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.start_time}
+                  </p>
                 )}
               </div>
 
@@ -253,13 +263,17 @@ export default function NewShowtimePage() {
                 )}
                 {selectedMovie && formData.start_time && (
                   <p className="text-xs text-muted-foreground">
-                    Suggested based on movie duration: {(() => {
-                      const [hours, minutes] = formData.start_time.split(':');
-                      const startMinutes = parseInt(hours) * 60 + parseInt(minutes);
+                    Suggested based on movie duration:{" "}
+                    {(() => {
+                      const [hours, minutes] = formData.start_time.split(":");
+                      const startMinutes =
+                        parseInt(hours) * 60 + parseInt(minutes);
                       const endMinutes = startMinutes + selectedMovie.duration;
                       const endHours = Math.floor(endMinutes / 60);
                       const endMins = endMinutes % 60;
-                      return `${String(endHours).padStart(2, '0')}:${String(endMins).padStart(2, '0')}`;
+                      return `${String(endHours).padStart(2, "0")}:${String(
+                        endMins
+                      ).padStart(2, "0")}`;
                     })()}
                   </p>
                 )}
@@ -284,7 +298,9 @@ export default function NewShowtimePage() {
               {formData.start_date && formData.start_time && (
                 <p>
                   <span className="font-medium">Start:</span>{" "}
-                  {new Date(`${formData.start_date}T${formData.start_time}`).toLocaleString("vi-VN")}
+                  {new Date(
+                    `${formData.start_date}T${formData.start_time}`
+                  ).toLocaleString("vi-VN")}
                 </p>
               )}
             </CardContent>

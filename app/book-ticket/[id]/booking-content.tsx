@@ -12,7 +12,16 @@ import { roomService, ticketService, type FoodMenuItem } from "@/services";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
-import { Calendar, Clock, MapPin, CreditCard, Wallet, Banknote, Building2, CheckCircle2 } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  CreditCard,
+  Wallet,
+  Banknote,
+  Building2,
+  CheckCircle2,
+} from "lucide-react";
 
 // VoucherDetail type definition (from mock-data)
 interface VoucherDetail {
@@ -20,7 +29,7 @@ interface VoucherDetail {
   promotional_id: string;
   start_date: string;
   end_date: string;
-  state: 'active' | 'used' | 'expired';
+  state: "active" | "used" | "expired";
   phone_number: string;
   promotional?: any;
   discount?: {
@@ -49,23 +58,39 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const [bookingStep, setBookingStep] = useState<"seats" | "food" | "payment">(
     "seats"
   );
-  const [appliedVoucher, setAppliedVoucher] = useState<VoucherDetail | null>(null);
+  const [appliedVoucher, setAppliedVoucher] = useState<VoucherDetail | null>(
+    null
+  );
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<string>("");
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookedSeatIds, setBookedSeatIds] = useState<string[]>([]);
 
   useEffect(() => {
-    roomService.getAll().then(setRooms).catch(console.error);
-    
+    roomService
+      .getAll()
+      .then((data) => setRooms(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error(err);
+        setRooms([]);
+      });
+
     // Fetch booked tickets for this showtime
     if (showtime.showtime_id) {
-      ticketService.getByShowtime(showtime.showtime_id)
-        .then(tickets => {
-          const booked = tickets.map(t => `${t.seat_row}${t.seat_column}`);
+      ticketService
+        .getByShowtime(showtime.showtime_id)
+        .then((tickets) => {
+          const ticketsArray = Array.isArray(tickets) ? tickets : [];
+          const booked = ticketsArray.map(
+            (t) => `${t.seat_row}${t.seat_column}`
+          );
           setBookedSeatIds(booked);
         })
-        .catch(console.error);
+        .catch((err) => {
+          console.error(err);
+          setBookedSeatIds([]);
+        });
     }
   }, [showtime.showtime_id]);
 
@@ -79,18 +104,22 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   // Format date and time from separate fields
   const formatDateTime = () => {
     const dateObj = new Date(showtime.start_date);
-    const [hours, minutes] = showtime.start_time.split(':');
-    
+    const [hours, minutes] = showtime.start_time.split(":");
+
     return {
-      date: dateObj.toLocaleDateString("vi-VN", { weekday: 'long', day: 'numeric', month: 'long' }),
-      time: `${hours}:${minutes}`
+      date: dateObj.toLocaleDateString("vi-VN", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      }),
+      time: `${hours}:${minutes}`,
     };
   };
 
   const { date, time } = formatDateTime();
-  
+
   // Get room info
-  const room = rooms.find(r => r.room_id === showtime.room_id);
+  const room = rooms.find((r) => r.room_id === showtime.room_id);
   const roomName = room?.name || showtime.room_id;
 
   // Calculate ticket price based on seat types (from lib/pricing.ts)
@@ -102,21 +131,24 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const subtotal = ticketTotal + foodTotal;
   const finalTotal = Math.max(0, subtotal - discountAmount);
 
-  const handleVoucherApply = (voucher: VoucherDetail | null, discount: number) => {
+  const handleVoucherApply = (
+    voucher: VoucherDetail | null,
+    discount: number
+  ) => {
     setAppliedVoucher(voucher);
     if (voucher === null) {
       setDiscountAmount(0);
     } else {
       // Calculate discount amount based on percentage
       if (voucher.discount) {
-          const calculatedDiscount = (subtotal * discount) / 100;
-          // Apply max reduction cap if exists
-          const finalDiscount = voucher.discount.max_price_can_reduce 
-              ? Math.min(calculatedDiscount, voucher.discount.max_price_can_reduce)
-              : calculatedDiscount;
-          setDiscountAmount(finalDiscount);
+        const calculatedDiscount = (subtotal * discount) / 100;
+        // Apply max reduction cap if exists
+        const finalDiscount = voucher.discount.max_price_can_reduce
+          ? Math.min(calculatedDiscount, voucher.discount.max_price_can_reduce)
+          : calculatedDiscount;
+        setDiscountAmount(finalDiscount);
       } else {
-          setDiscountAmount(0);
+        setDiscountAmount(0);
       }
     }
   };
@@ -138,12 +170,12 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
       {/* Breadcrumb */}
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-sm sticky top-0 z-40">
         <div className="mx-auto max-w-7xl px-6 py-4">
-          <Breadcrumb 
+          <Breadcrumb
             items={[
               { label: "Phim", href: "/" },
               { label: movie.name, href: `/movie/${movie.movie_id}` },
-              { label: "Đặt vé" }
-            ]} 
+              { label: "Đặt vé" },
+            ]}
           />
         </div>
       </div>
@@ -167,11 +199,15 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span className="font-medium text-foreground">{roomName}</span>
+                  <span className="font-medium text-foreground">
+                    {roomName}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
                   <Calendar className="w-4 h-4 text-primary" />
-                  <span className="font-medium text-foreground capitalize">{date}</span>
+                  <span className="font-medium text-foreground capitalize">
+                    {date}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border/50">
                   <Clock className="w-4 h-4 text-primary" />
@@ -186,21 +222,29 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
         <div className="mb-12">
           <div className="relative flex justify-between max-w-2xl mx-auto">
             <div className="absolute top-1/2 left-0 w-full h-1 bg-muted -translate-y-1/2 rounded-full" />
-            <div 
+            <div
               className="absolute top-1/2 left-0 h-1 bg-primary -translate-y-1/2 rounded-full transition-all duration-500 ease-out"
-              style={{ 
-                width: bookingStep === 'seats' ? '0%' : bookingStep === 'food' ? '50%' : '100%' 
-              }} 
+              style={{
+                width:
+                  bookingStep === "seats"
+                    ? "0%"
+                    : bookingStep === "food"
+                    ? "50%"
+                    : "100%",
+              }}
             />
-            
+
             {steps.map((step, index) => {
               const isActive = bookingStep === step.id;
-              const isCompleted = 
-                (bookingStep === 'food' && index === 0) || 
-                (bookingStep === 'payment' && index <= 1);
+              const isCompleted =
+                (bookingStep === "food" && index === 0) ||
+                (bookingStep === "payment" && index <= 1);
 
               return (
-                <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
+                <div
+                  key={step.id}
+                  className="relative z-10 flex flex-col items-center gap-2"
+                >
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full font-bold transition-all duration-300 border-4 ${
                       isActive
@@ -210,11 +254,17 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                         : "bg-muted border-background text-muted-foreground"
                     }`}
                   >
-                    {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : index + 1}
+                    {isCompleted ? (
+                      <CheckCircle2 className="w-5 h-5" />
+                    ) : (
+                      index + 1
+                    )}
                   </div>
-                  <span className={`text-sm font-medium transition-colors duration-300 ${
-                    isActive ? "text-primary" : "text-muted-foreground"
-                  }`}>
+                  <span
+                    className={`text-sm font-medium transition-colors duration-300 ${
+                      isActive ? "text-primary" : "text-muted-foreground"
+                    }`}
+                  >
                     {step.label}
                   </span>
                 </div>
@@ -227,8 +277,8 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
           <div className="lg:col-span-3 space-y-8">
             {bookingStep === "seats" && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-32">
-                <SeatSelection 
-                  onSeatsChange={setSelectedSeats} 
+                <SeatSelection
+                  onSeatsChange={setSelectedSeats}
                   roomId={showtime.room_id}
                   bookedSeatIds={bookedSeatIds}
                 />
@@ -236,8 +286,16 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                   <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 flex justify-end items-center gap-4">
                       <div className="text-right hidden md:block">
-                         <p className="text-sm text-muted-foreground">Ghế đang chọn</p>
-                         <p className="font-bold text-primary">{selectedSeats.length > 0 ? selectedSeats.map(s => `${s.seat_row}${s.seat_column}`).join(", ") : "Chưa chọn"}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Ghế đang chọn
+                        </p>
+                        <p className="font-bold text-primary">
+                          {selectedSeats.length > 0
+                            ? selectedSeats
+                                .map((s) => `${s.seat_row}${s.seat_column}`)
+                                .join(", ")
+                            : "Chưa chọn"}
+                        </p>
                       </div>
                       <Button
                         onClick={() => {
@@ -298,10 +356,30 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                   </h3>
                   <div className="grid gap-4 sm:grid-cols-2">
                     {[
-                      { id: "card", label: "Thẻ quốc tế", icon: <CreditCard className="w-6 h-6" />, desc: "Visa, Mastercard, JCB" },
-                      { id: "wallet", label: "Ví điện tử", icon: <Wallet className="w-6 h-6" />, desc: "Momo, ZaloPay, ShopeePay" },
-                      { id: "banking", label: "Chuyển khoản", icon: <Building2 className="w-6 h-6" />, desc: "QR Code 24/7" },
-                      { id: "cash", label: "Tiền mặt", icon: <Banknote className="w-6 h-6" />, desc: "Thanh toán tại quầy" },
+                      {
+                        id: "card",
+                        label: "Thẻ quốc tế",
+                        icon: <CreditCard className="w-6 h-6" />,
+                        desc: "Visa, Mastercard, JCB",
+                      },
+                      {
+                        id: "wallet",
+                        label: "Ví điện tử",
+                        icon: <Wallet className="w-6 h-6" />,
+                        desc: "Momo, ZaloPay, ShopeePay",
+                      },
+                      {
+                        id: "banking",
+                        label: "Chuyển khoản",
+                        icon: <Building2 className="w-6 h-6" />,
+                        desc: "QR Code 24/7",
+                      },
+                      {
+                        id: "cash",
+                        label: "Tiền mặt",
+                        icon: <Banknote className="w-6 h-6" />,
+                        desc: "Thanh toán tại quầy",
+                      },
                     ].map((method) => (
                       <button
                         key={method.id}
@@ -313,23 +391,33 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                         }`}
                       >
                         <div className="flex items-center gap-4 w-full">
-                          <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                             selectedPaymentMethod === method.id 
-                                ? "bg-primary text-primary-foreground" 
+                          <div
+                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                              selectedPaymentMethod === method.id
+                                ? "bg-primary text-primary-foreground"
                                 : "bg-muted group-hover:bg-primary/10 group-hover:text-primary"
-                          }`}>
+                            }`}
+                          >
                             {method.icon}
                           </div>
                           <div>
-                            <p className={`font-bold transition-colors ${
-                                selectedPaymentMethod === method.id ? "text-primary" : "text-foreground group-hover:text-primary"
-                            }`}>{method.label}</p>
-                            <p className="text-sm text-muted-foreground">{method.desc}</p>
+                            <p
+                              className={`font-bold transition-colors ${
+                                selectedPaymentMethod === method.id
+                                  ? "text-primary"
+                                  : "text-foreground group-hover:text-primary"
+                              }`}
+                            >
+                              {method.label}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {method.desc}
+                            </p>
                           </div>
                           {selectedPaymentMethod === method.id && (
-                             <div className="absolute top-4 right-4 text-primary">
-                                <CheckCircle2 className="w-5 h-5 fill-primary text-primary-foreground" />
-                             </div>
+                            <div className="absolute top-4 right-4 text-primary">
+                              <CheckCircle2 className="w-5 h-5 fill-primary text-primary-foreground" />
+                            </div>
                           )}
                         </div>
                       </button>
@@ -366,30 +454,48 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
               <div className="bg-primary/5 p-6 border-b border-border/50">
                 <h3 className="text-lg font-bold">Thông tin đặt vé</h3>
               </div>
-              
+
               <div className="p-6 space-y-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Ghế đang chọn</span>
                     <div className="text-right">
-                        <span className="font-bold text-primary text-lg block break-all max-w-[150px]">
-                        {selectedSeats.length > 0 ? selectedSeats.map(s => `${s.seat_row}${s.seat_column}`).join(", ") : "Chưa chọn"}
-                        </span>
+                      <span className="font-bold text-primary text-lg block break-all max-w-[150px]">
+                        {selectedSeats.length > 0
+                          ? selectedSeats
+                              .map((s) => `${s.seat_row}${s.seat_column}`)
+                              .join(", ")
+                          : "Chưa chọn"}
+                      </span>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2 pt-4 border-t border-border/50 border-dashed">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Vé ({selectedSeats.length})</span>
-                      <span className="font-medium">{ticketTotal.toLocaleString("vi-VN")}₫</span>
+                      <span className="text-muted-foreground">
+                        Vé ({selectedSeats.length})
+                      </span>
+                      <span className="font-medium">
+                        {ticketTotal.toLocaleString("vi-VN")}₫
+                      </span>
                     </div>
-                    
+
                     {selectedFoods.length > 0 && (
                       <div className="space-y-2">
                         {selectedFoods.map((food) => (
-                          <div key={food.food_id} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{food.name} (x{food.quantity})</span>
-                            <span className="font-medium">{(food.price * food.quantity).toLocaleString("vi-VN")}₫</span>
+                          <div
+                            key={food.food_id}
+                            className="flex justify-between text-sm"
+                          >
+                            <span className="text-muted-foreground">
+                              {food.name} (x{food.quantity})
+                            </span>
+                            <span className="font-medium">
+                              {(food.price * food.quantity).toLocaleString(
+                                "vi-VN"
+                              )}
+                              ₫
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -399,7 +505,9 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                   <div className="pt-4 border-t border-border/50 border-dashed space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Tạm tính</span>
-                      <span className="font-medium">{subtotal.toLocaleString("vi-VN")}₫</span>
+                      <span className="font-medium">
+                        {subtotal.toLocaleString("vi-VN")}₫
+                      </span>
                     </div>
                     {discountAmount > 0 && (
                       <div className="flex justify-between text-sm text-green-500">
@@ -412,10 +520,16 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
 
                 <div className="pt-6 border-t border-border/50">
                   <div className="flex justify-between items-end mb-2">
-                    <span className="text-sm font-medium text-muted-foreground">Tổng cộng</span>
-                    <span className="text-2xl font-bold text-primary">{finalTotal.toLocaleString("vi-VN")}₫</span>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      Tổng cộng
+                    </span>
+                    <span className="text-2xl font-bold text-primary">
+                      {finalTotal.toLocaleString("vi-VN")}₫
+                    </span>
                   </div>
-                  <p className="text-xs text-muted-foreground text-right">Đã bao gồm VAT</p>
+                  <p className="text-xs text-muted-foreground text-right">
+                    Đã bao gồm VAT
+                  </p>
                 </div>
               </div>
             </div>

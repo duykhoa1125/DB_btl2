@@ -22,30 +22,37 @@ export default function AdminDashboard() {
     Promise.all([
       movieService.getAll(),
       cinemaService.getAll(),
-      billService.getAll()
-    ]).then(async ([moviesData, cinemasData, billsData]) => {
-      setMovies(moviesData);
-      setCinemas(cinemasData);
-      setBills(billsData);
-      
-      // Calculate top movies
-      const topMoviesData = getTopMoviesByRevenue(5);
-      const enhancedTopMovies = await Promise.all(
-        topMoviesData.map(async (item) => {
-          try {
-            const detail = await movieService.getWithDetails(item.movie.movie_id);
-            return { ...item, movie: detail || item.movie };
-          } catch {
-            return item;
-          }
-        })
-      );
-      setTopMovies(enhancedTopMovies);
-      setLoading(false);
-    }).catch((error) => {
-      console.error('Failed to load dashboard data:', error);
-      setLoading(false);
-    });
+      billService.getAll(),
+    ])
+      .then(async ([moviesData, cinemasData, billsData]) => {
+        setMovies(Array.isArray(moviesData) ? moviesData : []);
+        setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
+        setBills(Array.isArray(billsData) ? billsData : []);
+
+        // Calculate top movies
+        const topMoviesData = getTopMoviesByRevenue(5);
+        const enhancedTopMovies = await Promise.all(
+          topMoviesData.map(async (item) => {
+            try {
+              const detail = await movieService.getWithDetails(
+                item.movie.movie_id
+              );
+              return { ...item, movie: detail || item.movie };
+            } catch {
+              return item;
+            }
+          })
+        );
+        setTopMovies(enhancedTopMovies);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load dashboard data:", error);
+        setMovies([]);
+        setCinemas([]);
+        setBills([]);
+        setLoading(false);
+      });
   }, []);
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -60,12 +67,10 @@ export default function AdminDashboard() {
     monthlyRevenue: calculateMonthlyRevenue(currentYear, currentMonth),
   };
 
-
-
   return (
     <div className="space-y-8">
-      <AdminPageHeader 
-        title="Tổng quan" 
+      <AdminPageHeader
+        title="Tổng quan"
         description="Chào mừng trở lại với trang quản trị CinemaHub"
       />
 
@@ -175,14 +180,17 @@ export default function AdminDashboard() {
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg">{item.movie.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Năm phát hành: {new Date(item.movie.release_date).getFullYear()}
+                      Năm phát hành:{" "}
+                      {new Date(item.movie.release_date).getFullYear()}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-primary">
                       {item.revenue.toLocaleString("vi-VN")} đ
                     </p>
-                    <p className="text-xs text-muted-foreground">Tổng doanh thu</p>
+                    <p className="text-xs text-muted-foreground">
+                      Tổng doanh thu
+                    </p>
                   </div>
                 </div>
               ))}

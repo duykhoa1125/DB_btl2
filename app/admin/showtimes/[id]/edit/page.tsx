@@ -42,7 +42,13 @@ export default function EditShowtimePage() {
   const movies = getAllMovies();
 
   useEffect(() => {
-    roomService.getAll().then(setRooms).catch(console.error);
+    roomService
+      .getAll()
+      .then((data) => setRooms(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error(err);
+        setRooms([]);
+      });
     const showtime_id = params.id as string;
     const showtime = getShowtimeById(showtime_id);
 
@@ -256,7 +262,9 @@ export default function EditShowtimePage() {
                   }
                 />
                 {errors.start_time && (
-                  <p className="text-sm text-destructive">{errors.start_time}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.start_time}
+                  </p>
                 )}
               </div>
 

@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  getAllShowtimes,
-  deleteShowtime,
-} from "@/lib/admin-helpers";
+import { getAllShowtimes, deleteShowtime } from "@/lib/admin-helpers";
 import { movieService, cinemaService, roomService } from "@/services";
 import type { Showtime } from "@/services/types";
 import { Button } from "@/components/ui/button";
@@ -46,7 +43,9 @@ export default function ShowtimesPage() {
   const [movieFilter, setMovieFilter] = useState<string>("all");
   const [cinemaFilter, setCinemaFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [showtimeToDelete, setShowtimeToDelete] = useState<Showtime | null>(null);
+  const [showtimeToDelete, setShowtimeToDelete] = useState<Showtime | null>(
+    null
+  );
   const { toast } = useToast();
   const [movies, setMovies] = useState<any[]>([]);
   const [cinemas, setCinemas] = useState<any[]>([]);
@@ -56,22 +55,31 @@ export default function ShowtimesPage() {
     Promise.all([
       movieService.getAllWithDetails(),
       cinemaService.getAll(),
-      roomService.getAll()
-    ]).then(([moviesData, cinemasData, roomsData]) => {
-      setMovies(moviesData);
-      setCinemas(cinemasData);
-      setRooms(roomsData);
-    }).catch(console.error);
+      roomService.getAll(),
+    ])
+      .then(([moviesData, cinemasData, roomsData]) => {
+        setMovies(Array.isArray(moviesData) ? moviesData : []);
+        setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
+        setRooms(Array.isArray(roomsData) ? roomsData : []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setMovies([]);
+        setCinemas([]);
+        setRooms([]);
+      });
   }, []);
 
   const filteredShowtimes = showtimes.filter((showtime) => {
     const movie = movies.find((m) => m.movie_id === showtime.movie_id);
-    const room = rooms.find(r => r.room_id === showtime.room_id);
-    const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
+    const room = rooms.find((r) => r.room_id === showtime.room_id);
+    const cinema = room
+      ? cinemas.find((c) => c.cinema_id === room.cinema_id)
+      : null;
 
     const matchesSearch =
       movie?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cinema?.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      cinema?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       room?.name.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesMovie =
@@ -109,17 +117,21 @@ export default function ShowtimesPage() {
   };
 
   const getMovieName = (movie_id: string) => {
-    return movies.find((m) => m.movie_id === movie_id)?.name || "Không xác định";
+    return (
+      movies.find((m) => m.movie_id === movie_id)?.name || "Không xác định"
+    );
   };
 
   const getCinemaName = (room_id: string) => {
-    const room = rooms.find(r => r.room_id === room_id);
-    const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
+    const room = rooms.find((r) => r.room_id === room_id);
+    const cinema = room
+      ? cinemas.find((c) => c.cinema_id === room.cinema_id)
+      : null;
     return cinema?.name || "Không xác định";
   };
 
   const getRoomName = (room_id: string) => {
-    return rooms.find(r => r.room_id === room_id)?.name || room_id;
+    return rooms.find((r) => r.room_id === room_id)?.name || room_id;
   };
 
   return (
@@ -185,13 +197,19 @@ export default function ShowtimesPage() {
           <TableBody>
             {filteredShowtimes.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={7}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   Không tìm thấy suất chiếu nào
                 </TableCell>
               </TableRow>
             ) : (
               filteredShowtimes.map((showtime) => (
-                <TableRow key={showtime.showtime_id} className="hover:bg-muted/50">
+                <TableRow
+                  key={showtime.showtime_id}
+                  className="hover:bg-muted/50"
+                >
                   <TableCell className="font-medium">
                     {getMovieName(showtime.movie_id)}
                   </TableCell>
@@ -203,25 +221,33 @@ export default function ShowtimesPage() {
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <div className="text-sm">
                         <p className="font-medium">
-                          {new Date(showtime.start_date).toLocaleDateString("vi-VN")}
+                          {new Date(showtime.start_date).toLocaleDateString(
+                            "vi-VN"
+                          )}
                         </p>
                         <p className="text-muted-foreground">
                           {(() => {
-                            const [hours, minutes] = showtime.start_time.split(':');
+                            const [hours, minutes] =
+                              showtime.start_time.split(":");
                             return `${hours}:${minutes}`;
                           })()}
                         </p>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{getRoomName(showtime.room_id)}</TableCell>
+                  <TableCell className="text-sm">
+                    {getRoomName(showtime.room_id)}
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-xs">
                       Ghế ngồi
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+                    <Badge
+                      variant="default"
+                      className="bg-green-500 hover:bg-green-600"
+                    >
                       Đang bán
                     </Badge>
                   </TableCell>
@@ -233,7 +259,9 @@ export default function ShowtimesPage() {
                         asChild
                         className="h-8 w-8 hover:text-primary hover:bg-primary/10"
                       >
-                        <Link href={`/admin/showtimes/${showtime.showtime_id}/edit`}>
+                        <Link
+                          href={`/admin/showtimes/${showtime.showtime_id}/edit`}
+                        >
                           <Edit className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -265,7 +293,8 @@ export default function ShowtimesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
             <AlertDialogDescription>
-              Hành động này sẽ xóa vĩnh viễn suất chiếu này. Hành động này không thể hoàn tác.
+              Hành động này sẽ xóa vĩnh viễn suất chiếu này. Hành động này không
+              thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

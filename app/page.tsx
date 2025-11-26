@@ -18,10 +18,12 @@ export default function Home() {
       try {
         setLoading(true);
         const movies = await movieService.getAllWithDetails();
-        setAllMovies(movies);
+        // Ensure we always have an array
+        setAllMovies(Array.isArray(movies) ? movies : []);
       } catch (err) {
         console.error("Failed to fetch movies:", err);
         setError("Không thể tải danh sách phim. Vui lòng thử lại sau.");
+        setAllMovies([]);
       } finally {
         setLoading(false);
       }

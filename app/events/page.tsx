@@ -6,12 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Search,
-  Calendar,
-  Sparkles,
-  ArrowRight,
-} from "lucide-react";
+import { Search, Calendar, Sparkles, ArrowRight } from "lucide-react";
 import { eventService } from "@/services";
 import { Event } from "@/services/types";
 
@@ -26,9 +21,10 @@ export default function EventsPage() {
       try {
         setLoading(true);
         const data = await eventService.getAll();
-        setEvents(data);
+        setEvents(Array.isArray(data) ? data : []);
       } catch (err) {
-        setError('Không thể tải danh sách sự kiện');
+        setError("Không thể tải danh sách sự kiện");
+        setEvents([]);
         console.error(err);
       } finally {
         setLoading(false);
@@ -37,9 +33,9 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  const activeEvents = events.filter(e => {
-      const today = new Date().toISOString().split('T')[0];
-      return e.end_date >= today;
+  const activeEvents = events.filter((e) => {
+    const today = new Date().toISOString().split("T")[0];
+    return e.end_date >= today;
   });
 
   const filteredEvents = activeEvents.filter((event) => {
@@ -53,19 +49,20 @@ export default function EventsPage() {
     return (
       <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
         <div className="relative aspect-video overflow-hidden">
-            {/* Placeholder image since Event doesn't have image field yet */}
+          {/* Placeholder image since Event doesn't have image field yet */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0 flex items-center justify-center">
-              <Sparkles className="w-16 h-16 text-primary/40" />
+            <Sparkles className="w-16 h-16 text-primary/40" />
           </div>
           <div className="absolute top-4 right-4">
-             <Badge className="bg-background/80 backdrop-blur text-foreground border-none">
-                <Calendar className="w-3 h-3 mr-1" />
-                {new Date(event.start_date).toLocaleDateString("vi-VN")} - {new Date(event.end_date).toLocaleDateString("vi-VN")}
-             </Badge>
+            <Badge className="bg-background/80 backdrop-blur text-foreground border-none">
+              <Calendar className="w-3 h-3 mr-1" />
+              {new Date(event.start_date).toLocaleDateString("vi-VN")} -{" "}
+              {new Date(event.end_date).toLocaleDateString("vi-VN")}
+            </Badge>
           </div>
         </div>
-        
+
         <div className="p-6 space-y-4">
           <div className="space-y-2">
             <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
@@ -77,11 +74,16 @@ export default function EventsPage() {
           </div>
 
           <div className="pt-4 flex items-center justify-between border-t border-border/50">
-             <Button variant="ghost" className="group/btn p-0 hover:bg-transparent hover:text-primary" asChild>
-                <Link href={`/events/${event.event_id}`}>
-                  Xem chi tiết <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                </Link>
-             </Button>
+            <Button
+              variant="ghost"
+              className="group/btn p-0 hover:bg-transparent hover:text-primary"
+              asChild
+            >
+              <Link href={`/events/${event.event_id}`}>
+                Xem chi tiết{" "}
+                <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
           </div>
         </div>
       </Card>
@@ -101,13 +103,14 @@ export default function EventsPage() {
             <Sparkles className="w-4 h-4" />
             <span>Sự Kiện Nổi Bật</span>
           </div>
-          
+
           <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
             Tin Tức & Sự Kiện
           </h1>
-          
+
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            Cập nhật những tin tức mới nhất và các sự kiện hấp dẫn đang diễn ra tại rạp chiếu phim.
+            Cập nhật những tin tức mới nhất và các sự kiện hấp dẫn đang diễn ra
+            tại rạp chiếu phim.
           </p>
         </div>
 
@@ -156,7 +159,9 @@ export default function EventsPage() {
 
             {filteredEvents.length === 0 && (
               <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg">Không tìm thấy sự kiện nào phù hợp.</p>
+                <p className="text-muted-foreground text-lg">
+                  Không tìm thấy sự kiện nào phù hợp.
+                </p>
               </div>
             )}
           </>

@@ -41,13 +41,16 @@ export default function StaffManagementPage() {
   const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      staffService.getAll(),
-      cinemaService.getAll()
-    ]).then(([staffsData, cinemasData]) => {
-      setStaffs(staffsData);
-      setCinemas(cinemasData);
-    }).catch(console.error);
+    Promise.all([staffService.getAll(), cinemaService.getAll()])
+      .then(([staffsData, cinemasData]) => {
+        setStaffs(Array.isArray(staffsData) ? staffsData : []);
+        setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setStaffs([]);
+        setCinemas([]);
+      });
   }, []);
 
   // Form state
@@ -76,7 +79,9 @@ export default function StaffManagementPage() {
       // Update
       setStaffs(
         staffs.map((s) =>
-          s.staff_id === editingStaff.staff_id ? { ...editingStaff, ...formData } as Staff : s
+          s.staff_id === editingStaff.staff_id
+            ? ({ ...editingStaff, ...formData } as Staff)
+            : s
         )
       );
     } else {
@@ -117,9 +122,7 @@ export default function StaffManagementPage() {
 
   // Get available managers for a cinema (Any staff can be a manager in this simplified model)
   const getAvailableManagers = (cinema_id: string) => {
-    return staffs.filter(
-      (s) => s.cinema_id === cinema_id
-    );
+    return staffs.filter((s) => s.cinema_id === cinema_id);
   };
 
   // Stats
@@ -191,7 +194,10 @@ export default function StaffManagementPage() {
         {/* Add Button */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="shadow-lg hover:shadow-primary/20">
+            <Button
+              onClick={resetForm}
+              className="shadow-lg hover:shadow-primary/20"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Thêm nhân viên
             </Button>
@@ -209,7 +215,9 @@ export default function StaffManagementPage() {
                   <label className="text-sm font-medium">Họ tên *</label>
                   <Input
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Nguyễn Văn A"
                   />
                 </div>
@@ -231,7 +239,11 @@ export default function StaffManagementPage() {
                 <Select
                   value={formData.cinema_id}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, cinema_id: value, manage_id: null })
+                    setFormData({
+                      ...formData,
+                      cinema_id: value,
+                      manage_id: null,
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -239,7 +251,10 @@ export default function StaffManagementPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {cinemas.map((cinema) => (
-                      <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
+                      <SelectItem
+                        key={cinema.cinema_id}
+                        value={cinema.cinema_id}
+                      >
                         {cinema.name}
                       </SelectItem>
                     ))}
@@ -253,7 +268,10 @@ export default function StaffManagementPage() {
                   <Select
                     value={formData.manage_id || "none"}
                     onValueChange={(value) =>
-                      setFormData({ ...formData, manage_id: value === "none" ? null : value })
+                      setFormData({
+                        ...formData,
+                        manage_id: value === "none" ? null : value,
+                      })
                     }
                   >
                     <SelectTrigger>
@@ -261,18 +279,26 @@ export default function StaffManagementPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Không có</SelectItem>
-                      {getAvailableManagers(formData.cinema_id!).map((manager) => (
-                        <SelectItem key={manager.staff_id} value={manager.staff_id}>
-                          {manager.name}
-                        </SelectItem>
-                      ))}
+                      {getAvailableManagers(formData.cinema_id!).map(
+                        (manager) => (
+                          <SelectItem
+                            key={manager.staff_id}
+                            value={manager.staff_id}
+                          >
+                            {manager.name}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
               )}
 
               <div className="flex justify-end gap-2 pt-4 border-t">
-                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   Hủy
                 </Button>
                 <Button onClick={handleSave}>
@@ -294,8 +320,12 @@ export default function StaffManagementPage() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredStaffs.map((staff) => {
-            const manager = staff.manage_id ? staffs.find(s => s.staff_id === staff.manage_id) : null;
-            const subordinates = staffs.filter(s => s.manage_id === staff.staff_id);
+            const manager = staff.manage_id
+              ? staffs.find((s) => s.staff_id === staff.manage_id)
+              : null;
+            const subordinates = staffs.filter(
+              (s) => s.manage_id === staff.staff_id
+            );
             const cinema = cinemas.find((c) => c.cinema_id === staff.cinema_id);
 
             return (
@@ -314,7 +344,9 @@ export default function StaffManagementPage() {
                     <div className="flex-1 space-y-3">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{staff.name}</h3>
+                          <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+                            {staff.name}
+                          </h3>
                         </div>
 
                         <div className="space-y-1 text-sm">
@@ -352,7 +384,12 @@ export default function StaffManagementPage() {
 
                   {/* Actions */}
                   <div className="flex flex-col gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(staff)} className="h-8 w-8 hover:text-primary hover:bg-primary/10">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(staff)}
+                      className="h-8 w-8 hover:text-primary hover:bg-primary/10"
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button

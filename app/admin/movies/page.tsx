@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { deleteMovie } from  "@/lib/admin-helpers";
+import { deleteMovie } from "@/lib/admin-helpers";
 import { movieService } from "@/services";
 import type { MovieDetail } from "@/services/types";
 import { Button } from "@/components/ui/button";
@@ -42,13 +42,17 @@ export default function MoviesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    movieService.getAllWithDetails().then((data) => {
-      setMovies(data);
-      setLoading(false);
-    }).catch((error) => {
-      console.error('Failed to load movies:', error);
-      setLoading(false);
-    });
+    movieService
+      .getAllWithDetails()
+      .then((data) => {
+        setMovies(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load movies:", error);
+        setMovies([]);
+        setLoading(false);
+      });
   }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -62,7 +66,10 @@ export default function MoviesPage() {
     .filter((movie) => {
       const matchesSearch =
         movie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (movie.directors && movie.directors.some((d) => d.toLowerCase().includes(searchTerm.toLowerCase())));
+        (movie.directors &&
+          movie.directors.some((d) =>
+            d.toLowerCase().includes(searchTerm.toLowerCase())
+          ));
       const matchesStatus =
         statusFilter === "all" || movie.status === statusFilter;
       return matchesSearch && matchesStatus;
@@ -72,7 +79,10 @@ export default function MoviesPage() {
         case "name":
           return a.name.localeCompare(b.name);
         case "year":
-          return new Date(b.release_date).getTime() - new Date(a.release_date).getTime();
+          return (
+            new Date(b.release_date).getTime() -
+            new Date(a.release_date).getTime()
+          );
         case "rating":
           return (b.avg_rating || 0) - (a.avg_rating || 0);
         default:
@@ -165,7 +175,10 @@ export default function MoviesPage() {
           <TableBody>
             {filteredMovies.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={8}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   Không tìm thấy phim nào
                 </TableCell>
               </TableRow>
@@ -186,7 +199,9 @@ export default function MoviesPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {movie.directors && movie.directors.length > 0 ? movie.directors.join(", ") : "N/A"}
+                    {movie.directors && movie.directors.length > 0
+                      ? movie.directors.join(", ")
+                      : "N/A"}
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
@@ -200,11 +215,19 @@ export default function MoviesPage() {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{movie.duration} phút</TableCell>
+                  <TableCell className="text-sm">
+                    {movie.duration} phút
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <span className="font-medium">{movie.avg_rating ? movie.avg_rating.toFixed(1) : "N/A"}</span>
-                      {movie.avg_rating && <span className="text-xs text-muted-foreground">/5</span>}
+                      <span className="font-medium">
+                        {movie.avg_rating ? movie.avg_rating.toFixed(1) : "N/A"}
+                      </span>
+                      {movie.avg_rating && (
+                        <span className="text-xs text-muted-foreground">
+                          /5
+                        </span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -213,7 +236,11 @@ export default function MoviesPage() {
                         movie.status === "showing" ? "default" : "secondary"
                       }
                     >
-                      {movie.status === "showing" ? "Đang chiếu" : movie.status === "upcoming" ? "Sắp chiếu" : "Đã kết thúc"}
+                      {movie.status === "showing"
+                        ? "Đang chiếu"
+                        : movie.status === "upcoming"
+                        ? "Sắp chiếu"
+                        : "Đã kết thúc"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -266,8 +293,8 @@ export default function MoviesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
             <AlertDialogDescription>
-              Hành động này sẽ xóa vĩnh viễn phim &quot;{movieToDelete?.name}&quot;.
-              Hành động này không thể hoàn tác.
+              Hành động này sẽ xóa vĩnh viễn phim &quot;{movieToDelete?.name}
+              &quot;. Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
