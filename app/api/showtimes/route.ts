@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { MOCK_SHOWTIMES } from '@/services/mock-data';
+import { MOCK_SHOWTIMES, MOCK_ROOMS } from '@/services/mock-data';
 
 // GET /api/showtimes
-// Support query params: ?movie_id=xxx, ?cinema_id=xxx, ?date=xxx
+// Support query params: ?movie_id=xxx, ?cinema_id=xxx, ?room_id=xxx, ?date=xxx
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
@@ -13,22 +13,27 @@ export async function GET(request: Request) {
 
         let showtimes = MOCK_SHOWTIMES;
 
+        // Filter by movie_id
         if (movie_id) {
             showtimes = showtimes.filter(s => s.movie_id === movie_id);
         }
 
+        // Filter by cinema_id (need to join with rooms)
         if (cinema_id) {
-            showtimes = showtimes.filter(s => s.cinema_id === cinema_id);
+            const cinemaRoomIds = MOCK_ROOMS
+                .filter(r => r.cinema_id === cinema_id)
+                .map(r => r.room_id);
+            showtimes = showtimes.filter(s => cinemaRoomIds.includes(s.room_id));
         }
 
+        // Filter by room_id
         if (room_id) {
             showtimes = showtimes.filter(s => s.room_id === room_id);
         }
 
+        // Filter by date
         if (date) {
-            showtimes = showtimes.filter(s =>
-                s.show_date_time.startsWith(date)
-            );
+            showtimes = showtimes.filter(s => s.start_date === date);
         }
 
         return NextResponse.json(showtimes);

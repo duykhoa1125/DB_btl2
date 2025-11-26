@@ -793,13 +793,29 @@ for (let d = 0; d < 14; d++) {
                 end_time: endTime
             });
 
+
             currentHour += Math.ceil(durationMinutes / 60);
         });
     });
 }
 
-// Add static showtimes for Order History
+// Add static showtimes for testing
 MOCK_SHOWTIMES.push(
+    // Simple IDs for testing book-ticket page (uppercase)
+    { showtime_id: 'ST001', room_id: 'CNM001_R1', movie_id: 'MV001', start_date: addDays(today, 0), start_time: '14:00:00', end_time: '17:00:00' },
+    { showtime_id: 'ST002', room_id: 'CNM001_R2', movie_id: 'MV002', start_date: addDays(today, 0), start_time: '16:00:00', end_time: '18:00:00' },
+    { showtime_id: 'ST003', room_id: 'CNM002_R1', movie_id: 'MV003', start_date: addDays(today, 1), start_time: '18:00:00', end_time: '20:30:00' },
+    { showtime_id: 'ST004', room_id: 'CNM003_R1', movie_id: 'MV004', start_date: addDays(today, 1), start_time: '20:00:00', end_time: '22:30:00' },
+    { showtime_id: 'ST005', room_id: 'CNM001_R1', movie_id: 'MV018', start_date: addDays(today, 2), start_time: '19:00:00', end_time: '21:00:00' },
+
+    // Lowercase variants for case-insensitive support
+    { showtime_id: 'st_001', room_id: 'CNM001_R1', movie_id: 'MV001', start_date: addDays(today, 0), start_time: '14:00:00', end_time: '17:00:00' },
+    { showtime_id: 'st_002', room_id: 'CNM001_R2', movie_id: 'MV002', start_date: addDays(today, 0), start_time: '16:00:00', end_time: '18:00:00' },
+    { showtime_id: 'st_003', room_id: 'CNM002_R1', movie_id: 'MV003', start_date: addDays(today, 1), start_time: '18:00:00', end_time: '20:30:00' },
+    { showtime_id: 'st_004', room_id: 'CNM003_R1', movie_id: 'MV004', start_date: addDays(today, 1), start_time: '20:00:00', end_time: '22:30:00' },
+    { showtime_id: 'st_005', room_id: 'CNM001_R1', movie_id: 'MV018', start_date: addDays(today, 2), start_time: '19:00:00', end_time: '21:00:00' },
+
+    // Historical showtimes for order history
     { showtime_id: 'ST_PAST_001', room_id: 'CNM001_R1', movie_id: 'MV001', start_date: '2024-03-01', start_time: '10:00:00', end_time: '13:00:00' },
     { showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', movie_id: 'MV002', start_date: '2024-03-05', start_time: '14:30:00', end_time: '16:30:00' },
     { showtime_id: 'ST_PAST_003', room_id: 'CNM002_R2', movie_id: 'MV003', start_date: '2024-03-10', start_time: '18:00:00', end_time: '20:00:00' },

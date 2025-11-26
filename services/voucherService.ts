@@ -24,6 +24,13 @@ const voucherService = {
     },
 
     /**
+     * Get voucher with full details (promotional, discount, gift info)
+     */
+    getDetailByCode: (code: string): Promise<any> => {
+        return axiosClient.get(`/vouchers/${code}/details`);
+    },
+
+    /**
      * Get active vouchers for a user
      */
     getActiveVouchers: (phoneNumber: string): Promise<Voucher[]> => {

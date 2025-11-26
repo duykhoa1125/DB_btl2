@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,17 +15,75 @@ import {
   Tag,
   Sparkles,
 } from "lucide-react";
-import {
-  MOCK_VOUCHERS,
-  getVoucherDetail,
-  VoucherDetail,
-} from "@/services/mock-data";
+import { voucherService } from "@/services";
 import { useAuth } from "@/lib/auth-context";
+
+// VoucherDetail type - matching mock-data structure
+interface VoucherDetail {
+  code: string;
+  phone_number: string;
+  state: 'active' | 'used' | 'expired';
+  start_date: string;
+  end_date: string;
+  promotional?: {
+    event_id: string;
+    description: string;
+    level: string;
+  };
+  discount?: {
+    percent_reduce: number;
+    max_price_can_reduce: number;
+  };
+  gift?: {
+    name: string;
+  };
+}
 
 export default function PromotionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState<"all" | "gift" | "discount">("all");
   const { currentUser } = useAuth();
+  const [userVouchers, setUserVouchers] = useState<VoucherDetail[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchVouchers = async () => {
+      try {
+        setLoading(true);
+        // Get basic vouchers for user
+        const vouchers = await voucherService.getByUser(currentUser.phone_number);
+        
+        // Fetch details for each voucher
+        const vouchersWithDetails = await Promise.all(
+          vouchers.map(async (v) => {
+            try {
+              return await voucherService.getDetailByCode(v.code);
+            } catch (err) {
+              console.error(`Failed to fetch details for voucher ${v.code}`, err);
+              return null;
+            }
+          })
+        );
+        
+        setUserVouchers(vouchersWithDetails.filter((v): v is VoucherDetail => v !== null));
+      } catch (err) {
+        setError('Không thể tải danh sách voucher');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVouchers();
+  }, [currentUser]);
+  
+  // Filter vouchers
+  const activeVouchers = userVouchers.filter((v) => v.state === "active");
+  const usedVouchers = userVouchers.filter((v) => v.state === "used");
+  const expiredVouchers = userVouchers.filter((v) => v.state === "expired");
 
   if (!currentUser) {
     return (
@@ -43,17 +101,6 @@ export default function PromotionsPage() {
   const userLevel = currentUser.membership_points >= 5000 ? "vip" :
                    currentUser.membership_points >= 2500 ? "diamond" :
                    currentUser.membership_points >= 1000 ? "gold" : "copper";
-
-  // Get user vouchers and enrich with details
-  const userVouchers = MOCK_VOUCHERS
-    .filter(v => v.phone_number === currentUser.phone_number)
-    .map(v => getVoucherDetail(v.code))
-    .filter((v): v is VoucherDetail => v !== undefined);
-  
-  // Filter vouchers
-  const activeVouchers = userVouchers.filter((v) => v.state === "active");
-  const usedVouchers = userVouchers.filter((v) => v.state === "used");
-  const expiredVouchers = userVouchers.filter((v) => v.state === "expired");
 
   const filteredVouchers = activeVouchers.filter((voucher) => {
     const eventName = voucher.promotional?.event_id || ""; // TODO: Get event name
@@ -255,6 +302,25 @@ export default function PromotionsPage() {
           </div>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+            <p className="text-muted-foreground">Đang tải voucher...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-16">
+            <p className="text-red-500 text-lg mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>Thử lại</Button>
+          </div>
+        )}
+
+        {/* Main Content */}
+        {!loading && !error && (
+          <>
         {/* Search and Filter */}
         <div className="mb-12 space-y-6 max-w-2xl mx-auto">
           <div className="relative group">
@@ -370,6 +436,8 @@ export default function PromotionsPage() {
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

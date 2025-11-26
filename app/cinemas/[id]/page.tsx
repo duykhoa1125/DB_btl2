@@ -1,33 +1,79 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { MOCK_CINEMAS, MOCK_SHOWTIMES, MOCK_ROOMS, getAllMoviesWithDetails } from "@/services/mock-data";
-import type { Showtime } from "@/services/types";
+import { notFound, useParams } from "next/navigation";
+import { cinemaService, showtimeService, roomService, movieService } from "@/services";
+import type { Showtime, Cinema, Room, MovieDetail } from "@/services/types";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Clock, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function CinemaDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function CinemaDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+  
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [cinema, setCinema] = useState<Cinema | null>(null);
+  const [showtimes, setShowtimes] = useState<Showtime[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [movies, setMovies] = useState<MovieDetail[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const cinema = MOCK_CINEMAS.find((c) => c.cinema_id === id);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Fetch cinema, showtimes, and rooms in parallel
+        const [cinemaData, showtimesData, roomsData, moviesData] = await Promise.all([
+          cinemaService.getById(id),
+          showtimeService.getByCinema(id),
+          roomService.getByCinema(id),
+          movieService.getAllWithDetails(),
+        ]);
+        
+        setCinema(cinemaData);
+        setShowtimes(showtimesData);
+        setRooms(roomsData);
+        setMovies(moviesData);
+      } catch (err) {
+        setError('Không thể tải thông tin rạp chiếu');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!cinema) {
-    notFound();
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4 mx-auto"></div>
+          <p className="text-muted-foreground">Đang tải thông tin rạp...</p>
+        </div>
+      </div>
+    );
   }
 
-  // 1. Get all showtimes for this cinema (via room_id)
-  const cinemaShowtimes = MOCK_SHOWTIMES.filter((s) => {
-    const room = MOCK_ROOMS.find(r => r.room_id === s.room_id);
-    return room?.cinema_id === id;
-  });
+  if (error || !cinema) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Không tìm thấy rạp chiếu</h1>
+          <p className="text-muted-foreground mb-4">{error || 'Rạp chiếu không tồn tại'}</p>
+          <Link href="/cinemas" className="text-primary hover:underline">← Quay lại danh sách rạp</Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter showtimes by cinema's rooms
+  const roomIds = rooms.map(r => r.room_id);
+  const cinemaShowtimes = showtimes.filter(s => roomIds.includes(s.room_id));
 
   // 2. Get unique dates from start_date
   const uniqueDates = Array.from(
@@ -141,8 +187,7 @@ export default function CinemaDetailPage({
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {Object.keys(showtimesByMovie).length > 0 ? (
                 Object.entries(showtimesByMovie).map(([movie_id, showtimes]) => {
-                  const allMovies = getAllMoviesWithDetails();
-                  const movie = allMovies.find((m) => m.movie_id === movie_id);
+                  const movie = movies.find((m) => m.movie_id === movie_id);
                   if (!movie) return null;
 
                   return (
@@ -193,7 +238,7 @@ export default function CinemaDetailPage({
                                   </span>
                                   <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
                                     {(() => {
-                                      const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+                                      const room = rooms.find(r => r.room_id === showtime.room_id);
                                       return room?.name.replace("Room", "R") || showtime.room_id;
                                     })()}
                                   </span>

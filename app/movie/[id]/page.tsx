@@ -3,7 +3,7 @@ import { ShowtimeSelector } from "@/components/showtime-selector";
 import { RatingSummary } from "@/components/rating-summary";
 import { Breadcrumb } from "@/components/breadcrumb";
 
-import { getMovieWithDetails, MOCK_SHOWTIMES, MOCK_REVIEWS } from "@/services/mock-data";
+import { movieService, showtimeService, reviewService } from "@/services";
 import { User, Clock, Calendar, Factory, Play } from "lucide-react";
 
 import { Reviews } from "@/components/reviews";
@@ -15,10 +15,14 @@ export default async function MovieDetailPage({
 }) {
   const { id } = await params;
 
-  const movie = getMovieWithDetails(id);
-  const showtimes = MOCK_SHOWTIMES. filter((s) => s.showtime_id.includes(id) || s.movie_id === id);
+  // Fetch data in parallel for better performance
+  const [movie, showtimes, reviews] = await Promise.all([
+    movieService.getWithDetails(id),
+    showtimeService.getByMovie(id),
+    reviewService.getByMovie(id),
+  ]);
 
-  const reviewCount = MOCK_REVIEWS.filter((r) => r.movie_id === id).length;
+  const reviewCount = reviews.length;
 
   if (!movie) {
     return (

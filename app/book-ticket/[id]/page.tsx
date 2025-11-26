@@ -1,4 +1,4 @@
-import { MOCK_SHOWTIMES, getMovieWithDetails } from "@/services/mock-data";
+import { showtimeService, movieService } from "@/services";
 import { BookingContent } from "./booking-content";
 import { Breadcrumb } from "@/components/breadcrumb";
 
@@ -11,9 +11,9 @@ interface BookingPageProps {
 export default async function BookingPage({ params }: BookingPageProps) {
   const { id } = await params;
 
-  const showtime = MOCK_SHOWTIMES.find((s) => s.showtime_id === id);
+  const showtime = await showtimeService.getById(id);
   const movie = showtime
-    ? getMovieWithDetails(showtime.movie_id)
+    ? await movieService.getWithDetails(showtime.movie_id)
     : null;
 
   if (!showtime || !movie) {

@@ -14,20 +14,25 @@ axiosClient.interceptors.response.use(
     },
     (error) => {
         if (error.response?.status === 401) {
-            // Ví dụ: Tự động logout khi token hết hạn
-            console.error('Unauthorized! Redirecting to login...');
-            window.location.href = '/login';
+            // Only redirect on client-side
+            if (typeof window !== 'undefined') {
+                console.error('Unauthorized! Redirecting to login...');
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
 )
 
-// Thêm token vào header (nếu có)
+// Request interceptor to add authorization token
 axiosClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Only access localStorage on client-side
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,13 +12,32 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-import { MOCK_EVENTS } from "@/services/mock-data";
+import { eventService } from "@/services";
 import { Event } from "@/services/types";
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const activeEvents = MOCK_EVENTS.filter(e => {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const data = await eventService.getAll();
+        setEvents(data);
+      } catch (err) {
+        setError('Không thể tải danh sách sự kiện');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const activeEvents = events.filter(e => {
       const today = new Date().toISOString().split('T')[0];
       return e.end_date >= today;
   });
@@ -90,34 +109,55 @@ export default function EventsPage() {
           </p>
         </div>
 
-        {/* Search */}
-        <div className="mb-12 max-w-xl mx-auto">
-           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
-            <div className="relative flex items-center bg-background rounded-xl border border-border/50 shadow-sm">
-              <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
-              <Input
-                type="text"
-                placeholder="Tìm kiếm sự kiện..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-12 border-none bg-transparent focus-visible:ring-0 text-lg"
-              />
-            </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+            <p className="text-muted-foreground">Đang tải sự kiện...</p>
           </div>
-        </div>
+        )}
 
-        {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredEvents.map((event) => (
-            <EventCard key={event.event_id} event={event} />
-          ))}
-        </div>
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-16">
+            <p className="text-red-500 text-lg mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>Thử lại</Button>
+          </div>
+        )}
 
-        {filteredEvents.length === 0 && (
-            <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg">Không tìm thấy sự kiện nào phù hợp.</p>
+        {/* Main Content */}
+        {!loading && !error && (
+          <>
+            {/* Search */}
+            <div className="mb-12 max-w-xl mx-auto">
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+                <div className="relative flex items-center bg-background rounded-xl border border-border/50 shadow-sm">
+                  <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
+                  <Input
+                    type="text"
+                    placeholder="Tìm kiếm sự kiện..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-12 h-12 border-none bg-transparent focus-visible:ring-0 text-lg"
+                  />
+                </div>
+              </div>
             </div>
+
+            {/* Events Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredEvents.map((event) => (
+                <EventCard key={event.event_id} event={event} />
+              ))}
+            </div>
+
+            {filteredEvents.length === 0 && (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground text-lg">Không tìm thấy sự kiện nào phù hợp.</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
