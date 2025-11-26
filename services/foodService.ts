@@ -1,7 +1,7 @@
 import axiosClient from '@/lib/axiosClient';
 import { Food } from './types';
 
-interface FoodMenuItem {
+export interface FoodMenuItem {
     food_id: string;
     name: string;
     description?: string;

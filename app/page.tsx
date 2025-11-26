@@ -1,11 +1,11 @@
 import { Carousel } from "@/components/carousel";
-import { getAllMoviesWithDetails } from "@/services/mock-data";
+import { movieService } from "@/services";
 import { MovieTabs } from "@/components/movie-tabs";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Film } from "lucide-react";
 
-export default function Home() {
-  const allMovies = getAllMoviesWithDetails();
+export default async function Home() {
+  const allMovies = await movieService.getAllWithDetails();
   const nowShowingMovies = allMovies.filter((m) => m.status === "showing");
   const comingSoonMovies = allMovies.filter((m) => m.status === "upcoming");
 

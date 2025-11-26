@@ -6,12 +6,12 @@ import { MOCK_BILLS } from '@/services/mock-data';
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const account_phone = searchParams.get('account_phone');
+        const phone_number = searchParams.get('phone_number') || searchParams.get('account_phone');
 
         let bills = MOCK_BILLS;
 
-        if (account_phone) {
-            bills = bills.filter(b => b.account_phone === account_phone);
+        if (phone_number) {
+            bills = bills.filter(b => b.phone_number === phone_number);
         }
 
         return NextResponse.json(bills);

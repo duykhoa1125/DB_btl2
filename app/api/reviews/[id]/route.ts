@@ -4,11 +4,13 @@ import { MOCK_REVIEWS } from '@/services/mock-data';
 // GET /api/reviews/:id
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;
-        const review = MOCK_REVIEWS.find(r => r.review_id === id);
+        // const review = MOCK_REVIEWS.find(r => r.review_id === id);
+        // Review ID is not supported in current data model
+        const review = undefined;
 
         if (!review) {
             return NextResponse.json(

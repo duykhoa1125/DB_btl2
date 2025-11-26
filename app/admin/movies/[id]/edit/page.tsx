@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { updateMovie } from "@/lib/admin-helpers";
-import { getMovieWithDetails } from "@/services/mock-data";
+import { movieService } from "@/services";
 import type { Movie } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,31 +42,47 @@ export default function EditMoviePage() {
 
   useEffect(() => {
     const movie_id = params.id as string;
-    const movie = getMovieWithDetails(movie_id);
+    
+    const fetchMovie = async () => {
+      try {
+        const movie = await movieService.getWithDetails(movie_id);
+        
+        if (!movie) {
+          toast({
+            title: "Error",
+            description: "Movie not found",
+            variant: "destructive",
+          });
+          router.push("/admin/movies");
+          return;
+        }
 
-    if (!movie) {
-      toast({
-        title: "Error",
-        description: "Movie not found",
-        variant: "destructive",
-      });
-      router.push("/admin/movies");
-      return;
-    }
+        setFormData({
+          name: movie.name,
+          synopsis: movie.synopsis || "",
+          image: movie.image,
+          status: movie.status,
+          duration: movie.duration.toString(),
+          release_date: movie.release_date,
+          end_date: movie.end_date,
+          age_rating: movie.age_rating.toString(),
+          language: movie.language as "en" | "vi" | "ko" | "ja",
+          trailer: movie.trailer || "",
+        });
+      } catch (error) {
+        console.error("Failed to fetch movie:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load movie details",
+          variant: "destructive",
+        });
+        router.push("/admin/movies");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    setFormData({
-      name: movie.name,
-      synopsis: movie.synopsis || "",
-      image: movie.image,
-      status: movie.status,
-      duration: movie.duration.toString(),
-      release_date: movie.release_date,
-      end_date: movie.end_date,
-      age_rating: movie.age_rating.toString(),
-      language: movie.language as "en" | "vi" | "ko" | "ja",
-      trailer: movie.trailer || "",
-    });
-    setIsLoading(false);
+    fetchMovie();
   }, [params.id, router, toast]);
 
   const validate = () => {

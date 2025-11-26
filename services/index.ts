@@ -14,7 +14,7 @@ export { default as accountService } from './accountService';
 export { default as bookingService } from './bookingService';
 export { default as billService } from './billService';
 export { default as ticketService } from './ticketService';
-export { default as foodService } from './foodService';
+export { default as foodService, type FoodMenuItem } from './foodService';
 export { default as voucherService } from './voucherService';
 export { default as eventService } from './eventService';
 export { default as promotionalService } from './promotionalService';
@@ -22,6 +22,7 @@ export { default as reviewService } from './reviewService';
 export { default as staffService } from './staffService';
 export { default as directorService } from './directorService';
 export { default as actorService } from './actorService';
+export { default as membershipService } from './membershipService';
 
 // Export all types
 export * from './types';

@@ -3,10 +3,7 @@
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { type Account } from "@/services/types";
-import { MOCK_ACCOUNTS } from "@/services/mock-data";
-
-// Mutable array for runtime changes (mocking DB)
-const runtimeAccounts = [...MOCK_ACCOUNTS];
+import { authService } from "@/services";
 
 interface AuthContextType {
   currentUser: Account | null;
@@ -40,43 +37,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock login: accept any password for existing users
-    const user = runtimeAccounts.find((u) => u.email === email);
-    if (user) {
-      setCurrentUser(user);
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      return true;
+    try {
+      // Mock login: accept any password for existing users
+      const user = await authService.getByEmail(email);
+      if (user) {
+        setCurrentUser(user);
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
     }
-    return false;
   };
 
   const signup = async (
     email: string,
     password: string,
     fullname: string
-  ): Promise<boolean> => {
-    const userExists = runtimeAccounts.some((u) => u.email === email);
-    if (userExists) {
+  ): Promise<boolean>  => {
+    try {
+      // Check if user exists
+      const userExists = await authService.getByEmail(email).then(() => true).catch(() => false);
+      if (userExists) {
+        return false;
+      }
+
+      const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const newUser: Account = {
+        phone_number: `09${Math.floor(Math.random() * 100000000)}`, // Mock phone
+        email: email,
+        password: password,
+        fullname: fullname,
+        birth_date: now,
+        gender: "unknown",
+        avatar: `https://avatar.vercel.sh/${email.split("@")[0]}`,
+        membership_points: 0,
+        registration_date: now,
+      };
+
+      // In a real implementation, this would call authService.register(newUser)
+      // For now, we'll just set it locally
+      setCurrentUser(newUser);
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+      return true;
+    } catch (error) {
+      console.error('Signup failed:', error);
       return false;
     }
-
-    const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const newUser: Account = {
-      phone_number: `09${Math.floor(Math.random() * 100000000)}`, // Mock phone
-      email: email,
-      password: password,
-      fullname: fullname,
-      birth_date: now,
-      gender: "unknown",
-      avatar: `https://avatar.vercel.sh/${email.split("@")[0]}`,
-      membership_points: 0,
-      registration_date: now,
-    };
-
-    runtimeAccounts.push(newUser);
-    setCurrentUser(newUser);
-    localStorage.setItem("currentUser", JSON.stringify(newUser));
-    return true;
   };
 
   const logout = () => {
@@ -84,15 +93,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("currentUser");
   };
 
-  const updateProfile = (updates: Partial<Account>) => {
+  const updateProfile = async (updates: Partial<Account>) => {
     if (currentUser) {
-      const updated = { ...currentUser, ...updates };
-      setCurrentUser(updated);
-      localStorage.setItem("currentUser", JSON.stringify(updated));
-      
-      const index = runtimeAccounts.findIndex((u) => u.email === currentUser.email);
-      if (index !== -1) {
-        runtimeAccounts[index] = updated;
+      try {
+        // In real implementation: await authService.updateProfile(updates)
+        const updated = { ...currentUser, ...updates };
+        setCurrentUser(updated);
+        localStorage.setItem("currentUser", JSON.stringify(updated));
+      } catch (error) {
+        console.error('Failed to update profile:', error);
       }
     }
   };

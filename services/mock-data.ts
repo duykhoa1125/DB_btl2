@@ -77,7 +77,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV001',
         name: 'Dune: Part Two',
-        image: 'https://image.tmdb.org/t/p/original/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
         duration: 166,
         release_date: '2024-03-01',
         end_date: '2024-05-01',
@@ -90,7 +90,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV002',
         name: 'Kung Fu Panda 4',
-        image: 'https://image.tmdb.org/t/p/original/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg',
         duration: 94,
         release_date: '2024-03-08',
         end_date: '2024-05-08',
@@ -103,7 +103,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV003',
         name: 'Godzilla x Kong: The New Empire',
-        image: 'https://image.tmdb.org/t/p/original/tMefBSflv6PGwM5ZtBe8xwQCoDe.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+tMefBSflv6PGwM5ZtBe8xwQCoDe.jpg',
         duration: 115,
         release_date: '2024-03-29',
         end_date: '2024-05-29',
@@ -116,7 +116,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV004',
         name: 'Exhuma',
-        image: 'https://image.tmdb.org/t/p/original/pQYHouPsDf32FhIKYB72laNSAQo.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+pQYHouPsDf32FhIKYB72laNSAQo.jpg',
         duration: 134,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
@@ -129,12 +129,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV005',
         name: 'Mai',
-        image: 'https://upload.wikimedia.org/wikipedia/vi/8/86/Mai_film_poster.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+Mai',
         duration: 131,
         release_date: '2024-02-10',
         end_date: '2024-04-10',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=kGlL1Dn6yTQ',
         language: 'vi',
         status: 'ended',
         synopsis: 'A touching story about love and family during Tet holiday.'
@@ -142,7 +142,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV006',
         name: 'Civil War',
-        image: 'https://image.tmdb.org/t/p/original/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg',
         duration: 109,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
@@ -155,7 +155,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV007',
         name: 'The Fall Guy',
-        image: 'https://image.tmdb.org/t/p/original/tSz1qsmSJon0rqkHBxXZmrotuse.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+tSz1qsmSJon0rqkHBxXZmrotuse.jpg',
         duration: 126,
         release_date: '2024-05-03',
         end_date: '2024-07-03',
@@ -168,7 +168,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV008',
         name: 'Kingdom of the Planet of the Apes',
-        image: 'https://image.tmdb.org/t/p/original/gKkl37BQuKTanygYQG1pyYgLVgf.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+gKkl37BQuKTanygYQG1pyYgLVgf.jpg',
         duration: 145,
         release_date: '2024-05-10',
         end_date: '2024-07-10',
@@ -181,7 +181,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV009',
         name: 'Furiosa: A Mad Max Saga',
-        image: 'https://image.tmdb.org/t/p/original/iADOJ8Zymht2JPMoy3R7xceZprc.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+iADOJ8Zymht2JPMoy3R7xceZprc.jpg',
         duration: 148,
         release_date: '2024-05-24',
         end_date: '2024-07-24',
@@ -194,7 +194,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV010',
         name: 'Inside Out 2',
-        image: 'https://image.tmdb.org/t/p/original/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg',
         duration: 100,
         release_date: '2024-06-14',
         end_date: '2024-08-14',
@@ -207,7 +207,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV011',
         name: 'Deadpool & Wolverine',
-        image: 'https://image.tmdb.org/t/p/original/jbwYaoYWSoYi7WCB84LFUi9D5I.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+jbwYaoYWSoYi7WCB84LFUi9D5I.jpg',
         duration: 120,
         release_date: '2024-07-26',
         end_date: '2024-09-26',
@@ -220,7 +220,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV012',
         name: 'Despicable Me 4',
-        image: 'https://image.tmdb.org/t/p/original/wWba3TaojhY7Nirs9D0GLXthdfZ.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+wWba3TaojhY7Nirs9D0GLXthdfZ.jpg',
         duration: 95,
         release_date: '2024-07-03',
         end_date: '2024-09-03',
@@ -233,7 +233,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV013',
         name: 'A Quiet Place: Day One',
-        image: 'https://image.tmdb.org/t/p/original/yrpPYKijjsMeq46h965xIGe7C5r.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+yrpPYKijjsMeq46h965xIGe7C5r.jpg',
         duration: 100,
         release_date: '2024-06-28',
         end_date: '2024-08-28',
@@ -246,7 +246,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV014',
         name: 'Bad Boys: Ride or Die',
-        image: 'https://image.tmdb.org/t/p/original/nP6RliHjxsz4irTKsxe8FRhKZYl.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+nP6RliHjxsz4irTKsxe8FRhKZYl.jpg',
         duration: 110,
         release_date: '2024-06-07',
         end_date: '2024-08-07',
@@ -259,7 +259,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV015',
         name: 'Haikyuu!! The Dumpster Battle',
-        image: 'https://image.tmdb.org/t/p/original/qjGrUmKW78MCPG8PTL4pBevwoCD.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+qjGrUmKW78MCPG8PTL4pBevwoCD.jpg',
         duration: 85,
         release_date: '2024-05-31',
         end_date: '2024-07-31',
@@ -272,7 +272,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV016',
         name: 'The Garfield Movie',
-        image: 'https://image.tmdb.org/t/p/original/t9XkeE7HzOsdQcDDDapDYh8lrmt.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+t9XkeE7HzOsdQcDDDapDYh8lrmt.jpg',
         duration: 101,
         release_date: '2024-05-24',
         end_date: '2024-07-24',
@@ -285,7 +285,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV017',
         name: 'IF',
-        image: 'https://image.tmdb.org/t/p/original/xbKFv4H3qIqGj1I3F5U38iI8.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+xbKFv4H3qIqGj1I3F5U38iI8.jpg',
         duration: 104,
         release_date: '2024-05-17',
         end_date: '2024-07-17',
@@ -298,7 +298,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV018',
         name: 'Challengers',
-        image: 'https://image.tmdb.org/t/p/original/H6vke7zGiuLsz4v4RPe2iyqe.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+H6vke7zGiuLsz4v4RPe2iyqe.jpg',
         duration: 131,
         release_date: '2024-04-26',
         end_date: '2024-06-26',
@@ -311,7 +311,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV019',
         name: 'Abigail',
-        image: 'https://image.tmdb.org/t/p/original/5Uq8P6MPj9Ppsns5tGSxUUNXUT.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+5Uq8P6MPj9Ppsns5tGSxUUNXUT.jpg',
         duration: 109,
         release_date: '2024-04-19',
         end_date: '2024-06-19',
@@ -324,7 +324,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV020',
         name: 'Monkey Man',
-        image: 'https://image.tmdb.org/t/p/original/4kxHB9pvMiMbCPZWpGtZfbh5.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+4kxHB9pvMiMbCPZWpGtZfbh5.jpg',
         duration: 121,
         release_date: '2024-04-05',
         end_date: '2024-06-05',
@@ -337,12 +337,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV021',
         name: 'Ghostbusters: Frozen Empire',
-        image: 'https://image.tmdb.org/t/p/original/6FaXDX798y.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+e1J2oNzSBdou01sUvriVuoYp0pJ.jpg',
         duration: 115,
         release_date: '2024-03-22',
         end_date: '2024-05-22',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=HpOBX.jpg',
+        trailer: 'https://www.youtube.com/watch?v=HpOBXnBgeiY',
         language: 'en',
         status: 'showing',
         synopsis: 'The Spengler family returns to where it all started – the iconic New York City firehouse – to team up with the original Ghostbusters.'
@@ -350,12 +350,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV022',
         name: 'The First Omen',
-        image: 'https://image.tmdb.org/t/p/original/uQP7.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+uQP0RklWqWpE3s8HmHUxn4CnN0.jpg',
         duration: 119,
         release_date: '2024-04-05',
         end_date: '2024-06-05',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=QKOQ5q3toxs',
         language: 'en',
         status: 'showing',
         synopsis: 'A young American woman is sent to Rome to begin a life of service to the church.'
@@ -363,12 +363,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV023',
         name: 'Late Night with the Devil',
-        image: 'https://image.tmdb.org/t/p/original/u3YQJctM.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+jEJw7C8yMbnaEW0auNYWdZdQCgG.jpg',
         duration: 93,
         release_date: '2024-03-22',
         end_date: '2024-05-22',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=Yn9dWA16rT4',
         language: 'en',
         status: 'showing',
         synopsis: 'A live television broadcast in 1977 goes horribly wrong, unleashing evil into the nation\'s living rooms.'
@@ -376,12 +376,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV024',
         name: 'Immaculate',
-        image: 'https://image.tmdb.org/t/p/original/fdZpvOD.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+fdZpvODTX5wwkD0ikZUb1h9O2j.jpg',
         duration: 89,
         release_date: '2024-03-22',
         end_date: '2024-05-22',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=DetoHsKe73s',
         language: 'en',
         status: 'showing',
         synopsis: 'Cecilia, a woman of devout faith, is warmly welcomed to the picture-perfect Italian countryside where she is offered a new role at an illustrious convent.'
@@ -389,12 +389,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV025',
         name: 'Arthur the King',
-        image: 'https://image.tmdb.org/t/p/original/gxVcBc4.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+gxVcBc4TbzPxZPy753VdPVqScE.jpg',
         duration: 107,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=Eor022Y6Kz4',
         language: 'en',
         status: 'showing',
         synopsis: 'Over the course of ten days and 435 miles, an unbreakable bond is forged between pro adventure racer Michael Light and a scrappy street dog companion dubbed Arthur.'
@@ -402,12 +402,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV026',
         name: 'Imaginary',
-        image: 'https://image.tmdb.org/t/p/original/9u6HE.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+9u6HELcdxY1yNkz5dFz0mMjkhLo.jpg',
         duration: 104,
         release_date: '2024-03-08',
         end_date: '2024-05-08',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=UIGXL2lbFAg',
         language: 'en',
         status: 'showing',
         synopsis: 'A woman returns to her childhood home to discover that the imaginary friend she left behind is very real and unhappy that she abandoned him.'
@@ -415,12 +415,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV027',
         name: 'Cabrini',
-        image: 'https://image.tmdb.org/t/p/original/5J2.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+5J2WyQUvDfZJxOmDPwsF5aFKxHu.jpg',
         duration: 145,
         release_date: '2024-03-08',
         end_date: '2024-05-08',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=CZtFKDMy_NE',
         language: 'en',
         status: 'showing',
         synopsis: 'The story of Francesca Cabrini, a poor Italian immigrant who became one of the great entrepreneurs of the 19th century.'
@@ -428,12 +428,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV028',
         name: 'Love Lies Bleeding',
-        image: 'https://image.tmdb.org/t/p/original/p7jy.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+p7jyMfC5LYQzDFWmNx4zgXDCNv.jpg',
         duration: 104,
         release_date: '2024-03-08',
         end_date: '2024-05-08',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=C7e_OaHQeZs',
         language: 'en',
         status: 'showing',
         synopsis: 'Reclusive gym manager Lou falls hard for Jackie, an ambitious bodybuilder headed through town to Vegas in pursuit of her dream.'
@@ -441,12 +441,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV029',
         name: 'One Life',
-        image: 'https://image.tmdb.org/t/p/original/yQ7.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+yQ7e8aIjyc6m7c6q3nBnUWaYeY.jpg',
         duration: 110,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=rZkuR9HwPMc',
         language: 'en',
         status: 'showing',
         synopsis: 'Sir Nicholas \'Nicky\' Winton, a young London broker, rescues 669 children from the Nazis in the months leading up to World War II.'
@@ -454,12 +454,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV030',
         name: 'The American Society of Magical Negroes',
-        image: 'https://image.tmdb.org/t/p/original/xtP.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+xtPB9cqx63Q2OBFbwk5Ep5JsqFz.jpg',
         duration: 104,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=7hbzPiwGxyo',
         language: 'en',
         status: 'showing',
         synopsis: 'A young man, Aren, is recruited into a secret society of magical Black people who dedicate their lives to a cause of utmost importance: making white people\'s lives easier.'
@@ -467,12 +467,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV031',
         name: 'Snack Shack',
-        image: 'https://image.tmdb.org/t/p/original/5.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+5PEjPwmBYx3IUqzMXwMjRU2yirU.jpg',
         duration: 112,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=pMx2EaGQiAo',
         language: 'en',
         status: 'showing',
         synopsis: 'Nebraska City, 1991. Two best friends get the chance to run the swimming pool snack shack, that later comes to be the perfect scenario for transgression, fun, personal discovery and romance.'
@@ -480,12 +480,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV032',
         name: 'Wicked Little Letters',
-        image: 'https://image.tmdb.org/t/p/original/sc.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+scxBFKKqBRxNDUSQgPLJMzvqNr.jpg',
         duration: 100,
         release_date: '2024-03-29',
         end_date: '2024-05-29',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=maNLJkzyQuA',
         language: 'en',
         status: 'showing',
         synopsis: 'When people in Littlehampton begin receiving letters full of hilarious profanities, rowdy Irish migrant Rose Gooding is charged with the crime.'
@@ -493,12 +493,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV033',
         name: 'Asphalt City',
-        image: 'https://image.tmdb.org/t/p/original/r.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+rH3jY9JJkyXJ6kFAvJVdwgPKSOb.jpg',
         duration: 125,
         release_date: '2024-03-29',
         end_date: '2024-05-29',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=wUHjf7JYG7E',
         language: 'en',
         status: 'showing',
         synopsis: 'A young paramedic is paired with a seasoned partner on the night shift in New York City revealing a city in crisis.'
@@ -506,12 +506,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV034',
         name: 'In the Land of Saints and Sinners',
-        image: 'https://image.tmdb.org/t/p/original/j.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+jKhCS2MwL08IYKLhSt9p6TcDGaB.jpg',
         duration: 106,
         release_date: '2024-03-29',
         end_date: '2024-05-29',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=7WJ_HUlX5cE',
         language: 'en',
         status: 'showing',
         synopsis: 'In a remote Irish village, a damaged Finbar Murphy is forced to fight for redemption after a lifetime of sins.'
@@ -519,12 +519,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV035',
         name: 'La Chimera',
-        image: 'https://image.tmdb.org/t/p/original/t.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+t5M3k0LWMy9WzcakEMKPGQChEyN.jpg',
         duration: 130,
         release_date: '2024-03-29',
         end_date: '2024-05-29',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=pHjdwbP0OOc',
         language: 'it',
         status: 'showing',
         synopsis: 'A group of archaeologists and the black market of historical artifacts.'
@@ -532,12 +532,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV036',
         name: 'The Beast',
-        image: 'https://image.tmdb.org/t/p/original/y.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+yEOEP9p7TUzr7yYYsXuNRl7ecO.jpg',
         duration: 146,
         release_date: '2024-04-05',
         end_date: '2024-06-05',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=vINLhxXEIpg',
         language: 'fr',
         status: 'showing',
         synopsis: 'In the near future where emotions have become a threat, Gabrielle finally decides to purify her DNA in a machine that will immerse her in her past lives.'
@@ -545,12 +545,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV037',
         name: 'Housekeeping for Beginners',
-        image: 'https://image.tmdb.org/t/p/original/i.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+izmx3v5Q8ULgaCfELKvXr3r8k5.jpg',
         duration: 107,
         release_date: '2024-04-05',
         end_date: '2024-06-05',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=HlWmTF2tDGw',
         language: 'mk',
         status: 'showing',
         synopsis: 'A woman is forced to raise her girlfriend\'s two daughters, who don\'t want to be a family.'
@@ -558,12 +558,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV038',
         name: 'Someone Like You',
-        image: 'https://image.tmdb.org/t/p/original/o.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+oGDvlyBGPz4u4ztCc8z7z0c0P4h.jpg',
         duration: 118,
         release_date: '2024-04-02',
         end_date: '2024-06-02',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=N9bRTx_F-Qk',
         language: 'en',
         status: 'showing',
         synopsis: 'After the tragic loss of his best friend, a young architect launches a search for her secret twin sister.'
@@ -571,12 +571,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV039',
         name: 'The Long Game',
-        image: 'https://image.tmdb.org/t/p/original/p.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+pfmOl68gOmv7z1PomvL1xAZJPDA.jpg',
         duration: 112,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=9hcEz3FjW_M',
         language: 'en',
         status: 'showing',
         synopsis: 'In 1955, five young Mexican-American caddies, out of the love for the game, were determined to learn how to play, so they created their own golf course in the middle of the South Texas brush country.'
@@ -584,12 +584,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV040',
         name: 'Sasquatch Sunset',
-        image: 'https://image.tmdb.org/t/p/original/a.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+aDrWzwR9hQkPW8v1Mg6yjHww4DE.jpg',
         duration: 89,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=Z2E7YUZQijg',
         language: 'en',
         status: 'showing',
         synopsis: 'A year in the life of a singular family. Sasquatch Sunset.'
@@ -597,12 +597,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV041',
         name: 'Sting',
-        image: 'https://image.tmdb.org/t/p/original/s.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+s2Nqy2FE9H3W7PrxPLg8NrJMiFe.jpg',
         duration: 91,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=2lMZlDRvqR4',
         language: 'en',
         status: 'showing',
         synopsis: 'After raising an unnervingly talented spider in secret, 12-year-old Charlotte must face the facts about her pet—and fight for her family\'s survival.'
@@ -610,12 +610,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV042',
         name: 'Arcadian',
-        image: 'https://image.tmdb.org/t/p/original/d.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+d8PJJjJppjfxqUeEP7zKmwmhFQz.jpg',
         duration: 92,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=0ZtiwzfWLN0',
         language: 'en',
         status: 'showing',
         synopsis: 'In a near future, normal life on Earth has been decimated. Paul and his two sons, Thomas and Joseph, have been living a half-life – tranquility by day and torment by night.'
@@ -623,12 +623,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV043',
         name: 'Don\'t Tell Mom the Babysitter\'s Dead',
-        image: 'https://image.tmdb.org/t/p/original/f.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+fvEo5NP9yPaGzUzf1RWqFI8D3qR.jpg',
         duration: 99,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=gLz5l0MX9gQ',
         language: 'en',
         status: 'showing',
         synopsis: 'Seventeen year old Tanya Crandell is looking forward to spending the summer with her friends in Europe, but her plans are cancelled when her mom decides to head to a wellness retreat in Thailand.'
@@ -636,12 +636,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV044',
         name: 'Hard Miles',
-        image: 'https://image.tmdb.org/t/p/original/g.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+gTQiXUUpR32eadqdgDhw6xqHDdD.jpg',
         duration: 108,
         release_date: '2024-04-19',
         end_date: '2024-06-19',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=wK-6u75mhzU',
         language: 'en',
         status: 'showing',
         synopsis: 'A strong-willed social worker at a youth prison assembles a cycling team of teenage convicts and takes them on a transformative 1000-mile ride.'
@@ -649,12 +649,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV045',
         name: 'We Grown Now',
-        image: 'https://image.tmdb.org/t/p/original/h.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+h2OC7ZA5bRu4rEwNQg9O6xQwIAl.jpg',
         duration: 93,
         release_date: '2024-04-19',
         end_date: '2024-06-19',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=dJDHcP0f7LE',
         language: 'en',
         status: 'showing',
         synopsis: 'In 1992 Chicago, as Michael Jordan cements himself as a champion, a story of two young legends in their own right begins.'
@@ -662,12 +662,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV046',
         name: 'Stress Positions',
-        image: 'https://image.tmdb.org/t/p/original/j.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+jMQYb4oYP6nfjrtxdNlUr7FHCyO.jpg',
         duration: 95,
         release_date: '2024-04-19',
         end_date: '2024-06-19',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=vI5YU7l7mK8',
         language: 'en',
         status: 'showing',
         synopsis: 'Terry Goon is keeping strict quarantine in his ex-husband\'s Brooklyn brownstone while caring for his nephew Bahlul, a 19-year-old model from Morocco.'
@@ -675,12 +675,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV047',
         name: 'Boy Kills World',
-        image: 'https://image.tmdb.org/t/p/original/k.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+kRHfB22qdqiRkPdcfvl9m6LiEjy.jpg',
         duration: 111,
         release_date: '2024-04-26',
         end_date: '2024-06-26',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=DR9UpN0gMKY',
         language: 'en',
         status: 'showing',
         synopsis: 'When his family is murdered, a deaf-mute named Boy escapes to the jungle and is trained by a mysterious shaman to repress his childish imagination and become an instrument of death.'
@@ -688,12 +688,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV048',
         name: 'Unsung Hero',
-        image: 'https://image.tmdb.org/t/p/original/l.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+lxnx7o8PZcMdj5XFNfzEDNcFqzb.jpg',
         duration: 113,
         release_date: '2024-04-26',
         end_date: '2024-06-26',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=JTzZN6AYQiE',
         language: 'en',
         status: 'showing',
         synopsis: 'Based on a remarkable true story, a mom\'s faith stands against all odds; and inspires her husband and children to hold onto theirs.'
@@ -701,12 +701,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV049',
         name: 'Breathe',
-        image: 'https://image.tmdb.org/t/p/original/z.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+z6FpMYBnlLMHSKMvYGmHSXuuFQC.jpg',
         duration: 93,
         release_date: '2024-04-26',
         end_date: '2024-06-26',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=VQq3_VEjvB0',
         language: 'en',
         status: 'showing',
         synopsis: 'Air-supply is scarce in the near future, forcing a mother and daughter to fight for survival when two strangers arrive desperate for an oxygenated haven.'
@@ -714,12 +714,12 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV050',
         name: 'Humane',
-        image: 'https://image.tmdb.org/t/p/original/x.jpg',
+        image: 'https://placehold.co/300x450/png?text=Movie+xdvYi5GvtKLgCBNPn0KMvcLfbEF.jpg',
         duration: 93,
         release_date: '2024-04-26',
         end_date: '2024-06-26',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=example',
+        trailer: 'https://www.youtube.com/watch?v=kqAy1Sf4TvM',
         language: 'en',
         status: 'showing',
         synopsis: 'In the wake of an environmental collapse that is forcing humanity to shed 20% of its population, a family dinner erupts into chaos when a father\'s plan to enlist in the government\'s new euthanasia program goes horribly awry.'
@@ -822,8 +822,29 @@ MOCK_SHOWTIMES.push(
     { showtime_id: 'ST_PAST_004', room_id: 'CNM003_R3', movie_id: 'MV006', start_date: '2024-04-15', start_time: '19:00:00', end_time: '21:00:00' },
     { showtime_id: 'ST_PAST_005', room_id: 'CNM001_R1', movie_id: 'MV005', start_date: '2024-04-20', start_time: '20:00:00', end_time: '22:30:00' },
     { showtime_id: 'ST_FUTURE_001', room_id: 'CNM004_R1', movie_id: 'MV008', start_date: '2024-05-01', start_time: '09:00:00', end_time: '11:30:00' },
-    { showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', movie_id: 'MV009', start_date: '2024-05-10', start_time: '15:00:00', end_time: '18:00:00' }
+    { showtime_id: 'ST_FUTURE_002', room_id: 'CNM001_R2', movie_id: 'MV009', start_date: '2024-05-10', start_time: '15:00:00', end_time: '18:00:00' },
+
+    // User requested test showtime
+    {
+        showtime_id: 'ST_TEST_USER',
+        room_id: 'CNM001_R1',
+        movie_id: 'MV001',
+        start_date: '2025-11-27',
+        start_time: '09:30:00',
+        end_time: '12:15:00'
+    }
 );
+
+// --- 5. USERS ---
+// ... (existing users)
+
+// Add tickets for the test showtime at the end of MOCK_TICKETS (which is likely further down or I need to find where MOCK_TICKETS is defined/populated)
+// Wait, MOCK_TICKETS was defined earlier or later? 
+// I need to check where MOCK_TICKETS is. 
+// Based on previous edits, MOCK_TICKETS is likely at the end of the file or I need to append to it.
+// The previous edit appended to MOCK_TICKETS.
+// Let's look at the file content again to be sure where to add tickets.
+
 
 // --- 5. USERS ---
 
@@ -930,24 +951,6 @@ export const MOCK_FOODS: Food[] = [
         name: 'Coca Cola (L)',
         description: 'Nước ngọt có ga size lớn',
         price: 45000,
-        production_date: '2024-01-01',
-        expiration_date: '2024-12-31'
-    },
-    {
-        food_id: 'F004',
-        bill_id: '',
-        name: 'Combo Solo',
-        description: '1 Bắp (M) + 1 Nước (M)',
-        price: 95000,
-        production_date: '2024-01-01',
-        expiration_date: '2024-12-31'
-    },
-    {
-        food_id: 'F005',
-        bill_id: '',
-        name: 'Combo Couple',
-        description: '1 Bắp (L) + 2 Nước (L)',
-        price: 150000,
         production_date: '2024-01-01',
         expiration_date: '2024-12-31'
     }
@@ -1373,7 +1376,13 @@ export const MOCK_TICKETS: Ticket[] = [
 
     // BILL009 - Kung Fu Panda 4 (Past) - John Doe
     { ticket_id: 'T018', bill_id: 'BILL009', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'H', seat_column: 5, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-02-20T14:30:00Z', expiration_date: '2025-02-20T16:30:00Z' },
-    { ticket_id: 'T019', bill_id: 'BILL009', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'H', seat_column: 6, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-02-20T14:30:00Z', expiration_date: '2025-02-20T16:30:00Z' }
+    { ticket_id: 'T019', bill_id: 'BILL009', showtime_id: 'ST_PAST_002', room_id: 'CNM001_R1', seat_row: 'H', seat_column: 6, price: 100000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-02-20T14:30:00Z', expiration_date: '2025-02-20T16:30:00Z' },
+
+    // Tickets for ST_TEST_USER (Dune: Part Two - 2025-11-27 09:30)
+    { ticket_id: 'TK_TEST_01', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'F', seat_column: 5, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
+    { ticket_id: 'TK_TEST_02', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'F', seat_column: 6, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
+    { ticket_id: 'TK_TEST_03', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 7, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
+    { ticket_id: 'TK_TEST_04', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 8, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' }
 ];
 
 export function getBillsByPhone(phone: string): Bill[] {

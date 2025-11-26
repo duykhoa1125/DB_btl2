@@ -5,46 +5,60 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  getBillsByPhone,
-  getTicketsByBill,
-  MOCK_SHOWTIMES,
-  MOCK_CINEMAS,
-  MOCK_ROOMS,
-  getMovieWithDetails
-} from "@/services/mock-data";
+import { billService, ticketService, showtimeService, movieService, cinemaService, roomService } from "@/services";
 import { QrCode, MapPin, Calendar, Clock, Armchair } from "lucide-react";
 
 export function OrderHistoryList() {
   const { currentUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
+  const [userBills, setUserBills] = useState<any[]>([]);
+  const [billDetails, setBillDetails] = useState<Map<string, any>>(new Map());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !currentUser) {
       router.push("/account/login");
+    } else if (currentUser) {
+      billService.getByUser(currentUser.phone_number).then(async (bills) => {
+        setUserBills(bills);
+        
+        // Load all bill details
+        const detailsMap = new Map();
+        for (const bill of bills) {
+          try {
+            const tickets = await ticketService.getByBill(bill.bill_id);
+            if (tickets.length > 0) {
+              const firstTicket = tickets[0];
+              const showtime = await showtimeService.getById(firstTicket.showtime_id);
+              if (showtime) {
+                const [movie, room] = await Promise.all([
+                  movieService.getWithDetails(showtime.movie_id),
+                  roomService.getById(showtime.room_id)
+                ]);
+                const cinema = room ? await cinemaService.getById(room.cinema_id) : null;
+                detailsMap.set(bill.bill_id, { tickets, showtime, movie, cinema, room });
+              }
+            }
+          } catch (error) {
+            console.error(`Error loading bill ${bill.bill_id}:`, error);
+          }
+        }
+        setBillDetails(detailsMap);
+        setLoading(false);
+      }).catch((error) => {
+        console.error('Failed to load bills:', error);
+        setLoading(false);
+      });
     }
   }, [currentUser, authLoading, router]);
 
-  if (authLoading || !currentUser) {
+  if (authLoading || !currentUser || loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <p>Đang tải...</p>
       </div>
     );
   }
-
-  const userBills = getBillsByPhone(currentUser.phone_number);
-
-  const getShowtimeInfo = (showtime_id: string) => {
-    const showtime = MOCK_SHOWTIMES.find((s) => s.showtime_id === showtime_id);
-    if (!showtime) return null;
-
-    const movie = getMovieWithDetails(showtime.movie_id);
-    const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
-    const cinema = room ? MOCK_CINEMAS.find((c) => c.cinema_id === room.cinema_id) : null;
-
-    return { showtime, movie, cinema, room };
-  };
 
   return (
     <div className="px-4 py-12 bg-background">
@@ -66,18 +80,13 @@ export function OrderHistoryList() {
         ) : (
           <div className="space-y-4">
             {userBills.map((bill) => {
-              const tickets = getTicketsByBill(bill.bill_id);
-              if (tickets.length === 0) return null;
-
-              // Assuming all tickets in a bill are for the same showtime for display purposes
-              const firstTicket = tickets[0];
-              const info = getShowtimeInfo(firstTicket.showtime_id);
-              if (!info) return null;
-
-              const { movie, showtime, cinema, room } = info;
+              const details = billDetails.get(bill.bill_id);
+              if (!details) return null;
+              
+              const { tickets, movie, showtime, cinema, room } = details;
               
               // Seat list string
-              const seatList = tickets.map(t => `${t.seat_row}${t.seat_column}`).join(", ");
+              const seatList = tickets.map((t: any) => `${t.seat_row}${t.seat_column}`).join(", ");
 
               return (
                 <div

@@ -1,7 +1,7 @@
 "use client";
 
-import { MOCK_MOVIES, MOCK_CINEMAS, MOCK_BILLS } from "@/services/mock-data";
-import { getMovieWithDetails } from "@/services/mock-data";
+import { useState, useEffect } from "react";
+import { movieService, cinemaService, billService } from "@/services";
 import {
   calculateMonthlyRevenue,
   getTotalBookingsThisMonth,
@@ -12,26 +12,55 @@ import { Film, MapPin, Ticket, DollarSign, TrendingUp } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/page-header";
 
 export default function AdminDashboard() {
+  const [movies, setMovies] = useState<any[]>([]);
+  const [cinemas, setCinemas] = useState<any[]>([]);
+  const [bills, setBills] = useState<any[]>([]);
+  const [topMovies, setTopMovies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      movieService.getAll(),
+      cinemaService.getAll(),
+      billService.getAll()
+    ]).then(async ([moviesData, cinemasData, billsData]) => {
+      setMovies(moviesData);
+      setCinemas(cinemasData);
+      setBills(billsData);
+      
+      // Calculate top movies
+      const topMoviesData = getTopMoviesByRevenue(5);
+      const enhancedTopMovies = await Promise.all(
+        topMoviesData.map(async (item) => {
+          try {
+            const detail = await movieService.getWithDetails(item.movie.movie_id);
+            return { ...item, movie: detail || item.movie };
+          } catch {
+            return item;
+          }
+        })
+      );
+      setTopMovies(enhancedTopMovies);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load dashboard data:', error);
+      setLoading(false);
+    });
+  }, []);
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
   const stats = {
-    totalMovies: MOCK_MOVIES.length,
-    nowShowing: MOCK_MOVIES.filter((m) => m.status === "showing").length,
-    comingSoon: MOCK_MOVIES.filter((m) => m.status === "upcoming").length,
-    totalCinemas: MOCK_CINEMAS.length,
+    totalMovies: movies.length,
+    nowShowing: movies.filter((m) => m.status === "showing").length,
+    comingSoon: movies.filter((m) => m.status === "upcoming").length,
+    totalCinemas: cinemas.length,
     totalBookingsThisMonth: getTotalBookingsThisMonth(),
     monthlyRevenue: calculateMonthlyRevenue(currentYear, currentMonth),
   };
 
-  const topMovies = getTopMoviesByRevenue(5).map(item => {
-    const detail = getMovieWithDetails(item.movie.movie_id);
-    return {
-      ...item,
-      movie: detail || item.movie
-    };
-  });
+
 
   return (
     <div className="space-y-8">
@@ -169,7 +198,7 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {MOCK_BILLS.slice(0, 5).map((bill) => (
+            {bills.slice(0, 5).map((bill) => (
               <div
                 key={bill.bill_id}
                 className="flex items-center justify-between rounded-lg border border-border/50 bg-card/50 p-4 transition-colors hover:bg-card"

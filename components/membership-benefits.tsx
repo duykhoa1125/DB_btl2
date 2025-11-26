@@ -1,13 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  MOCK_MEMBERS,
-  getMembershipProgress,
-} from "@/services/mock-data";
-import type { AccountMembership, MemberLevel } from "@/services/types";
+import { membershipService } from "@/services";
+import type { AccountMembership, MemberLevel, Member } from "@/services/types";
 import { Check, Lock, Trophy, TrendingUp, Gift, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -55,8 +53,29 @@ export function MembershipBenefits({
   phoneNumber,
   membershipHistory = [],
 }: MembershipBenefitsProps) {
-  const { currentTier, nextTier, progress, pointsToNext } =
-    getMembershipProgress(membershipPoints);
+  const [membershipData, setMembershipData] = useState<any>(null);
+  const [allTiers, setAllTiers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      membershipService.getProgress(membershipPoints),
+      membershipService.getAllLevels()
+    ]).then(([progressData, tiersData]) => {
+      setMembershipData(progressData);
+      setAllTiers(tiersData);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load membership data:', error);
+      setLoading(false);
+    });
+  }, [membershipPoints]);
+
+  if (loading || !membershipData) {
+    return <div>Loading...</div>;
+  }
+
+  const { currentTier, nextTier, progress, pointsToNext } = membershipData;
 
   const currentConfig = TIER_CONFIG[currentTier.level];
   const nextConfig = nextTier ? TIER_CONFIG[nextTier.level] : null;
@@ -182,7 +201,7 @@ export function MembershipBenefits({
         </h3>
         
         <div className="grid gap-4 md:grid-cols-2">
-          {MOCK_MEMBERS.map((tier) => {
+          {allTiers.map((tier) => {
             const config = TIER_CONFIG[tier.level];
             const isCurrentTier = tier.level === currentTier.level;
             const isLocked = membershipPoints < tier.minimum_point;

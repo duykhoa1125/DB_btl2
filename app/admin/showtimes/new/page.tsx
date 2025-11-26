@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createShowtime, getAllMovies } from "@/lib/admin-helpers";
-import type { Showtime } from "@/services/types";
-import { MOCK_ROOMS } from "@/services/mock-data";
+import type { Showtime, Room } from "@/services/types";
+import { roomService } from "@/services";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,6 +23,7 @@ export default function NewShowtimePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [formData, setFormData] = useState({
     movie_id: "",
     room_id: "",
@@ -31,6 +32,10 @@ export default function NewShowtimePage() {
     end_time: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    roomService.getAll().then(setRooms).catch(console.error);
+  }, []);
 
   const movies = getAllMovies();
 
@@ -106,7 +111,7 @@ export default function NewShowtimePage() {
   };
 
   const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
-  const selectedRoom = MOCK_ROOMS.find(r => r.room_id === formData.room_id);
+  const selectedRoom = rooms.find(r => r.room_id === formData.room_id);
 
   return (
     <div className="space-y-6">
@@ -177,7 +182,7 @@ export default function NewShowtimePage() {
                   <SelectValue placeholder="Select a room" />
                 </SelectTrigger>
                 <SelectContent>
-                  {MOCK_ROOMS.map((room) => (
+                  {rooms.map((room) => (
                     <SelectItem key={room.room_id} value={room.room_id}>
                       {room.name}
                     </SelectItem>

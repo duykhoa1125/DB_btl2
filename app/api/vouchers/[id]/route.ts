@@ -4,11 +4,11 @@ import { MOCK_VOUCHERS } from '@/services/mock-data';
 // GET /api/vouchers/:id
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;
-        const voucher = MOCK_VOUCHERS.find(v => v.voucher_id === id);
+        const voucher = MOCK_VOUCHERS.find(v => v.code === id);
 
         if (!voucher) {
             return NextResponse.json(

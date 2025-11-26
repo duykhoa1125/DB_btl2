@@ -5,7 +5,7 @@ import { getVoucherDetail } from '@/services/mock-data';
 // Trả về voucher kèm thông tin chi tiết (promotional, discount, gift)
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;

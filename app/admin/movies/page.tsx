@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { deleteMovie } from "@/lib/admin-helpers";
-import { getAllMoviesWithDetails } from "@/services/mock-data";
+import { deleteMovie } from  "@/lib/admin-helpers";
+import { movieService } from "@/services";
 import type { MovieDetail } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,18 @@ import {
 } from "@/components/ui/table";
 
 export default function MoviesPage() {
-  const [movies, setMovies] = useState<MovieDetail[]>(getAllMoviesWithDetails());
+  const [movies, setMovies] = useState<MovieDetail[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    movieService.getAllWithDetails().then((data) => {
+      setMovies(data);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load movies:', error);
+      setLoading(false);
+    });
+  }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
@@ -78,7 +89,7 @@ export default function MoviesPage() {
     if (movieToDelete) {
       const success = deleteMovie(movieToDelete.movie_id);
       if (success) {
-        setMovies(getAllMoviesWithDetails());
+        movieService.getAllWithDetails().then(setMovies);
         toast({
           title: "Đã xóa phim",
           description: `"${movieToDelete.name}" đã được xóa thành công.`,

@@ -1,8 +1,8 @@
 "use client";
 
-import { MOCK_REVIEWS } from "@/services/mock-data";
+import { reviewService } from "@/services";
 import { MovieReview } from "@/services/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ReviewList } from "@/components/review-list";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,9 +18,19 @@ interface ReviewsProps {
 export function Reviews({ movie_id, movieTitle }: ReviewsProps) {
   const { currentUser } = useAuth();
   const { toast } = useToast();
-  const [reviews, setReviews] = useState<MovieReview[]>(
-    MOCK_REVIEWS.filter((r) => r.movie_id === movie_id)
-  );
+  const [reviews, setReviews] = useState<MovieReview[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    reviewService.getByMovie(movie_id).then((data) => {
+      setReviews(data);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load reviews:', error);
+      setLoading(false);
+    });
+  }, [movie_id]);
+
   
   const [rating, setRating] = useState(10); // Default 10/10
   const [content, setContent] = useState("");

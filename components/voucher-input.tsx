@@ -5,8 +5,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Ticket, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getVoucherDetail, VoucherDetail } from "@/services/mock-data";
+import { voucherService } from "@/services";
 import { cn } from "@/lib/utils";
+
+// VoucherDetail type from mock-data - we need to define it here or in types
+interface VoucherDetail {
+  code: string;
+  promotional_id: string;
+  start_date: string;
+  end_date: string;
+  state: 'active' | 'used' | 'expired';
+  phone_number: string;
+  promotional?: any;
+  discount?: {
+    promotional_id: string;
+    percent_reduce: number;
+    max_price_can_reduce: number;
+  };
+  gift?: {
+    promotional_id: string;
+    name: string;
+    quantity: number;
+  };
+}
 
 interface VoucherInputProps {
   onVoucherApply?: (voucher: VoucherDetail, discount: number) => void;
@@ -21,51 +42,66 @@ export function VoucherInput({
 }: VoucherInputProps) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (!code.trim()) {
       setError("Vui lòng nhập mã khuyến mại");
       return;
     }
 
-    const voucher = getVoucherDetail(code.toUpperCase());
+    setLoading(true);
+    try {
+      const voucher = await voucherService.getDetailByCode(code.toUpperCase()) as VoucherDetail;
 
-    if (!voucher) {
-      setError("Mã khuyến mại không tồn tại");
-      toast({
-        title: "Lỗi",
-        description: "Mã khuyến mại không tồn tại hoặc đã hết hạn",
-        variant: "destructive",
-      });
-      return;
-    }
+      if (!voucher) {
+        setError("Mã khuyến mại không tồn tại");
+        toast({
+          title: "Lỗi",
+          description: "Mã khuyến mại không tồn tại hoặc đã hết hạn",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    if (voucher.state !== "active") {
-      setError("Mã khuyến mại đã hết hạn hoặc đã được sử dụng");
-      toast({
-        title: "Lỗi",
-        description: "Mã khuyến mại đã hết hạn hoặc đã được sử dụng",
-        variant: "destructive",
-      });
-      return;
-    }
+      if (voucher.state !== "active") {
+        setError("Mã khuyến mại đã hết hạn hoặc đã được sử dụng");
+        toast({
+          title: "Lỗi",
+          description: "Mã khuyến mại đã hết hạn hoặc đã được sử dụng",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    setError("");
-    let discount = 0;
-    if (voucher.discount) {
+      setError("");
+      let discount = 0;
+      if (voucher.discount) {
         discount = voucher.discount.percent_reduce;
+      }
+
+      onVoucherApply?.(voucher, discount);
+
+      toast({
+        title: "Thành công",
+        description: `Đã áp dụng mã ${code.toUpperCase()}`,
+      });
+
+      setCode("");
+    } catch (error) {
+      console.error('Failed to apply voucher:', error);
+      setError("Có lỗi xảy ra khi áp dụng mã khuyến mại");
+      toast({
+        title: "Lỗi",
+        description: "Có lỗi xảy ra khi áp dụng mã khuyến mại",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    
-    onVoucherApply?.(voucher, discount);
-
-    toast({
-      title: "Thành công",
-      description: `Đã áp dụng mã ${code.toUpperCase()}`,
-    });
-
-    setCode("");
   };
+
 
   if (appliedVoucher) {
     return (

@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   getAllShowtimes,
   deleteShowtime,
 } from "@/lib/admin-helpers";
-import { getAllMoviesWithDetails, MOCK_CINEMAS } from "@/services/mock-data";
+import { movieService, cinemaService, roomService } from "@/services";
 import type { Showtime } from "@/services/types";
-import { MOCK_ROOMS } from "@/services/mock-data";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -49,15 +48,25 @@ export default function ShowtimesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [showtimeToDelete, setShowtimeToDelete] = useState<Showtime | null>(null);
   const { toast } = useToast();
+  const [movies, setMovies] = useState<any[]>([]);
+  const [cinemas, setCinemas] = useState<any[]>([]);
+  const [rooms, setRooms] = useState<any[]>([]);
 
-  // Use services data for movies and cinemas to match showtime movie_ids/cinema_ids
-  const movies = getAllMoviesWithDetails();
-  const cinemas = MOCK_CINEMAS;
+  useEffect(() => {
+    Promise.all([
+      movieService.getAllWithDetails(),
+      cinemaService.getAll(),
+      roomService.getAll()
+    ]).then(([moviesData, cinemasData, roomsData]) => {
+      setMovies(moviesData);
+      setCinemas(cinemasData);
+      setRooms(roomsData);
+    }).catch(console.error);
+  }, []);
 
-  // Filter showtimes
   const filteredShowtimes = showtimes.filter((showtime) => {
     const movie = movies.find((m) => m.movie_id === showtime.movie_id);
-    const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+    const room = rooms.find(r => r.room_id === showtime.room_id);
     const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
 
     const matchesSearch =
@@ -104,13 +113,13 @@ export default function ShowtimesPage() {
   };
 
   const getCinemaName = (room_id: string) => {
-    const room = MOCK_ROOMS.find(r => r.room_id === room_id);
+    const room = rooms.find(r => r.room_id === room_id);
     const cinema = room ? cinemas.find((c) => c.cinema_id === room.cinema_id) : null;
     return cinema?.name || "Không xác định";
   };
 
   const getRoomName = (room_id: string) => {
-    return MOCK_ROOMS.find(r => r.room_id === room_id)?.name || room_id;
+    return rooms.find(r => r.room_id === room_id)?.name || room_id;
   };
 
   return (

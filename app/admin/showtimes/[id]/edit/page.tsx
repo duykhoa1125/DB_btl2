@@ -7,8 +7,8 @@ import {
   updateShowtime,
   getAllMovies,
 } from "@/lib/admin-helpers";
-import type { Showtime } from "@/services/types";
-import { MOCK_ROOMS } from "@/services/mock-data";
+import type { Showtime, Room } from "@/services/types";
+import { roomService } from "@/services";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,6 +29,7 @@ export default function EditShowtimePage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [formData, setFormData] = useState({
     movie_id: "",
     room_id: "",
@@ -41,6 +42,7 @@ export default function EditShowtimePage() {
   const movies = getAllMovies();
 
   useEffect(() => {
+    roomService.getAll().then(setRooms).catch(console.error);
     const showtime_id = params.id as string;
     const showtime = getShowtimeById(showtime_id);
 
@@ -135,7 +137,7 @@ export default function EditShowtimePage() {
   }
 
   const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
-  const selectedRoom = MOCK_ROOMS.find((r) => r.room_id === formData.room_id);
+  const selectedRoom = rooms.find((r) => r.room_id === formData.room_id);
 
   return (
     <div className="space-y-6">
@@ -204,7 +206,7 @@ export default function EditShowtimePage() {
                   <SelectValue placeholder="Select a room" />
                 </SelectTrigger>
                 <SelectContent>
-                  {MOCK_ROOMS.map((room) => (
+                  {rooms.map((room) => (
                     <SelectItem key={room.room_id} value={room.room_id}>
                       {room.name}
                     </SelectItem>

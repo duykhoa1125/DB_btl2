@@ -4,7 +4,7 @@ import { MOCK_SEATS, MOCK_SHOWTIMES } from '@/services/mock-data';
 // GET /api/showtimes/:id/seats
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;

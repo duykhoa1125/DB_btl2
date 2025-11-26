@@ -89,7 +89,7 @@ export function ReviewEditor({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-xl border-border/50 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Đánh giá "{movieTitle}"
+            Đánh giá &quot;{movieTitle}&quot;
           </DialogTitle>
           <DialogDescription className="text-base">
             Chia sẻ cảm nhận chân thực của bạn về bộ phim này

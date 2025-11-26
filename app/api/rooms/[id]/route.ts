@@ -4,7 +4,7 @@ import { MOCK_ROOMS } from '@/services/mock-data';
 // GET /api/rooms/:id
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params;

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { type Showtime } from "@/services/types";
-import { MOCK_CINEMAS, MOCK_ROOMS } from "@/services/mock-data";
+import { type Showtime, type Cinema, type Room } from "@/services/types";
+import { cinemaService, roomService } from "@/services";
 import { Calendar, Clock, MapPin, Ticket, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +20,23 @@ export function ShowtimeSelector({
 }: ShowtimeSelectorProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<string | null>(null);
+  const [cinemas, setCinemas] = useState<Cinema[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      cinemaService.getAll(),
+      roomService.getAll()
+    ]).then(([cinemasData, roomsData]) => {
+      setCinemas(cinemasData);
+      setRooms(roomsData);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load cinemas/rooms:', error);
+      setLoading(false);
+    });
+  }, []);
 
   // Format time from start_time (HH:mm:ss)
   const formatTime = (time: string) => {
@@ -152,7 +169,7 @@ export function ShowtimeSelector({
             const showtimesForDate = groupedShowtimes[selectedDate];
             // Group by room (which contains cinema info via room_id)
             const showtimesByRoom = showtimesForDate.reduce((acc, showtime) => {
-              const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+              const room = rooms.find(r => r.room_id === showtime.room_id);
               const cinema_id = room?.cinema_id || 'unknown';
               
               if (!acc[cinema_id]) {
@@ -163,7 +180,7 @@ export function ShowtimeSelector({
             }, {} as Record<string, Showtime[]>);
 
             return Object.entries(showtimesByRoom).map(([cinema_id, cinemaShowtimes]) => {
-              const cinema = MOCK_CINEMAS.find((c) => c.cinema_id === cinema_id);
+              const cinema = cinemas.find((c) => c.cinema_id === cinema_id);
               
               return (
                 <div key={cinema_id} className="space-y-4">
@@ -212,7 +229,7 @@ export function ShowtimeSelector({
                             {/* Room Info (Cinema name removed as it's in header) */}
                             <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
                               {(() => {
-                                const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+                                const room = rooms.find(r => r.room_id === showtime.room_id);
                                 return (
                                   <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
                                     {room?.name || showtime.room_id}

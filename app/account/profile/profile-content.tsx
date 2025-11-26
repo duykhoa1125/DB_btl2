@@ -7,21 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import {
-  MOCK_BILLS,
-  MOCK_TICKETS,
-  MOCK_SHOWTIMES,
-  MOCK_SEATS,
-  MOCK_FOODS,
-  getMembershipProgress,
-  getMovieWithDetails,
-  getBillsByPhone,
-  getTicketsByBill
-} from "@/services/mock-data";
+import { billService, ticketService, showtimeService, movieService, membershipService } from "@/services";
 import { ChevronDown, Edit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { MembershipBenefits } from "@/components/membership-benefits";
+
+// Type for bill with enriched data
+interface EnrichedBill {
+  bill_id: string;
+  total_price: number;
+  creation_date: string;
+  tickets: any[];
+  showtime: any;
+  movie: any;
+}
 
 export function ProfileContent() {
   const { currentUser, updateProfile, isLoading: authLoading } = useAuth();
@@ -30,6 +30,9 @@ export function ProfileContent() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [expandedBill, setExpandedBill] = useState<string | null>(null);
+  const [userBills, setUserBills] = useState<EnrichedBill[]>([]);
+  const [membershipData, setMembershipData] = useState<any>(null);
+  const [dataLoading, setDataLoading] = useState(true);
   const [formData, setFormData] = useState({
     fullname: "",
     phone_number: "",
@@ -47,13 +50,61 @@ export function ProfileContent() {
         birth_date: currentUser.birth_date,
         avatar: currentUser.avatar || "",
       });
+      
+      // Load user data: bills and membership
+      const loadUserData = async () => {
+        try {
+          setDataLoading(true);
+          
+          // Load membership data
+          const membershipPoints = currentUser.membership_points || 0;
+          const membership = await membershipService.getProgress(membershipPoints);
+          setMembershipData(membership);
+          
+          // Load bills
+          const bills = await billService.getByUser(currentUser.phone_number);
+          
+          // Enrich each bill with tickets, showtime, and movie data
+          const enrichedBills: EnrichedBill[] = [];
+          for (const bill of bills) {
+            try {
+              const tickets = await ticketService.getByBill(bill.bill_id);
+              if (tickets.length > 0) {
+                const firstTicket = tickets[0];
+                const showtime = await showtimeService.getById(firstTicket.showtime_id);
+                if (showtime) {
+                  const movie = await movieService.getWithDetails(showtime.movie_id);
+                  enrichedBills.push({
+                    bill_id: bill.bill_id,
+                    total_price: bill.total_price,
+                    creation_date: bill.creation_date,
+                    tickets,
+                    showtime,
+                    movie,
+                  });
+                }
+              }
+            } catch (error) {
+              console.error(`Error loading bill ${bill.bill_id}:`, error);
+            }
+          }
+          
+          setUserBills(enrichedBills);
+          setDataLoading(false);
+        } catch (error) {
+          console.error('Error loading user data:', error);
+          setDataLoading(false);
+        }
+      };
+      
+      loadUserData();
     }
   }, [currentUser, authLoading, router]);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      updateProfile({
+      await updateProfile({
         fullname: formData.fullname,
         phone_number: formData.phone_number,
         birth_date: formData.birth_date,
@@ -69,7 +120,7 @@ export function ProfileContent() {
     }
   };
 
-  if (authLoading || !currentUser) {
+  if (authLoading || !currentUser || dataLoading || !membershipData) {
     return (
       <div className="flex items-center justify-center py-12">
         <p>Đang tải...</p>
@@ -77,12 +128,9 @@ export function ProfileContent() {
     );
   }
 
-  // Get user bills
-  const userBills = getBillsByPhone(currentUser.phone_number);
-
-  // Get membership progress
+  // Get membership info from loaded data
   const membershipPoints = currentUser.membership_points || 0;
-  const { currentTier } = getMembershipProgress(membershipPoints);
+  const { currentTier } = membershipData;
 
   return (
     <div className="min-h-screen bg-background">
@@ -261,16 +309,7 @@ export function ProfileContent() {
                     </div>
                   ) : (
                     userBills.map((bill) => {
-                      const tickets = getTicketsByBill(bill.bill_id);
-                      if (tickets.length === 0) return null;
-                      
-                      const firstTicket = tickets[0];
-                      const showtime = MOCK_SHOWTIMES.find(
-                        (s) => s.showtime_id === firstTicket.showtime_id
-                      );
-                      const movie = showtime
-                        ? getMovieWithDetails(showtime.movie_id)
-                        : null;
+                      const { tickets, movie } = bill;
                       const isExpanded = expandedBill === bill.bill_id;
 
                       return (

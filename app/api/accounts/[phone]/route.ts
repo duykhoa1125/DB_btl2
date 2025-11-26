@@ -4,11 +4,11 @@ import { MOCK_ACCOUNTS } from '@/services/mock-data';
 // GET /api/accounts/:phone
 export async function GET(
     request: Request,
-    { params }: { params: { phone: string } }
+    { params }: { params: Promise<{ phone: string }> }
 ) {
     try {
         const { phone } = await params;
-        const account = MOCK_ACCOUNTS.find(a => a.phone === phone);
+        const account = MOCK_ACCOUNTS.find(a => a.phone_number === phone);
 
         if (!account) {
             return NextResponse.json(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -18,13 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  MOCK_STAFFS,
-  MOCK_CINEMAS,
-  getStaffByCinema,
-  getStaffManager,
-  getSubordinates,
-} from "@/services/mock-data";
+import { staffService, cinemaService } from "@/services";
 import type { Staff } from "@/services/types";
 import {
   Plus,
@@ -39,11 +33,22 @@ import { AdminPageHeader } from "@/components/admin/page-header";
 import { AdminSearch } from "@/components/admin/search";
 
 export default function StaffManagementPage() {
-  const [staffs, setStaffs] = useState<Staff[]>(MOCK_STAFFS);
+  const [staffs, setStaffs] = useState<Staff[]>([]);
+  const [cinemas, setCinemas] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCinema, setSelectedCinema] = useState<string>("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
+
+  useEffect(() => {
+    Promise.all([
+      staffService.getAll(),
+      cinemaService.getAll()
+    ]).then(([staffsData, cinemasData]) => {
+      setStaffs(staffsData);
+      setCinemas(cinemasData);
+    }).catch(console.error);
+  }, []);
 
   // Form state
   const [formData, setFormData] = useState<Partial<Staff>>({
@@ -120,7 +125,7 @@ export default function StaffManagementPage() {
   // Stats
   const stats = {
     total: staffs.length,
-    cinemas: MOCK_CINEMAS.length,
+    cinemas: cinemas.length,
   };
 
   return (
@@ -175,7 +180,7 @@ export default function StaffManagementPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tất cả rạp</SelectItem>
-            {MOCK_CINEMAS.map((cinema) => (
+            {cinemas.map((cinema) => (
               <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                 {cinema.name}
               </SelectItem>
@@ -233,7 +238,7 @@ export default function StaffManagementPage() {
                     <SelectValue placeholder="Chọn rạp" />
                   </SelectTrigger>
                   <SelectContent>
-                    {MOCK_CINEMAS.map((cinema) => (
+                    {cinemas.map((cinema) => (
                       <SelectItem key={cinema.cinema_id} value={cinema.cinema_id}>
                         {cinema.name}
                       </SelectItem>
@@ -291,7 +296,7 @@ export default function StaffManagementPage() {
           {filteredStaffs.map((staff) => {
             const manager = staff.manage_id ? staffs.find(s => s.staff_id === staff.manage_id) : null;
             const subordinates = staffs.filter(s => s.manage_id === staff.staff_id);
-            const cinema = MOCK_CINEMAS.find((c) => c.cinema_id === staff.cinema_id);
+            const cinema = cinemas.find((c) => c.cinema_id === staff.cinema_id);
 
             return (
               <Card

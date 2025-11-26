@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { MOCK_SEATS } from "@/services/mock-data";
+import { seatService } from "@/services";
 import type { Seat } from "@/services/types";
 import { cn } from "@/lib/utils";
 import { Armchair, Sofa } from "lucide-react";
 
 interface SeatSelectionProps {
   onSeatsChange: (seats: Seat[]) => void;
+  roomId?: string;
+  bookedSeatIds?: string[];
 }
 
 // Icons for different seat types
@@ -50,12 +52,22 @@ const CoupleSeatIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
+export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatIds = [] }: SeatSelectionProps) {
   const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set());
+  const [demoSeats, setDemoSeats] = useState<Seat[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Use seats from a specific room (e.g., first room of first cinema) for demo
-  // In a real app, this would be passed as a prop or fetched based on showtime
-  const demoSeats = MOCK_SEATS.filter(s => s.room_id === 'CNM001_R1');
+  useEffect(() => {
+    // Use seats from a specific room for demo
+    // In a real app, roomId would be passed from parent based on showtime
+    seatService.getByRoom(roomId).then((seats) => {
+      setDemoSeats(seats);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load seats:', error);
+      setLoading(false);
+    });
+  }, [roomId]);
 
   // Group seats by row
   const seatsByRow = demoSeats.reduce((acc, seat) => {
@@ -70,6 +82,9 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
 
   const handleSeatClick = (seat: Seat) => {
     const seatId = getSeatId(seat);
+    // Prevent selecting booked seats
+    if (bookedSeatIds.includes(seatId)) return;
+
     const newSelected = new Set(selectedSeats);
     if (newSelected.has(seatId)) {
       newSelected.delete(seatId);
@@ -85,16 +100,23 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
 
   const getSeatColor = (seat: Seat) => {
     const seatId = getSeatId(seat);
-    if (selectedSeats.has(seatId)) {
-      return "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)] scale-105";
+    
+    // Check if booked
+    if (bookedSeatIds.includes(seatId)) {
+      return "text-red-500/50 cursor-not-allowed"; // Booked: Reddish/Disabled
     }
-    // Default unselected state - uniform color as requested, but hover effect remains
-    return "text-muted-foreground/40 hover:text-primary/80 hover:scale-105 transition-all duration-200";
+
+    if (selectedSeats.has(seatId)) {
+      return "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)] scale-105"; // Selected: Primary Color
+    }
+    // Default unselected state
+    return "text-muted-foreground/30 hover:text-primary/80 hover:scale-105 transition-all duration-200"; // Available: Muted
   };
 
   const renderSeat = (seat: Seat) => {
     const seatId = getSeatId(seat);
     const isSelected = selectedSeats.has(seatId);
+    const isBooked = bookedSeatIds.includes(seatId);
     
     let Icon = StandardSeatIcon;
     let width = "w-8";
@@ -111,18 +133,20 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
       <button
         key={seatId}
         onClick={() => handleSeatClick(seat)}
+        disabled={isBooked}
         className={cn(
           "group relative flex flex-col items-center justify-center transition-all duration-300",
           width,
           "h-8",
           getSeatColor(seat)
         )}
-        title={`${seat.seat_row}${seat.seat_column} - ${seat.seat_type}`}
+        title={`${seat.seat_row}${seat.seat_column} - ${seat.seat_type}${isBooked ? ' (Đã đặt)' : ''}`}
       >
         <Icon className="h-full w-full" />
         <span className={cn(
           "absolute -bottom-6 text-[10px] font-bold opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 z-10 bg-background/80 px-1 rounded",
-          isSelected ? "text-primary" : "text-foreground"
+          isSelected ? "text-primary" : "text-foreground",
+          isBooked && "text-muted-foreground"
         )}>
           {seat.seat_row}{seat.seat_column}
         </span>
@@ -133,7 +157,7 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
   const rows = Object.keys(seatsByRow).sort();
 
   return (
-    <div className="space-y-10 w-full max-w-6xl mx-auto">
+    <div className="space-y-10 w-full max-w-full mx-auto">
       <div className="flex flex-col items-center">
         <h3 className="mb-8 text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
           Chọn vị trí ngồi
@@ -248,8 +272,12 @@ export function SeatSelection({ onSeatsChange }: SeatSelectionProps) {
              <span className="text-sm font-medium">Đang chọn</span>
           </div>
           <div className="flex items-center gap-3">
-             <div className="w-6 h-6 rounded bg-muted-foreground/20 border border-muted-foreground/30" />
+             <div className="w-6 h-6 rounded bg-red-500/20 border border-red-500/50" />
              <span className="text-sm font-medium">Đã đặt</span>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="w-6 h-6 rounded bg-muted-foreground/20 border border-muted-foreground/30" />
+             <span className="text-sm font-medium">Trống</span>
           </div>
         </div>
       </div>

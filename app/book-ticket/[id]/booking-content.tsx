@@ -6,13 +6,34 @@ import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
-import type { Seat, Food } from "@/services/types";
+import type { Seat, Food, Room } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
-import { MOCK_ROOMS, VoucherDetail } from "@/services/mock-data";
+import { roomService, ticketService } from "@/services";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Calendar, Clock, MapPin, CreditCard, Wallet, Banknote, Building2, CheckCircle2 } from "lucide-react";
+
+// VoucherDetail type definition (from mock-data)
+interface VoucherDetail {
+  code: string;
+  promotional_id: string;
+  start_date: string;
+  end_date: string;
+  state: 'active' | 'used' | 'expired';
+  phone_number: string;
+  promotional?: any;
+  discount?: {
+    promotional_id: string;
+    percent_reduce: number;
+    max_price_can_reduce: number;
+  };
+  gift?: {
+    promotional_id: string;
+    name: string;
+    quantity: number;
+  };
+}
 
 interface BookingContentProps {
   showtime: Showtime;
@@ -31,6 +52,22 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const [appliedVoucher, setAppliedVoucher] = useState<VoucherDetail | null>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [bookedSeatIds, setBookedSeatIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    roomService.getAll().then(setRooms).catch(console.error);
+    
+    // Fetch booked tickets for this showtime
+    if (showtime.showtime_id) {
+      ticketService.getByShowtime(showtime.showtime_id)
+        .then(tickets => {
+          const booked = tickets.map(t => `${t.seat_row}${t.seat_column}`);
+          setBookedSeatIds(booked);
+        })
+        .catch(console.error);
+    }
+  }, [showtime.showtime_id]);
 
   useEffect(() => {
     const voucherCode = searchParams.get("voucher");
@@ -53,7 +90,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const { date, time } = formatDateTime();
   
   // Get room info
-  const room = MOCK_ROOMS.find(r => r.room_id === showtime.room_id);
+  const room = rooms.find(r => r.room_id === showtime.room_id);
   const roomName = room?.name || showtime.room_id;
 
   // Calculate ticket price based on seat types (from lib/pricing.ts)
@@ -91,7 +128,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   ];
 
   return (
-    <main className="min-h-screen bg-background relative overflow-hidden">
+    <main className="min-h-screen bg-background relative">
       {/* Ambient Background */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]" />
@@ -111,7 +148,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto w-full max-w-[1800px] px-4 md:px-8 py-8">
         {/* Movie Header Card */}
         <div className="mb-8 rounded-3xl bg-gradient-to-br from-card to-card/50 border border-border/50 p-6 shadow-xl relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -186,11 +223,15 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div className="lg:col-span-3 space-y-8">
             {bookingStep === "seats" && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-32">
-                <SeatSelection onSeatsChange={setSelectedSeats} />
+                <SeatSelection 
+                  onSeatsChange={setSelectedSeats} 
+                  roomId={showtime.room_id}
+                  bookedSeatIds={bookedSeatIds}
+                />
                 <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/80 p-4 backdrop-blur-lg">
                   <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 flex justify-end items-center gap-4">

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import { MOCK_FOODS } from "@/services/mock-data";
-import type { Food } from "@/services/types";
+import { foodService, type FoodMenuItem } from "@/services";
 import { cn } from "@/lib/utils";
 
-interface FoodItem extends Food {
+interface FoodItem extends FoodMenuItem {
   quantity: number;
 }
 
@@ -19,8 +18,20 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
   const [selectedFoods, setSelectedFoods] = useState<Map<string, FoodItem>>(
     new Map()
   );
+  const [availableFoods, setAvailableFoods] = useState<FoodMenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleQuantityChange = (food: Food, change: number) => {
+  useEffect(() => {
+    foodService.getAvailableItems().then((data) => {
+      setAvailableFoods(data);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to load food items:', error);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleQuantityChange = (food: FoodMenuItem, change: number) => {
     const newFoods = new Map(selectedFoods);
     const existing = newFoods.get(food.food_id);
 
@@ -49,7 +60,7 @@ export function FoodSelection({ onFoodChange }: FoodSelectionProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {MOCK_FOODS.map((food) => {
+        {availableFoods.map((food) => {
           const selectedFood = selectedFoods.get(food.food_id);
           const quantity = selectedFood?.quantity || 0;
 

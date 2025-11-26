@@ -66,6 +66,13 @@ const authService = {
     changePassword: (oldPassword: string, newPassword: string): Promise<void> => {
         return axiosClient.put('/auth/password', { old_password: oldPassword, new_password: newPassword });
     },
+
+    /**
+     * Get account by email (used for authentication lookup)
+     */
+    getByEmail: (email: string): Promise<Account> => {
+        return axiosClient.get('/accounts/email', { params: { email } });
+    },
 };
 
 export default authService;
