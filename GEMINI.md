@@ -1,66 +1,130 @@
-# Tổng quan dự án Hệ thống Đặt vé Xem phim
+# CinemaHub Project Documentation
 
-Đây là một dự án full-stack được xây dựng bằng Next.js, TypeScript, và sử dụng MySQL cho cơ sở dữ liệu. Dưới đây là phân tích chi tiết về cấu trúc và công nghệ của dự án.
+This document serves as the single source of truth for the CinemaHub project. It contains comprehensive information about the project's architecture, database, design system, and logic. **AI Assistants must read this file to understand the project context.**
 
-## 1. Công nghệ sử dụng
+## 1. Technology Stack
 
-- **Frontend:**
-  - **Framework:** [Next.js](https://nextjs.org/) (sử dụng App Router).
-  - **Ngôn ngữ:** [TypeScript](https://www.typescriptlang.org/).
-  - **Thư viện UI:** [shadcn/ui](https://ui.shadcn.com/) - Một tập hợp các component có thể tái sử dụng, được xây dựng trên Radix UI và Tailwind CSS.
-  - **Styling:** [Tailwind CSS](https://tailwindcss.com/).
-  - **Quản lý Form:** [React Hook Form](https://react-hook-form.com/) kết hợp với [Zod](https://zod.dev/) để validation schema.
-  - **Data Fetching:** [Axios](https://axios-http.com/) được sử dụng để thực hiện các yêu cầu HTTP đến backend.
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4 (using CSS-first configuration in `globals.css`)
+- **UI Library:** shadcn/ui (Radix UI based)
+- **Icons:** Lucide React
+- **Forms:** React Hook Form + Zod
+- **HTTP Client:** Axios
+- **Database:** MySQL (Schema defined in `mysql_Ticket_Booking_System.sql`)
+- **Fonts:** Be Vietnam Pro (Body), Outfit (Headings)
 
-- **Backend (Dựa trên yêu cầu và schema):**
-  - **Cơ sở dữ liệu:** [MySQL](https://www.mysql.com/). File `mysql_Ticket_Booking_System.sql` định nghĩa toàn bộ schema, bao gồm tables, relationships, triggers để tự động sinh ID (ví dụ: `CIN00001`), và dữ liệu mẫu.
-  - **API:** Yêu cầu backend cung cấp một RESTful API theo tài liệu `BACKEND_API_REQUIREMENTS.md`. Các API endpoints được thiết kế để quản lý các tài nguyên như phim, rạp chiếu, suất chiếu, và người dùng.
+## 2. Architecture & Folder Structure
 
-## 2. Cấu trúc thư mục
+The project follows a modular architecture using Next.js App Router.
 
-Dự án tuân theo cấu trúc tiêu chuẩn của Next.js App Router, với sự phân chia rõ ràng về chức năng:
+### Directory Structure
 
-- **`app/`**: Chứa toàn bộ các trang và API routes của ứng dụng.
-  - **`app/api/`**: Các API routes của Next.js, hoạt động như một lớp Backend-for-Frontend (BFF), xử lý các yêu cầu từ client trước khi tương tác với cơ sở dữ liệu hoặc một backend service khác.
-  - **`app/(user-pages)/`**: Các thư mục con như `movie`, `cinemas`, `book-ticket` định nghĩa các trang cho người dùng cuối.
-  - **`app/admin/`**: Khu vực quản trị, chứa các trang để quản lý dữ liệu hệ thống (phim, rạp, nhân viên, v.v.).
-  - **`layout.tsx` & `page.tsx`**: Các file layout và trang chính của ứng dụng.
+- **`app/`**: Application routes and API endpoints.
+  - **`api/`**: Backend-for-Frontend (BFF) API routes. Organized by resource (e.g., `api/movies`, `api/auth`).
+  - **`(user-pages)/`**: User-facing pages (e.g., movie details, booking flow).
+  - **`admin/`**: Admin dashboard and management pages.
+  - **`layout.tsx`**: Root layout with providers (`AuthProvider`, `Toaster`, `Analytics`).
+  - **`globals.css`**: Global styles and Tailwind 4 configuration.
+- **`components/`**: React components.
+  - **`ui/`**: Reusable UI components from shadcn/ui.
+  - **`header.tsx`, `footer.tsx`**: Layout components.
+- **`services/`**: Service layer for data fetching.
+  - **`mock-data.ts`**: Contains all mock data for the application.
+  - **`types.ts`**: TypeScript interfaces matching the DB schema.
+  - **`*Service.ts`**: Service modules (e.g., `movieService.ts`) that abstract data fetching logic. Currently switching between mock data and API calls.
+- **`lib/`**: Utilities and contexts (e.g., `auth-context.tsx`, `utils.ts`).
 
-- **`components/`**: Chứa các React component có thể tái sử dụng.
-  - **`components/ui/`**: Các UI component cơ bản được cung cấp bởi `shadcn/ui` (Button, Card, Dialog, v.v.).
-  - **`components/*.tsx`**: Các component phức tạp hơn, dành riêng cho các tính năng của ứng dụng như `seat-map.tsx`, `showtime-selector.tsx`.
+### Service Layer Pattern
 
-- **`services/`**: Tách biệt logic gọi API. Mỗi file (ví dụ: `movieService.ts`, `cinemaService.ts`) chịu trách nhiệm cho việc tương tác với một nhóm API endpoint cụ thể, giúp mã nguồn ở các component gọn gàng hơn.
+Data access is abstracted through "Services". Components should **never** fetch data directly. They should call methods from `services/*Service.ts`.
 
-- **`lib/`**: Chứa các hàm tiện ích (`utils.ts`), context providers (`auth-context.tsx`), và các logic chung khác.
+- **Current State**: Services primarily return data from `mock-data.ts` or call internal API routes.
+- **Goal**: Services will eventually call the real Backend API.
 
-- **`public/`**: Chứa các tài sản tĩnh như hình ảnh (poster phim, logo, v.v.).
+## 3. Database Schema (MySQL)
 
-## 3. Phân tích Cơ sở dữ liệu
+The database schema is defined in `mysql_Ticket_Booking_System.sql`.
 
-File `mysql_Ticket_Booking_System.sql` cho thấy một thiết kế CSDL quan hệ chi tiết (not edit this file):
+### Key Tables & Prefixes
 
-- **Các thực thể chính:** `CINEMA`, `ROOM`, `SEAT`, `MOVIE`, `SHOWTIME`.
-- **Quản lý người dùng:** `ACCOUNT` (khách hàng) và `STAFF` (nhân viên).
-- **Quy trình đặt vé:** `BILL` (hóa đơn), `TICKET` (vé), `FOOD` (đồ ăn kèm).
-- **Khuyến mãi và thành viên:** `EVENT`, `PROMOTIONAL`, `VOUCHER`, `MEMBER`, `ACCOUNT_MEMBERSHIP`.
-- **Tự động hóa:** Sử dụng **Triggers** để tự động tạo ID theo một định dạng chuẩn (ví dụ: `MOV` + số thứ tự) trước khi `INSERT`, đảm bảo tính nhất quán của dữ liệu.
-- **Ràng buộc:** Toàn bộ các mối quan hệ (Foreign Keys) được định nghĩa rõ ràng, đảm bảo tính toàn vẹn dữ liệu.
+- **CINEMA** (`CIN...`): Cinema locations.
+- **ROOM** (`ROO...`): Screening rooms within a cinema.
+- **SEAT**: Seats in a room (Composite PK: `room_id`, `seat_row`, `seat_column`).
+- **MOVIE** (`MOV...`): Movie information.
+- **SHOWTIME** (`SHO...`): Specific screening of a movie in a room.
+- **ACCOUNT**: User accounts (PK: `phone_number`).
+- **STAFF** (`STA...`): Staff members.
+- **TICKET** (`TIC...`): Issued tickets.
+- **BILL** (`BIL...`): Transaction records.
+- **FOOD** (`FOO...`): Food items ordered.
+- **VOUCHER** (`VOU...`): Discount codes.
 
-## 4. Luồng hoạt động chính (dự đoán)
+### ID Generation
 
-1.  **Người dùng:**
-    - Đăng ký, đăng nhập tài khoản.
-    - Xem danh sách phim đang chiếu, sắp chiếu.
-    - Xem chi tiết một bộ phim (thông tin, trailer, đánh giá).
-    - Xem danh sách rạp chiếu và thông tin chi tiết.
-    - Chọn phim, sau đó chọn suất chiếu (ngày, giờ) và rạp.
-    - Chuyển đến giao diện chọn ghế (`seat-map`), chọn đồ ăn (`food-selection`).
-    - Áp dụng voucher khuyến mãi.
-    - Thanh toán và nhận vé (lưu trong lịch sử đơn hàng).
-    - Xem lại lịch sử đặt vé.
+Triggers are used to automatically generate IDs with prefixes (e.g., `MOV00001`) when inserting with `NULL` ID.
 
-2.  **Quản trị viên (Admin):**
-    - Đăng nhập vào trang quản trị.
-    - Xem dashboard thống kê (doanh thu, số lượng vé bán ra).
-    - Thực hiện các thao tác CRUD (Create, Read, Update, Delete) trên các tài nguyên: Phim, Rạp, Phòng chiếu, Suất chiếu, Nhân viên, v.v.
+## 4. Design System & UI
+
+### Tailwind CSS 4 Configuration
+
+Configuration is inline in `app/globals.css` using `@theme`.
+
+- **Colors**: OKLCH color space for vibrant and accessible colors.
+  - Primary: `oklch(58% 0.24 264)` (Deep Blue/Purple)
+  - Accent: `oklch(75% 0.15 85)` (Warm Orange/Gold)
+  - Background: `oklch(98% 0.005 264)` (Light) / `oklch(10% 0.015 264)` (Dark)
+- **Fonts**:
+  - Sans: `Be Vietnam Pro`
+  - Heading: `Outfit`
+
+### Custom Utilities
+
+- `.glow-primary`, `.glow-accent`: Box-shadow glow effects.
+- `.glass`: Glassmorphism effect (blur + transparency).
+- `.animate-shimmer`: Loading/highlight animation.
+
+## 5. Logic & Data Flow
+
+### Booking Flow
+
+1.  **Select Movie**: User chooses a movie from the homepage or list.
+2.  **Select Showtime**: User selects a cinema, date, and time.
+3.  **Select Seats**: User picks seats from a visual map (`seat-map.tsx`).
+    - Seat types: Normal, VIP, Couple.
+    - State: Available, Occupied, Selected.
+4.  **Select Food**: Optional food & drink selection.
+5.  **Payment**: Review order, apply voucher, and "pay" (mock payment).
+6.  **Ticket**: Ticket is generated and saved to `TICKET` table (mock).
+
+### Authentication
+
+- **Context**: `AuthProvider` (`lib/auth-context.tsx`) manages user state.
+- **Roles**: `user` (Customer) and `admin` (Staff).
+- **Mock Auth**: Supports login with phone number/password from `MOCK_ACCOUNTS`.
+
+## 6. API Routes (BFF)
+
+Located in `app/api/`. These routes simulate a real backend.
+
+- `GET /api/movies`: List movies.
+- `GET /api/showtimes`: Get showtimes.
+- `POST /api/auth/login`: Authenticate user.
+- `GET /api/account/profile`: Get user profile.
+
+## 7. Mock Data (`services/mock-data.ts`)
+
+Contains static arrays for all entities.
+
+- `MOCK_MOVIES`: Array of `Movie` objects.
+- `MOCK_SHOWTIMES`: Generated programmatically for the next 14 days.
+- `MOCK_SEATS`: Generated based on room layout.
+- **Note**: When "saving" data (e.g., booking a ticket), we currently push to these in-memory arrays (reset on server restart).
+
+## 8. Development Rules for AI
+
+1.  **Update Documentation**: If you change the architecture, add a new table, or modify a core logic flow, **YOU MUST UPDATE THIS FILE**.
+2.  **Use Services**: Always use `services/` for data fetching. Do not import `mock-data` directly in components.
+3.  **Type Safety**: Strictly adhere to types in `services/types.ts`.
+4.  **UI Consistency**: Use `shadcn/ui` components and Tailwind utility classes. Do not write custom CSS unless absolutely necessary.
+5.  **Mobile First**: Ensure all designs are responsive.

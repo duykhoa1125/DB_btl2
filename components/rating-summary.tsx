@@ -1,25 +1,38 @@
-import type { MovieDetail } from "@/services/types";
+import type { MovieDetail, MovieReview } from "@/services/types";
 import { StarIcon } from "lucide-react";
 
 interface RatingSummaryProps {
   movie: MovieDetail;
-  reviewCount: number;
+  reviews: MovieReview[];
 }
 
-export function RatingSummary({ movie, reviewCount }: RatingSummaryProps) {
-  // Use avg_rating from movie reviews (1-5 scale)
-  const avgRating = movie.avg_rating || 0;
+export function RatingSummary({ movie, reviews }: RatingSummaryProps) {
+  const reviewCount = reviews.length;
 
-  // Calculate rating distribution (simulated)
+  // Calculate average rating from reviews
+  const avgRating =
+    reviewCount > 0
+      ? reviews.reduce((acc, review) => acc + review.star_rating, 0) /
+        reviewCount
+      : movie.avg_rating || 0;
+
+  // Calculate rating distribution from actual reviews
   const ratingDistribution = {
-    5: 45,
-    4: 30,
-    3: 15,
-    2: 7,
-    1: 3,
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
   };
 
-  const maxCount = Math.max(...Object.values(ratingDistribution));
+  reviews.forEach((review) => {
+    const rating = Math.round(review.star_rating);
+    if (rating >= 1 && rating <= 5) {
+      ratingDistribution[rating as keyof typeof ratingDistribution]++;
+    }
+  });
+
+  const maxCount = Math.max(...Object.values(ratingDistribution), 1);
 
   return (
     <div className="space-y-6 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 shadow-sm">
