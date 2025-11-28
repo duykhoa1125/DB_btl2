@@ -82,7 +82,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-03-01',
         end_date: '2024-05-01',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=Way9Dexny3w',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'showing',
         synopsis: 'Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.'
@@ -95,7 +95,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-03-08',
         end_date: '2024-05-08',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=_inKs4eeHiI',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'showing',
         synopsis: 'Po is gearing up to become the spiritual leader of his Valley of Peace, but also needs someone to take his place as Dragon Warrior.'
@@ -108,7 +108,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-03-29',
         end_date: '2024-05-29',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=lV1OOlGwExM',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'showing',
         synopsis: 'Two ancient titans, Godzilla and Kong, clash in an epic battle as humans unravel their intertwined origins and connection to Skull Island\'s mysteries.'
@@ -121,7 +121,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-03-15',
         end_date: '2024-05-15',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=M5S6d6g2g2k',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'ko',
         status: 'showing',
         synopsis: 'A wealthy family in LA experiences a series of supernatural events and contacts young shamans Hwa-rim and Bong-gil.'
@@ -134,7 +134,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-02-10',
         end_date: '2024-04-10',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=kGlL1Dn6yTQ',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'vi',
         status: 'ended',
         synopsis: 'A touching story about love and family during Tet holiday.'
@@ -147,7 +147,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-04-12',
         end_date: '2024-06-12',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=aDyQxtgKW5s',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'A journey across a dystopian future America, following a team of military-embedded journalists as they race against time to reach DC before rebel factions descend upon the White House.'
@@ -160,7 +160,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-05-03',
         end_date: '2024-07-03',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=j7jPnwVGdZ8',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'A battered and past-his-prime stuntman finds himself working on a movie set with the star for whom he doubled long ago, who has gone missing.'
@@ -173,7 +173,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-05-10',
         end_date: '2024-07-10',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=XtFI7SNtVpY',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Several generations in the future following Caesar\'s reign, in which apes are the dominant species living harmoniously and humans have been reduced to living in the shadows.'
@@ -186,7 +186,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-05-24',
         end_date: '2024-07-24',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=XJMuhwVlca4',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'As the world fell, young Furiosa is snatched from the Green Place of Many Mothers and falls into the hands of a great Biker Horde led by the Warlord Dementus.'
@@ -199,7 +199,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-06-14',
         end_date: '2024-08-14',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=LEjhY15eCx0',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Teenager Riley\'s mind headquarters is undergoing a sudden demolition to make room for something entirely unexpected: new Emotions!'
@@ -212,7 +212,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-07-26',
         end_date: '2024-09-26',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=uJMCNJP2ipI',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Wolverine is recovering from his injuries when he crosses paths with the loudmouth, Deadpool. They team up to defeat a common enemy.'
@@ -225,7 +225,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-07-03',
         end_date: '2024-09-03',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=qQdBZXy15p0',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Gru, Lucy, Margo, Edith, and Agnes welcome a new member to the family, Gru Jr., who is intent on tormenting his dad.'
@@ -238,7 +238,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-06-28',
         end_date: '2024-08-28',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=YPY7J-flzE8',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Experience the day the world went quiet.'
@@ -251,7 +251,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-06-07',
         end_date: '2024-08-07',
         age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=hZVd5lr_Zxs',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'This Summer, the world\'s favorite Bad Boys are back with their iconic mix of edge-of-your seat action and outrageous comedy.'
@@ -264,7 +264,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-05-31',
         end_date: '2024-07-31',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=e8y3o3rF44g',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'ja',
         status: 'upcoming',
         synopsis: 'Shoyo Hinata joins Karasuno High\'s volleyball club to be like his idol, a former Karasuno player known as the "Little Giant".'
@@ -277,7 +277,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-05-24',
         end_date: '2024-07-24',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=IeFWNtMo1Fs',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Garfield, the world-famous, Monday-hating, lasagna-loving indoor cat, is about to have a wild outdoor adventure.'
@@ -290,7 +290,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-05-17',
         end_date: '2024-07-17',
         age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=mb2187ZtPZM',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'A young girl who goes through a difficult experience begins to see everyone\'s imaginary friends who have been left behind.'
@@ -303,7 +303,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-04-26',
         end_date: '2024-06-26',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=VobTZ-pA3c0',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'showing',
         synopsis: 'Tashi, a tennis player turned coach, has taken her husband, Art, and transformed him from a mediocre player into a world-famous grand slam champion.'
@@ -316,7 +316,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-10-04',
         end_date: '2024-12-04',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=xy8aJw1vYHo',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Failed comedian Arthur Fleck meets the love of his life, Harley Quinn, while in Arkham State Hospital.'
@@ -329,7 +329,7 @@ export const MOCK_MOVIES: Movie[] = [
         release_date: '2024-10-25',
         end_date: '2024-12-25',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=__2bjWbet5I',
+        trailer: 'https://www.youtube.com/watch?v=9kzE8isXlQY&list=RD9kzE8isXlQY&start_radio=1',
         language: 'en',
         status: 'upcoming',
         synopsis: 'Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision.'

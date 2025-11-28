@@ -24,6 +24,8 @@ import {
   Shield,
 } from "lucide-react";
 
+import { MovieSearch } from "@/components/movie-search";
+
 export function Header() {
   const { currentUser, logout, isAdmin } = useAuth();
 
@@ -39,6 +41,11 @@ export function Header() {
             CinemaHub
           </span>
         </Link>
+
+        {/* Search Bar */}
+        <div className="hidden md:block flex-1 max-w-md mx-4">
+          <MovieSearch />
+        </div>
 
         {/* Navigation */}
         <nav className="flex items-center gap-1">

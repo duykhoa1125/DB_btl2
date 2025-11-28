@@ -14,6 +14,29 @@ import { User, Clock, Calendar, Factory, Play } from "lucide-react";
 
 import { Reviews } from "@/components/reviews";
 
+const getEmbedUrl = (url: string | null | undefined) => {
+  if (!url) return "";
+  try {
+    // Handle standard YouTube watch URLs
+    if (url.includes("youtube.com/watch")) {
+      const videoId = url.split("v=")[1]?.split("&")[0];
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    }
+    // Handle youtu.be short URLs
+    if (url.includes("youtu.be/")) {
+      const videoId = url.split("youtu.be/")[1]?.split("?")[0];
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    }
+    // Handle already embed URLs
+    if (url.includes("youtube.com/embed/")) {
+      return url;
+    }
+    return url;
+  } catch (e) {
+    return url || "";
+  }
+};
+
 export default async function MovieDetailPage({
   params,
 }: {
@@ -218,7 +241,7 @@ export default async function MovieDetailPage({
                 style={{ paddingBottom: "56.25%" }}
               >
                 <iframe
-                  src={movie.trailer || ""}
+                  src={getEmbedUrl(movie.trailer)}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="absolute inset-0 h-full w-full"
