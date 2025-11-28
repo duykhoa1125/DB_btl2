@@ -563,13 +563,13 @@ export const MOCK_ACCOUNTS: Account[] = [
     },
     {
         phone_number: '0912345678',
-        email: 'vip@example.com',
-        fullname: 'Le Van VIP',
-        birth_date: '1990-12-20',
+        email: 'user1@gmail.com',
+        fullname: 'Nguyễn Văn An',
+        birth_date: '1990-05-15',
         gender: 'male',
-        membership_points: 15000,
-        registration_date: '2021-01-01',
-        avatar: 'https://i.pravatar.cc/150?u=vip'
+        membership_points: 1500,
+        registration_date: '2024-01-01',
+        avatar: 'https://avatar.vercel.sh/user1'
     },
     {
         phone_number: '0988888888',
@@ -580,6 +580,16 @@ export const MOCK_ACCOUNTS: Account[] = [
         membership_points: 2000,
         registration_date: '2025-01-01',
         avatar: 'https://i.pravatar.cc/150?u=johndoe'
+    },
+    {
+        phone_number: '0999111222', // New test account
+        email: 'test.user@example.com',
+        fullname: 'Test User',
+        birth_date: '2000-01-01',
+        gender: 'other',
+        membership_points: 0,
+        registration_date: '2025-11-27',
+        avatar: ''
     }
 ];
 
@@ -977,6 +987,55 @@ export const MOCK_VOUCHERS: Voucher[] = [
         end_date: '2025-12-31',
         state: 'active',
         phone_number: '0988888888'
+    },
+    // --- TEST VOUCHERS (User: 0912345678 - user1@gmail.com) ---
+    {
+        code: 'TEST_EXPIRED',
+        promotional_id: 'PROMO_TEST_EXPIRED',
+        start_date: '2023-01-01',
+        end_date: '2023-12-31',
+        state: 'expired',
+        phone_number: '0912345678'
+    },
+    {
+        code: 'TEST_SOON',
+        promotional_id: 'PROMO_TEST_SOON',
+        start_date: '2024-01-01',
+        end_date: addDays(new Date(), 3),
+        state: 'active',
+        phone_number: '0912345678'
+    },
+    {
+        code: 'TEST_PERCENT',
+        promotional_id: 'PROMO_TEST_PERCENT',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0912345678'
+    },
+    {
+        code: 'TEST_FIXED',
+        promotional_id: 'PROMO_TEST_FIXED',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0912345678'
+    },
+    {
+        code: 'TEST_FOOD',
+        promotional_id: 'PROMO_TEST_FOOD',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0912345678'
+    },
+    {
+        code: 'TEST_COMBO',
+        promotional_id: 'PROMO_TEST_COMBO',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        state: 'active',
+        phone_number: '0912345678'
     }
 ];
 
@@ -1164,6 +1223,55 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
         start_date: '2025-01-01',
         end_date: '2025-12-31',
         level: 'vip'
+    },
+    // --- TEST PROMOTIONS ---
+    {
+        promotional_id: 'PROMO_TEST_EXPIRED',
+        event_id: 'EVT001',
+        description: 'Khuyến mãi đã hết hạn (Test Case)',
+        start_date: '2023-01-01',
+        end_date: '2023-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO_TEST_SOON',
+        event_id: 'EVT002',
+        description: 'Khuyến mãi sắp hết hạn (3 ngày nữa)',
+        start_date: '2024-01-01',
+        end_date: addDays(new Date(), 3), // Expire in 3 days
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO_TEST_PERCENT',
+        event_id: 'EVT005',
+        description: 'Siêu giảm giá 75% vé xem phim',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        level: 'gold'
+    },
+    {
+        promotional_id: 'PROMO_TEST_FIXED',
+        event_id: 'EVT003',
+        description: 'Giảm trực tiếp 50K cho đơn hàng',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO_TEST_FOOD',
+        event_id: 'EVT004',
+        description: 'Tặng 1 Hotdog miễn phí',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO_TEST_COMBO',
+        event_id: 'EVT008',
+        description: 'Combo Hủy Diệt: Giảm 50% + Tặng Bắp',
+        start_date: '2024-01-01',
+        end_date: '2025-12-31',
+        level: 'diamond'
     }
 ];
 
@@ -1187,6 +1295,32 @@ export const MOCK_DISCOUNTS: Discount[] = [
         promotional_id: 'PROMO006',
         percent_reduce: 10,
         max_price_can_reduce: 50000
+    },
+    // --- TEST DISCOUNTS ---
+    {
+        promotional_id: 'PROMO_TEST_EXPIRED',
+        percent_reduce: 50,
+        max_price_can_reduce: 50000
+    },
+    {
+        promotional_id: 'PROMO_TEST_SOON',
+        percent_reduce: 25,
+        max_price_can_reduce: 100000
+    },
+    {
+        promotional_id: 'PROMO_TEST_PERCENT',
+        percent_reduce: 75,
+        max_price_can_reduce: 300000
+    },
+    {
+        promotional_id: 'PROMO_TEST_FIXED',
+        percent_reduce: 100, // Simulate fixed amount by 100% up to cap
+        max_price_can_reduce: 50000
+    },
+    {
+        promotional_id: 'PROMO_TEST_COMBO',
+        percent_reduce: 50,
+        max_price_can_reduce: 150000
     }
 ];
 
@@ -1200,6 +1334,17 @@ export const MOCK_GIFTS: Gift[] = [
         promotional_id: 'PROMO005',
         name: 'Bắp Ngọt (S)',
         quantity: 500
+    },
+    // --- TEST GIFTS ---
+    {
+        promotional_id: 'PROMO_TEST_FOOD',
+        name: 'Hotdog',
+        quantity: 100
+    },
+    {
+        promotional_id: 'PROMO_TEST_COMBO',
+        name: 'Bắp Ngọt (M)',
+        quantity: 50
     }
 ];
 
@@ -1372,7 +1517,12 @@ export const MOCK_BILLS: Bill[] = [
     { bill_id: 'BILL006', phone_number: '0901234567', total_price: 220000, creation_date: '2024-05-01T09:00:00Z' }, // Upcoming/Recent
     { bill_id: 'BILL007', phone_number: '0912345678', total_price: 320000, creation_date: '2024-05-10T15:00:00Z' },  // Upcoming/Recent
     { bill_id: 'BILL008', phone_number: '0988888888', total_price: 150000, creation_date: '2025-01-15T10:00:00Z' },
-    { bill_id: 'BILL009', phone_number: '0988888888', total_price: 200000, creation_date: '2025-02-20T14:30:00Z' }
+    { bill_id: 'BILL009', phone_number: '0988888888', total_price: 200000, creation_date: '2025-02-20T14:30:00Z' },
+    // New mock bills for pre-booked seats
+    { bill_id: 'BILL_SEATS_001', phone_number: '0999111222', total_price: 225000, creation_date: '2025-11-27T10:00:00Z' }, // For ST001
+    { bill_id: 'BILL_SEATS_002', phone_number: '0999111222', total_price: 100000, creation_date: '2025-11-27T10:10:00Z' }, // For ST002
+    { bill_id: 'BILL_SEATS_003', phone_number: '0999111222', total_price: 75000, creation_date: '2025-11-27T10:20:00Z' }, // For st_001
+    { bill_id: 'BILL_SEATS_004', phone_number: '0999111222', total_price: 200000, creation_date: '2025-11-27T10:30:00Z' }  // For ST_FUTURE_001
 ];
 
 export const MOCK_TICKETS: Ticket[] = [
@@ -1417,8 +1567,65 @@ export const MOCK_TICKETS: Ticket[] = [
     { ticket_id: 'TK_TEST_01', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'F', seat_column: 5, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
     { ticket_id: 'TK_TEST_02', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'F', seat_column: 6, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
     { ticket_id: 'TK_TEST_03', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 7, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
-    { ticket_id: 'TK_TEST_04', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 8, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' }
+    { ticket_id: 'TK_TEST_04', bill_id: 'BILL_TEST', showtime_id: 'ST_TEST_USER', room_id: 'CNM001_R1', seat_row: 'G', seat_column: 8, price: 120000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-26T10:00:00Z', expiration_date: '2025-11-27T12:15:00Z' },
+    // New tickets for testing pre-booked seats
+    // ST001 (Dune: Part Two - CNM001_R1)
+    { ticket_id: 'TEST_T001_01', bill_id: 'BILL_SEATS_001', showtime_id: 'ST001', room_id: 'CNM001_R1', seat_row: 'C', seat_column: 3, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-27T10:00:00Z', expiration_date: '2025-11-27T17:00:00Z' },
+    { ticket_id: 'TEST_T001_02', bill_id: 'BILL_SEATS_001', showtime_id: 'ST001', room_id: 'CNM001_R1', seat_row: 'C', seat_column: 4, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-27T10:00:00Z', expiration_date: '2025-11-27T17:00:00Z' },
+    { ticket_id: 'TEST_T001_03', bill_id: 'BILL_SEATS_001', showtime_id: 'ST001', room_id: 'CNM001_R1', seat_row: 'D', seat_column: 5, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-27T10:00:00Z', expiration_date: '2025-11-27T17:00:00Z' },
+
+    // ST002 (Kung Fu Panda 4 - CNM001_R2)
+    { ticket_id: 'TEST_T002_01', bill_id: 'BILL_SEATS_002', showtime_id: 'ST002', room_id: 'CNM001_R2', seat_row: 'A', seat_column: 1, price: 50000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-11-27T10:10:00Z', expiration_date: '2025-11-27T18:00:00Z' },
+    { ticket_id: 'TEST_T002_02', bill_id: 'BILL_SEATS_002', showtime_id: 'ST002', room_id: 'CNM001_R2', seat_row: 'A', seat_column: 2, price: 50000, movie_name: 'Kung Fu Panda 4', purchase_date: '2025-11-27T10:10:00Z', expiration_date: '2025-11-27T18:00:00Z' },
+
+    // st_001 (Dune: Part Two - CNM001_R1) - same as ST001, but lower case ID to test case insensitivity
+    { ticket_id: 'TEST_T003_01', bill_id: 'BILL_SEATS_003', showtime_id: 'st_001', room_id: 'CNM001_R1', seat_row: 'E', seat_column: 8, price: 75000, movie_name: 'Dune: Part Two', purchase_date: '2025-11-27T10:20:00Z', expiration_date: '2025-11-27T17:00:00Z' },
+
+    // ST_FUTURE_001 (Kingdom of the Planet of the Apes - CNM004_R1)
+    { ticket_id: 'TEST_T004_01', bill_id: 'BILL_SEATS_004', showtime_id: 'ST_FUTURE_001', room_id: 'CNM004_R1', seat_row: 'F', seat_column: 1, price: 100000, movie_name: 'Kingdom of the Planet of the Apes', purchase_date: '2025-11-27T10:30:00Z', expiration_date: '2024-06-01T11:30:00Z' },
+    { ticket_id: 'TEST_T004_02', bill_id: 'BILL_SEATS_004', showtime_id: 'ST_FUTURE_001', room_id: 'CNM004_R1', seat_row: 'F', seat_column: 2, price: 100000, movie_name: 'Kingdom of the Planet of the Apes', purchase_date: '2025-11-27T10:30:00Z', expiration_date: '2024-06-01T11:30:00Z' }
 ];
+
+// --- GENERATE RANDOM BOOKED SEATS FOR ALL SHOWTIMES ---
+MOCK_SHOWTIMES.forEach(showtime => {
+    // Generate 5 to 10 random booked seats per showtime
+    const numTickets = Math.floor(Math.random() * 6) + 5; 
+    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    const usedSeats = new Set<string>();
+
+    // Pre-populate used seats from existing hardcoded tickets for this showtime to avoid collisions
+    MOCK_TICKETS.filter(t => t.showtime_id === showtime.showtime_id).forEach(t => {
+        usedSeats.add(`${t.seat_row}${t.seat_column}`);
+    });
+
+    for (let i = 0; i < numTickets; i++) {
+        let row, col, seatId;
+        let attempts = 0;
+        // Try to find an empty seat
+        do {
+            row = rows[Math.floor(Math.random() * rows.length)];
+            col = Math.floor(Math.random() * 12) + 1;
+            seatId = `${row}${col}`;
+            attempts++;
+        } while (usedSeats.has(seatId) && attempts < 20);
+
+        if (!usedSeats.has(seatId)) {
+            usedSeats.add(seatId);
+            MOCK_TICKETS.push({
+                ticket_id: `AUTO_TK_${showtime.showtime_id}_${i}`,
+                bill_id: `AUTO_BILL_${showtime.showtime_id}`,
+                showtime_id: showtime.showtime_id,
+                room_id: showtime.room_id,
+                seat_row: row,
+                seat_column: col,
+                price: 95000,
+                movie_name: 'Auto Generated Ticket',
+                purchase_date: new Date().toISOString(),
+                expiration_date: new Date().toISOString()
+            });
+        }
+    }
+});
 
 export function getBillsByPhone(phone: string): Bill[] {
     return MOCK_BILLS.filter(b => b.phone_number === phone);

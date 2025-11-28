@@ -43,16 +43,20 @@ export default function PromotionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Derived user
+  // Derived user - allow admin to view but with different UI
   const user =
     currentUser && currentUser.role === "user"
       ? (currentUser as AccountWithRole)
       : null;
 
+  const isAdmin = currentUser?.role === "admin";
+
   useEffect(() => {
-    if (!user) return;
+    if (!user && !isAdmin) return; // Skip if neither user nor admin
 
     const fetchVouchers = async () => {
+      if (!user) return; // Admin won't fetch vouchers
+
       try {
         setLoading(true);
         // Get basic vouchers for user
@@ -87,24 +91,72 @@ export default function PromotionsPage() {
     };
 
     fetchVouchers();
-  }, [user]);
+  }, [user, isAdmin]);
 
   // Filter vouchers
   const activeVouchers = userVouchers.filter((v) => v.state === "active");
   const usedVouchers = userVouchers.filter((v) => v.state === "used");
   const expiredVouchers = userVouchers.filter((v) => v.state === "expired");
 
-  if (!user) {
+  // Show login prompt only if not authenticated at all
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
-         {/* Ambient Background */}
+        {/* Ambient Background */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
         <div className="text-center z-10">
           <h1 className="text-3xl font-bold mb-6">Vui lòng đăng nhập</h1>
-          <Button asChild size="lg" className="rounded-xl font-bold shadow-lg hover:shadow-primary/20">
+          <Button
+            asChild
+            size="lg"
+            className="rounded-xl font-bold shadow-lg hover:shadow-primary/20"
+          >
             <Link href="/account/login">Đăng nhập ngay</Link>
           </Button>
         </div>
+      </div>
+    );
+  }
+
+  // Show admin message
+  if (isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        {/* Ambient Background */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
+        <div className="text-center z-10 max-w-md">
+          <h1 className="text-3xl font-bold mb-4">Trang Voucher Khách Hàng</h1>
+          <p className="text-muted-foreground mb-6">
+            Trang này dành cho khách hàng. Admin vui lòng quản lý voucher trong
+            trang quản trị.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button
+              asChild
+              size="lg"
+              className="rounded-xl font-bold shadow-lg hover:shadow-primary/20"
+            >
+              <Link href="/admin/dashboard">Về Trang Quản Trị</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="rounded-xl font-bold"
+            >
+              <Link href="/">Trang Chủ</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Safety check - user should exist at this point
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
       </div>
     );
   }
@@ -326,7 +378,7 @@ export default function PromotionsPage() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
-      
+
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -349,7 +401,10 @@ export default function PromotionsPage() {
             {getMemberLevelBadge(userLevel)}
             <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
             <p className="text-lg text-muted-foreground">
-              <span className="font-bold text-primary">{user.membership_points}</span> điểm
+              <span className="font-bold text-primary">
+                {user.membership_points}
+              </span>{" "}
+              điểm
             </p>
           </div>
         </div>
@@ -463,7 +518,10 @@ export default function PromotionsPage() {
                   <h2 className="text-3xl md:text-4xl font-bold text-muted-foreground tracking-tight">
                     Đã Sử Dụng
                   </h2>
-                  <Badge variant="outline" className="ml-auto border-border/50 px-3 py-1">
+                  <Badge
+                    variant="outline"
+                    className="ml-auto border-border/50 px-3 py-1"
+                  >
                     {usedVouchers.length} voucher
                   </Badge>
                 </div>
@@ -488,7 +546,8 @@ export default function PromotionsPage() {
                   Nâng Hạng Thành Viên Ngay!
                 </h3>
                 <p className="text-xl text-primary-foreground/90 font-light leading-relaxed">
-                  Tích lũy điểm thưởng để mở khóa hạng thành viên VIP và nhận thêm hàng ngàn ưu đãi độc quyền chỉ dành cho bạn.
+                  Tích lũy điểm thưởng để mở khóa hạng thành viên VIP và nhận
+                  thêm hàng ngàn ưu đãi độc quyền chỉ dành cho bạn.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
                   <Button

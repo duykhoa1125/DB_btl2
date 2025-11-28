@@ -54,9 +54,13 @@ export function ProfileContent() {
       ? (currentUser as AccountWithRole)
       : null;
 
+  // Redirect admin to admin dashboard
   useEffect(() => {
     if (!authLoading && !currentUser) {
       router.push("/account/login");
+    } else if (!authLoading && currentUser && currentUser.role === "admin") {
+      // Admin should use admin dashboard, not user profile
+      router.push("/admin/dashboard");
     } else if (user) {
       setFormData({
         fullname: user.fullname,
@@ -159,7 +163,7 @@ export function ProfileContent() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
-      
+
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -184,7 +188,10 @@ export function ProfileContent() {
                 <div className="relative mb-6 group/avatar">
                   <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary to-accent opacity-75 blur transition duration-500 group-hover/avatar:opacity-100" />
                   <Avatar className="h-32 w-32 border-4 border-background shadow-2xl transition-transform duration-500 group-hover/avatar:scale-105">
-                    <AvatarImage src={user.avatar || ""} className="object-cover" />
+                    <AvatarImage
+                      src={user.avatar || ""}
+                      className="object-cover"
+                    />
                     <AvatarFallback className="text-4xl font-bold bg-primary/10 text-primary">
                       {(user.fullname || "U").charAt(0)}
                     </AvatarFallback>
@@ -245,7 +252,9 @@ export function ProfileContent() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/50">
                   <div>
-                    <p className="text-sm text-muted-foreground">Hạng hiện tại</p>
+                    <p className="text-sm text-muted-foreground">
+                      Hạng hiện tại
+                    </p>
                     <p className="font-bold text-2xl text-primary capitalize">
                       {currentTier.level}
                     </p>
@@ -389,7 +398,10 @@ export function ProfileContent() {
                       const isExpanded = expandedBill === bill.bill_id;
 
                       return (
-                        <div key={bill.bill_id} className="transition-colors hover:bg-muted/20">
+                        <div
+                          key={bill.bill_id}
+                          className="transition-colors hover:bg-muted/20"
+                        >
                           <button
                             onClick={() =>
                               setExpandedBill(isExpanded ? null : bill.bill_id)
@@ -416,7 +428,13 @@ export function ProfileContent() {
                               <span className="text-lg font-bold text-primary bg-primary/5 px-3 py-1 rounded-lg border border-primary/10">
                                 ₫{bill.total_price.toLocaleString("vi-VN")}
                               </span>
-                              <div className={`p-2 rounded-full bg-muted/50 transition-transform duration-300 ${isExpanded ? "rotate-180 bg-primary/10 text-primary" : ""}`}>
+                              <div
+                                className={`p-2 rounded-full bg-muted/50 transition-transform duration-300 ${
+                                  isExpanded
+                                    ? "rotate-180 bg-primary/10 text-primary"
+                                    : ""
+                                }`}
+                              >
                                 <ChevronDown className="h-5 w-5" />
                               </div>
                             </div>
@@ -443,7 +461,9 @@ export function ProfileContent() {
                                           </span>
                                           <span className="font-mono">
                                             ₫
-                                            {ticket.price.toLocaleString("vi-VN")}
+                                            {ticket.price.toLocaleString(
+                                              "vi-VN"
+                                            )}
                                           </span>
                                         </div>
                                       );
