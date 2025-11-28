@@ -1,37 +1,18 @@
 import axiosClient from '@/lib/axiosClient';
-import { Account } from './types';
-
-interface LoginPayload {
-    phone_number: string;
-    password: string;
-}
-
-interface RegisterPayload {
-    phone_number: string;
-    email: string;
-    password: string;
-    fullname: string;
-    birth_date: string;
-    gender: 'male' | 'female' | 'unknown';
-}
-
-interface AuthResponse {
-    token: string;
-    user: Account;
-}
+import { Account, AuthResponse, LoginRequest, RegisterRequest, AuthenticatedUser } from './types';
 
 const authService = {
     /**
-     * User login
+     * User/Admin login (supports email or phone)
      */
-    login: (data: LoginPayload): Promise<AuthResponse> => {
+    login: (data: LoginRequest): Promise<AuthResponse> => {
         return axiosClient.post('/auth/login', data);
     },
 
     /**
-     * User registration
+     * User registration (users only, not admins)
      */
-    register: (data: RegisterPayload): Promise<AuthResponse> => {
+    register: (data: RegisterRequest): Promise<AuthResponse> => {
         return axiosClient.post('/auth/register', data);
     },
 
@@ -41,7 +22,7 @@ const authService = {
     logout: (): void => {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem('currentUser');
             window.location.href = '/account/login';
         }
     },
@@ -49,29 +30,22 @@ const authService = {
     /**
      * Get current authenticated user
      */
-    getCurrentUser: (): Promise<Account> => {
+    getCurrentUser: (): Promise<AuthenticatedUser> => {
         return axiosClient.get('/auth/me');
     },
 
     /**
-     * Update user profile
+     * Update user profile (users only)
      */
     updateProfile: (data: Partial<Omit<Account, 'phone_number'>>): Promise<Account> => {
         return axiosClient.put('/auth/profile', data);
     },
 
     /**
-     * Change password
+     * Change password (both user and admin)
      */
     changePassword: (oldPassword: string, newPassword: string): Promise<void> => {
         return axiosClient.put('/auth/password', { old_password: oldPassword, new_password: newPassword });
-    },
-
-    /**
-     * Get account by email (used for authentication lookup)
-     */
-    getByEmail: (email: string): Promise<Account> => {
-        return axiosClient.get('/accounts/email', { params: { email } });
     },
 };
 

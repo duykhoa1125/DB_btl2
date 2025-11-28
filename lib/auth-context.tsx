@@ -2,52 +2,89 @@
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
-import { type Account } from "@/services/types";
+import { useRouter } from "next/navigation";
+import { type AuthenticatedUser, type Account } from "@/services/types";
 import { authService } from "@/services";
+import axiosClient from "@/lib/axiosClient";
 
 interface AuthContextType {
-  currentUser: Account | null;
+  currentUser: AuthenticatedUser | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (identifier: string, password: string) => Promise<boolean>;
   signup: (
     email: string,
     password: string,
-    fullname: string
+    fullname: string,
+    birthDate: string,
+    gender: "male" | "female" | "unknown"
   ) => Promise<boolean>;
   logout: () => void;
-  updateProfile: (updates: Partial<Account>) => void;
+  updateProfile: (updates: Partial<Account>) => Promise<void>;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<Account | null>(null);
+  const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
+  // Initialize user from token on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) {
-      try {
-        setCurrentUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to restore user:", e);
+    const initAuth = async () => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        try {
+          // Try to get current user from server using token
+          const user = await authService.getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          // Token invalid or expired, clear storage
+          console.error("Failed to restore session:", error);
+          localStorage.removeItem("token");
+          localStorage.removeItem("currentUser");
+        }
       }
-    }
-    setIsLoading(false);
+
+      setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (
+    identifier: string,
+    password: string
+  ): Promise<boolean> => {
     try {
-      // Mock login: accept any password for existing users
-      const user = await authService.getByEmail(email);
-      if (user) {
-        setCurrentUser(user);
-        localStorage.setItem("currentUser", JSON.stringify(user));
-        return true;
-      }
-      return false;
+      const response = await authService.login({ identifier, password });
+      const { token, user } = response;
+
+      // Save token and user
+      localStorage.setItem("token", token);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      // Set axios default authorization header
+      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      setCurrentUser(user);
+
+      // Auto redirect based on role
+      setTimeout(() => {
+        if (user.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
+        }
+      }, 100);
+
+      return true;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
       return false;
     }
   };
@@ -55,56 +92,78 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (
     email: string,
     password: string,
-    fullname: string
-  ): Promise<boolean>  => {
+    fullname: string,
+    birthDate: string,
+    gender: "male" | "female" | "unknown"
+  ): Promise<boolean> => {
     try {
-      // Check if user exists
-      const userExists = await authService.getByEmail(email).then(() => true).catch(() => false);
-      if (userExists) {
-        return false;
-      }
+      const response = await authService.register({
+        email,
+        password,
+        fullname,
+        birth_date: birthDate,
+        gender,
+      });
 
-      const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      const newUser: Account = {
-        phone_number: `09${Math.floor(Math.random() * 100000000)}`, // Mock phone
-        email: email,
-        password: password,
-        fullname: fullname,
-        birth_date: now,
-        gender: "unknown",
-        avatar: `https://avatar.vercel.sh/${email.split("@")[0]}`,
-        membership_points: 0,
-        registration_date: now,
-      };
+      const { token, user } = response;
 
-      // In a real implementation, this would call authService.register(newUser)
-      // For now, we'll just set it locally
-      setCurrentUser(newUser);
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
+      // Save token and user
+      localStorage.setItem("token", token);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      // Set axios default authorization header
+      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      setCurrentUser(user);
+
+      // Auto redirect to home (users only)
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+
       return true;
     } catch (error) {
-      console.error('Signup failed:', error);
+      console.error("Signup failed:", error);
       return false;
     }
   };
 
   const logout = () => {
     setCurrentUser(null);
+    localStorage.removeItem("token");
     localStorage.removeItem("currentUser");
+
+    // Clear axios authorization header
+    delete axiosClient.defaults.headers.common["Authorization"];
+
+    // Redirect to login
+    router.push("/account/login");
   };
 
   const updateProfile = async (updates: Partial<Account>) => {
-    if (currentUser) {
-      try {
-        // In real implementation: await authService.updateProfile(updates)
-        const updated = { ...currentUser, ...updates };
-        setCurrentUser(updated);
-        localStorage.setItem("currentUser", JSON.stringify(updated));
-      } catch (error) {
-        console.error('Failed to update profile:', error);
-      }
+    if (!currentUser || currentUser.role !== "user") {
+      console.error("Can only update user profiles");
+      return;
+    }
+
+    try {
+      const updatedUser = await authService.updateProfile(updates);
+
+      // Update local state
+      const newUser: AuthenticatedUser = {
+        ...updatedUser,
+        role: "user",
+      };
+
+      setCurrentUser(newUser);
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      throw error;
     }
   };
+
+  const isAdmin = currentUser?.role === "admin";
 
   return (
     <AuthContext.Provider
@@ -115,6 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signup,
         logout,
         updateProfile,
+        isAdmin,
       }}
     >
       {children}

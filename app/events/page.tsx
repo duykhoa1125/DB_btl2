@@ -47,15 +47,15 @@ export default function EventsPage() {
 
   const EventCard = ({ event }: { event: Event }) => {
     return (
-      <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+      <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 h-full flex flex-col">
         <div className="relative aspect-video overflow-hidden">
-          {/* Placeholder image since Event doesn't have image field yet */}
+          {/* Placeholder gradient since Event doesn't have image field yet */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles className="w-16 h-16 text-primary/40" />
+            <Sparkles className="w-16 h-16 text-primary/40 group-hover:scale-110 transition-transform duration-500" />
           </div>
           <div className="absolute top-4 right-4">
-            <Badge className="bg-background/80 backdrop-blur text-foreground border-none">
+            <Badge className="bg-background/80 backdrop-blur text-foreground border-none shadow-sm">
               <Calendar className="w-3 h-3 mr-1" />
               {new Date(event.start_date).toLocaleDateString("vi-VN")} -{" "}
               {new Date(event.end_date).toLocaleDateString("vi-VN")}
@@ -63,20 +63,20 @@ export default function EventsPage() {
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
+        <div className="p-6 space-y-4 flex-1 flex flex-col">
+          <div className="space-y-2 flex-1">
+            <h3 className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">
               {event.name}
             </h3>
-            <p className="text-muted-foreground line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
               {event.description}
             </p>
           </div>
 
-          <div className="pt-4 flex items-center justify-between border-t border-border/50">
+          <div className="pt-4 flex items-center justify-between border-t border-border/50 mt-auto">
             <Button
               variant="ghost"
-              className="group/btn p-0 hover:bg-transparent hover:text-primary"
+              className="group/btn p-0 hover:bg-transparent hover:text-primary pl-0 h-auto font-medium"
               asChild
             >
               <Link href={`/events/${event.event_id}`}>
@@ -93,25 +93,44 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
+      
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-16">
-        {/* Header */}
+        {/* Hero Section */}
         <div className="mb-16 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Sparkles className="w-4 h-4" />
-            <span>Sự Kiện Nổi Bật</span>
+            <span>Sự Kiện & Tin Tức</span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
-            Tin Tức & Sự Kiện
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 tracking-tight">
+            Khám Phá Sự Kiện Mới
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
             Cập nhật những tin tức mới nhất và các sự kiện hấp dẫn đang diễn ra
-            tại rạp chiếu phim.
+            tại rạp chiếu phim CinemaHub.
           </p>
+        </div>
+
+        {/* Search Section */}
+        <div className="mb-16 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+            <div className="relative flex items-center bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50 shadow-sm">
+              <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Tìm kiếm sự kiện..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-14 border-none bg-transparent focus-visible:ring-0 text-lg placeholder:text-muted-foreground/70"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Loading State */}
@@ -133,23 +152,6 @@ export default function EventsPage() {
         {/* Main Content */}
         {!loading && !error && (
           <>
-            {/* Search */}
-            <div className="mb-12 max-w-xl mx-auto">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
-                <div className="relative flex items-center bg-background rounded-xl border border-border/50 shadow-sm">
-                  <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
-                  <Input
-                    type="text"
-                    placeholder="Tìm kiếm sự kiện..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 h-12 border-none bg-transparent focus-visible:ring-0 text-lg"
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Events Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredEvents.map((event) => (
@@ -158,9 +160,15 @@ export default function EventsPage() {
             </div>
 
             {filteredEvents.length === 0 && (
-              <div className="text-center py-16">
-                <p className="text-muted-foreground text-lg">
-                  Không tìm thấy sự kiện nào phù hợp.
+              <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/20">
+                <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                  <Search className="w-10 h-10 text-muted-foreground/50" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">
+                  Không tìm thấy sự kiện nào
+                </h3>
+                <p className="text-muted-foreground">
+                  Thử thay đổi từ khóa tìm kiếm của bạn.
                 </p>
               </div>
             )}

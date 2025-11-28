@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Ticket, CheckCircle2 } from "lucide-react";
@@ -14,7 +14,7 @@ interface VoucherDetail {
   promotional_id: string;
   start_date: string;
   end_date: string;
-  state: 'active' | 'used' | 'expired';
+  state: "active" | "used" | "expired";
   phone_number: string;
   promotional?: any;
   discount?: {
@@ -33,27 +33,29 @@ interface VoucherInputProps {
   onVoucherApply?: (voucher: VoucherDetail, discount: number) => void;
   appliedVoucher?: VoucherDetail | null;
   appliedDiscount?: number;
+  initialCode?: string;
 }
 
 export function VoucherInput({
   onVoucherApply,
   appliedVoucher,
   appliedDiscount,
+  initialCode,
 }: VoucherInputProps) {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(initialCode || "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleApply = async () => {
-    if (!code.trim()) {
+  const applyCode = useCallback(async (voucherCode: string) => {
+    if (!voucherCode.trim()) {
       setError("Vui lòng nhập mã khuyến mại");
       return;
     }
 
     setLoading(true);
     try {
-      const voucher = await voucherService.getDetailByCode(code.toUpperCase()) as VoucherDetail;
+      const voucher = await voucherService.getDetailByCode(voucherCode.toUpperCase()) as VoucherDetail;
 
       if (!voucher) {
         setError("Mã khuyến mại không tồn tại");
@@ -85,7 +87,7 @@ export function VoucherInput({
 
       toast({
         title: "Thành công",
-        description: `Đã áp dụng mã ${code.toUpperCase()}`,
+        description: `Đã áp dụng mã ${voucherCode.toUpperCase()}`,
       });
 
       setCode("");
@@ -100,8 +102,18 @@ export function VoucherInput({
     } finally {
       setLoading(false);
     }
+  }, [onVoucherApply, toast]);
+
+  const handleApply = () => {
+    applyCode(code);
   };
 
+  useEffect(() => {
+    if (initialCode && !appliedVoucher) {
+      setCode(initialCode);
+      applyCode(initialCode);
+    }
+  }, [initialCode, appliedVoucher, applyCode]);
 
   if (appliedVoucher) {
     return (
@@ -119,7 +131,9 @@ export function VoucherInput({
               <p className="text-sm text-green-600/80 dark:text-green-400/80">
                 {appliedVoucher.discount
                   ? `Giảm ${appliedVoucher.discount.percent_reduce}%`
-                  : `Quà tặng: ${appliedVoucher.gift?.name || 'Quà tặng đặc biệt'}`}
+                  : `Quà tặng: ${
+                      appliedVoucher.gift?.name || "Quà tặng đặc biệt"
+                    }`}
               </p>
             </div>
             <Button
@@ -131,15 +145,17 @@ export function VoucherInput({
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
+
           {/* Decorative circles */}
           <div className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-background border border-green-500/30" />
           <div className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-background border border-green-500/30" />
         </div>
-        
+
         {appliedDiscount ? (
           <div className="flex justify-between items-center px-2">
-            <span className="text-sm text-muted-foreground">Tiết kiệm được:</span>
+            <span className="text-sm text-muted-foreground">
+              Tiết kiệm được:
+            </span>
             <span className="text-sm font-bold text-green-600 dark:text-green-400">
               {appliedDiscount}%
             </span>
@@ -167,15 +183,18 @@ export function VoucherInput({
             )}
           />
         </div>
-        <Button 
+        <Button
           onClick={handleApply}
           className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 font-bold"
         >
           Áp dụng
         </Button>
       </div>
-      {error && <p className="text-xs font-medium text-destructive animate-in slide-in-from-left-1">{error}</p>}
+      {error && (
+        <p className="text-xs font-medium text-destructive animate-in slide-in-from-left-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
-

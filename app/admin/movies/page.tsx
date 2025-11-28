@@ -158,7 +158,7 @@ export default function MoviesPage() {
       </div>
 
       {/* Movies Table */}
-      <div className="rounded-lg border border-border/50 bg-card overflow-hidden">
+      <div className="rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>

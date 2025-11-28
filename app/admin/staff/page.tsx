@@ -331,7 +331,7 @@ export default function StaffManagementPage() {
             return (
               <Card
                 key={staff.staff_id}
-                className="p-6 transition-all hover:shadow-lg hover:border-primary/50 group"
+                className="p-6 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/50 group"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">

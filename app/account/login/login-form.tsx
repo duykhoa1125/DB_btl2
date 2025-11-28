@@ -1,113 +1,153 @@
 "use client";
 
-import type React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { Mail, Lock, Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const { login } = useAuth();
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
-  const router = useRouter();
-  const { toast } = useToast();
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    if (!identifier || !password) {
+      setError("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
-        toast({
-          title: "Đăng nhập thành công",
-          description: "Chào mừng bạn quay trở lại!",
-        });
-        router.push("/");
-      } else {
-        toast({
-          title: "Đăng nhập thất bại",
-          description: "Email hoặc mật khẩu không đúng.",
-          variant: "destructive",
-        });
+      const success = await login(identifier, password);
+
+      if (!success) {
+        setError("Email/Số điện thoại hoặc mật khẩu không đúng");
       }
+      // If success, auth-context will handle redirect
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Đăng nhập</CardTitle>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+      <Card className="w-full max-w-md shadow-2xl">
+        <CardHeader className="space-y-2 text-center">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Đăng nhập
+          </CardTitle>
           <CardDescription>
-            Đăng nhập vào tài khoản CinemaHub của bạn
+            Nhập email hoặc số điện thoại để tiếp tục
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
+              <Label htmlFor="identifier" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Email hoặc Số điện thoại
+              </Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="example@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                id="identifier"
+                type="text"
+                placeholder="user@example.com hoặc 0912345678"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
+                required
               />
+              <p className="text-xs text-muted-foreground">
+                Bạn có thể dùng email hoặc số điện thoại để đăng nhập
+              </p>
             </div>
+
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
+              <Label htmlFor="password" className="flex items-center gap-2">
+                <Lock className="h-4 w-4" />
                 Mật khẩu
-              </label>
+              </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Nhập mật khẩu"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
                 disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
+                required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-            </Button>
-          </form>
 
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">Chưa có tài khoản? </span>
-            <Link
-              href="/account/register"
-              className="text-red-600 hover:underline font-medium"
+            <div className="flex items-center justify-between text-sm">
+              <Link
+                href="/account/forgot-password"
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                Quên mật khẩu?
+              </Link>
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex flex-col space-y-4">
+            <Button
+              type="submit"
+              className="w-full shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+              disabled={isLoading}
+              size="lg"
             >
-              Đăng ký ngay
-            </Link>
-          </div>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang đăng nhập...
+                </>
+              ) : (
+                "Đăng nhập"
+              )}
+            </Button>
 
-          <div className="mt-6 p-4 bg-muted rounded-lg text-sm text-muted-foreground">
-            <p className="font-medium mb-2">Tài khoản demo:</p>
-            <p>Email: john.doe@gmail.com</p>
-            <p>Mật khẩu: any_password</p>
-          </div>
-        </CardContent>
+            <div className="text-center text-sm text-muted-foreground">
+              Chưa có tài khoản?{" "}
+              <Link
+                href="/account/register"
+                className="font-medium text-primary hover:underline"
+              >
+                Đăng ký ngay
+              </Link>
+            </div>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

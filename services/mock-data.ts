@@ -77,7 +77,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV001',
         name: 'Dune: Part Two',
-        image: 'https://placehold.co/300x450/png?text=Movie+1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
+        image: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=500&q=60',
         duration: 166,
         release_date: '2024-03-01',
         end_date: '2024-05-01',
@@ -90,11 +90,11 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV002',
         name: 'Kung Fu Panda 4',
-        image: 'https://placehold.co/300x450/png?text=Movie+kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg',
+        image: 'https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?auto=format&fit=crop&w=500&q=60',
         duration: 94,
         release_date: '2024-03-08',
         end_date: '2024-05-08',
-        age_rating: 0, // All ages
+        age_rating: 0,
         trailer: 'https://www.youtube.com/watch?v=_inKs4eeHiI',
         language: 'en',
         status: 'showing',
@@ -103,7 +103,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV003',
         name: 'Godzilla x Kong: The New Empire',
-        image: 'https://placehold.co/300x450/png?text=Movie+tMefBSflv6PGwM5ZtBe8xwQCoDe.jpg',
+        image: 'https://images.unsplash.com/photo-1616530940355-351fabd9524b?auto=format&fit=crop&w=500&q=60',
         duration: 115,
         release_date: '2024-03-29',
         end_date: '2024-05-29',
@@ -116,7 +116,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV004',
         name: 'Exhuma',
-        image: 'https://placehold.co/300x450/png?text=Movie+pQYHouPsDf32FhIKYB72laNSAQo.jpg',
+        image: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cd4?auto=format&fit=crop&w=500&q=60',
         duration: 134,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
@@ -129,7 +129,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV005',
         name: 'Mai',
-        image: 'https://placehold.co/300x450/png?text=Movie+Mai',
+        image: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=500&q=60',
         duration: 131,
         release_date: '2024-02-10',
         end_date: '2024-04-10',
@@ -142,7 +142,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV006',
         name: 'Civil War',
-        image: 'https://placehold.co/300x450/png?text=Movie+sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg',
+        image: 'https://images.unsplash.com/photo-1533613220915-609f661a6fe1?auto=format&fit=crop&w=500&q=60',
         duration: 109,
         release_date: '2024-04-12',
         end_date: '2024-06-12',
@@ -155,7 +155,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV007',
         name: 'The Fall Guy',
-        image: 'https://placehold.co/300x450/png?text=Movie+tSz1qsmSJon0rqkHBxXZmrotuse.jpg',
+        image: 'https://images.unsplash.com/photo-1511875762315-c77a168d75a4?auto=format&fit=crop&w=500&q=60',
         duration: 126,
         release_date: '2024-05-03',
         end_date: '2024-07-03',
@@ -168,7 +168,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV008',
         name: 'Kingdom of the Planet of the Apes',
-        image: 'https://placehold.co/300x450/png?text=Movie+gKkl37BQuKTanygYQG1pyYgLVgf.jpg',
+        image: 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&w=500&q=60',
         duration: 145,
         release_date: '2024-05-10',
         end_date: '2024-07-10',
@@ -181,7 +181,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV009',
         name: 'Furiosa: A Mad Max Saga',
-        image: 'https://placehold.co/300x450/png?text=Movie+iADOJ8Zymht2JPMoy3R7xceZprc.jpg',
+        image: 'https://images.unsplash.com/photo-1568876694728-451bbf694b83?auto=format&fit=crop&w=500&q=60',
         duration: 148,
         release_date: '2024-05-24',
         end_date: '2024-07-24',
@@ -194,7 +194,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV010',
         name: 'Inside Out 2',
-        image: 'https://placehold.co/300x450/png?text=Movie+vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg',
+        image: 'https://images.unsplash.com/photo-1598899134739-967d535cc43d?auto=format&fit=crop&w=500&q=60',
         duration: 100,
         release_date: '2024-06-14',
         end_date: '2024-08-14',
@@ -207,7 +207,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV011',
         name: 'Deadpool & Wolverine',
-        image: 'https://placehold.co/300x450/png?text=Movie+jbwYaoYWSoYi7WCB84LFUi9D5I.jpg',
+        image: 'https://images.unsplash.com/photo-1608889476561-6242cfdbf622?auto=format&fit=crop&w=500&q=60',
         duration: 120,
         release_date: '2024-07-26',
         end_date: '2024-09-26',
@@ -220,7 +220,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV012',
         name: 'Despicable Me 4',
-        image: 'https://placehold.co/300x450/png?text=Movie+wWba3TaojhY7Nirs9D0GLXthdfZ.jpg',
+        image: 'https://images.unsplash.com/photo-1613310023042-ad79320c00fc?auto=format&fit=crop&w=500&q=60',
         duration: 95,
         release_date: '2024-07-03',
         end_date: '2024-09-03',
@@ -233,7 +233,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV013',
         name: 'A Quiet Place: Day One',
-        image: 'https://placehold.co/300x450/png?text=Movie+yrpPYKijjsMeq46h965xIGe7C5r.jpg',
+        image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=60',
         duration: 100,
         release_date: '2024-06-28',
         end_date: '2024-08-28',
@@ -246,7 +246,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV014',
         name: 'Bad Boys: Ride or Die',
-        image: 'https://placehold.co/300x450/png?text=Movie+nP6RliHjxsz4irTKsxe8FRhKZYl.jpg',
+        image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=500&q=60',
         duration: 110,
         release_date: '2024-06-07',
         end_date: '2024-08-07',
@@ -254,12 +254,12 @@ export const MOCK_MOVIES: Movie[] = [
         trailer: 'https://www.youtube.com/watch?v=hZVd5lr_Zxs',
         language: 'en',
         status: 'upcoming',
-        synopsis: 'This Summer, the world\'s favorite Bad Boys are back with their iconic mix of edge-of-your seat action and outrageous comedy but this time with a twist: Miami\'s finest are now on the run.'
+        synopsis: 'This Summer, the world\'s favorite Bad Boys are back with their iconic mix of edge-of-your seat action and outrageous comedy.'
     },
     {
         movie_id: 'MV015',
         name: 'Haikyuu!! The Dumpster Battle',
-        image: 'https://placehold.co/300x450/png?text=Movie+qjGrUmKW78MCPG8PTL4pBevwoCD.jpg',
+        image: 'https://images.unsplash.com/photo-1515634928627-2a4e0dae3ddf?auto=format&fit=crop&w=500&q=60',
         duration: 85,
         release_date: '2024-05-31',
         end_date: '2024-07-31',
@@ -272,7 +272,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV016',
         name: 'The Garfield Movie',
-        image: 'https://placehold.co/300x450/png?text=Movie+t9XkeE7HzOsdQcDDDapDYh8lrmt.jpg',
+        image: 'https://images.unsplash.com/photo-1517604931442-710e8e9d53c1?auto=format&fit=crop&w=500&q=60',
         duration: 101,
         release_date: '2024-05-24',
         end_date: '2024-07-24',
@@ -285,7 +285,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV017',
         name: 'IF',
-        image: 'https://placehold.co/300x450/png?text=Movie+xbKFv4H3qIqGj1I3F5U38iI8.jpg',
+        image: 'https://images.unsplash.com/photo-1478720568477-152d9b164e63?auto=format&fit=crop&w=500&q=60',
         duration: 104,
         release_date: '2024-05-17',
         end_date: '2024-07-17',
@@ -293,12 +293,12 @@ export const MOCK_MOVIES: Movie[] = [
         trailer: 'https://www.youtube.com/watch?v=mb2187ZtPZM',
         language: 'en',
         status: 'upcoming',
-        synopsis: 'A young girl who goes through a difficult experience begins to see everyone\'s imaginary friends who have been left behind as their real-life friends have grown up.'
+        synopsis: 'A young girl who goes through a difficult experience begins to see everyone\'s imaginary friends who have been left behind.'
     },
     {
         movie_id: 'MV018',
         name: 'Challengers',
-        image: 'https://placehold.co/300x450/png?text=Movie+H6vke7zGiuLsz4v4RPe2iyqe.jpg',
+        image: 'https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&w=500&q=60',
         duration: 131,
         release_date: '2024-04-26',
         end_date: '2024-06-26',
@@ -310,419 +310,29 @@ export const MOCK_MOVIES: Movie[] = [
     },
     {
         movie_id: 'MV019',
-        name: 'Abigail',
-        image: 'https://placehold.co/300x450/png?text=Movie+5Uq8P6MPj9Ppsns5tGSxUUNXUT.jpg',
-        duration: 109,
-        release_date: '2024-04-19',
-        end_date: '2024-06-19',
+        name: 'Joker: Folie à Deux',
+        image: 'https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?auto=format&fit=crop&w=500&q=60',
+        duration: 138,
+        release_date: '2024-10-04',
+        end_date: '2024-12-04',
         age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=3PsP8MfH8_0',
+        trailer: 'https://www.youtube.com/watch?v=xy8aJw1vYHo',
         language: 'en',
-        status: 'showing',
-        synopsis: 'After a group of would-be criminals kidnap the 12-year-old ballerina daughter of a powerful underworld figure, all they have to do to collect a $50 million ransom is watch the girl overnight.'
+        status: 'upcoming',
+        synopsis: 'Failed comedian Arthur Fleck meets the love of his life, Harley Quinn, while in Arkham State Hospital.'
     },
     {
         movie_id: 'MV020',
-        name: 'Monkey Man',
-        image: 'https://placehold.co/300x450/png?text=Movie+4kxHB9pvMiMbCPZWpGtZfbh5.jpg',
-        duration: 121,
-        release_date: '2024-04-05',
-        end_date: '2024-06-05',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=g8zxiB5Qh_w',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Kid, an anonymous young man who ekes out a meager living in an underground fight club where, night after night, wearing a gorilla mask, he is beaten bloody by more popular fighters for cash.'
-    },
-    {
-        movie_id: 'MV021',
-        name: 'Ghostbusters: Frozen Empire',
-        image: 'https://placehold.co/300x450/png?text=Movie+e1J2oNzSBdou01sUvriVuoYp0pJ.jpg',
-        duration: 115,
-        release_date: '2024-03-22',
-        end_date: '2024-05-22',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=HpOBXnBgeiY',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'The Spengler family returns to where it all started – the iconic New York City firehouse – to team up with the original Ghostbusters.'
-    },
-    {
-        movie_id: 'MV022',
-        name: 'The First Omen',
-        image: 'https://placehold.co/300x450/png?text=Movie+uQP0RklWqWpE3s8HmHUxn4CnN0.jpg',
-        duration: 119,
-        release_date: '2024-04-05',
-        end_date: '2024-06-05',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=QKOQ5q3toxs',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A young American woman is sent to Rome to begin a life of service to the church.'
-    },
-    {
-        movie_id: 'MV023',
-        name: 'Late Night with the Devil',
-        image: 'https://placehold.co/300x450/png?text=Movie+jEJw7C8yMbnaEW0auNYWdZdQCgG.jpg',
-        duration: 93,
-        release_date: '2024-03-22',
-        end_date: '2024-05-22',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=Yn9dWA16rT4',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A live television broadcast in 1977 goes horribly wrong, unleashing evil into the nation\'s living rooms.'
-    },
-    {
-        movie_id: 'MV024',
-        name: 'Immaculate',
-        image: 'https://placehold.co/300x450/png?text=Movie+fdZpvODTX5wwkD0ikZUb1h9O2j.jpg',
-        duration: 89,
-        release_date: '2024-03-22',
-        end_date: '2024-05-22',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=DetoHsKe73s',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Cecilia, a woman of devout faith, is warmly welcomed to the picture-perfect Italian countryside where she is offered a new role at an illustrious convent.'
-    },
-    {
-        movie_id: 'MV025',
-        name: 'Arthur the King',
-        image: 'https://placehold.co/300x450/png?text=Movie+gxVcBc4TbzPxZPy753VdPVqScE.jpg',
-        duration: 107,
-        release_date: '2024-03-15',
-        end_date: '2024-05-15',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=Eor022Y6Kz4',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Over the course of ten days and 435 miles, an unbreakable bond is forged between pro adventure racer Michael Light and a scrappy street dog companion dubbed Arthur.'
-    },
-    {
-        movie_id: 'MV026',
-        name: 'Imaginary',
-        image: 'https://placehold.co/300x450/png?text=Movie+9u6HELcdxY1yNkz5dFz0mMjkhLo.jpg',
-        duration: 104,
-        release_date: '2024-03-08',
-        end_date: '2024-05-08',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=UIGXL2lbFAg',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A woman returns to her childhood home to discover that the imaginary friend she left behind is very real and unhappy that she abandoned him.'
-    },
-    {
-        movie_id: 'MV027',
-        name: 'Cabrini',
-        image: 'https://placehold.co/300x450/png?text=Movie+5J2WyQUvDfZJxOmDPwsF5aFKxHu.jpg',
-        duration: 145,
-        release_date: '2024-03-08',
-        end_date: '2024-05-08',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=CZtFKDMy_NE',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'The story of Francesca Cabrini, a poor Italian immigrant who became one of the great entrepreneurs of the 19th century.'
-    },
-    {
-        movie_id: 'MV028',
-        name: 'Love Lies Bleeding',
-        image: 'https://placehold.co/300x450/png?text=Movie+p7jyMfC5LYQzDFWmNx4zgXDCNv.jpg',
-        duration: 104,
-        release_date: '2024-03-08',
-        end_date: '2024-05-08',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=C7e_OaHQeZs',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Reclusive gym manager Lou falls hard for Jackie, an ambitious bodybuilder headed through town to Vegas in pursuit of her dream.'
-    },
-    {
-        movie_id: 'MV029',
-        name: 'One Life',
-        image: 'https://placehold.co/300x450/png?text=Movie+yQ7e8aIjyc6m7c6q3nBnUWaYeY.jpg',
+        name: 'Venom: The Last Dance',
+        image: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=500&q=60',
         duration: 110,
-        release_date: '2024-03-15',
-        end_date: '2024-05-15',
+        release_date: '2024-10-25',
+        end_date: '2024-12-25',
         age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=rZkuR9HwPMc',
+        trailer: 'https://www.youtube.com/watch?v=__2bjWbet5I',
         language: 'en',
-        status: 'showing',
-        synopsis: 'Sir Nicholas \'Nicky\' Winton, a young London broker, rescues 669 children from the Nazis in the months leading up to World War II.'
-    },
-    {
-        movie_id: 'MV030',
-        name: 'The American Society of Magical Negroes',
-        image: 'https://placehold.co/300x450/png?text=Movie+xtPB9cqx63Q2OBFbwk5Ep5JsqFz.jpg',
-        duration: 104,
-        release_date: '2024-03-15',
-        end_date: '2024-05-15',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=7hbzPiwGxyo',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A young man, Aren, is recruited into a secret society of magical Black people who dedicate their lives to a cause of utmost importance: making white people\'s lives easier.'
-    },
-    {
-        movie_id: 'MV031',
-        name: 'Snack Shack',
-        image: 'https://placehold.co/300x450/png?text=Movie+5PEjPwmBYx3IUqzMXwMjRU2yirU.jpg',
-        duration: 112,
-        release_date: '2024-03-15',
-        end_date: '2024-05-15',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=pMx2EaGQiAo',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Nebraska City, 1991. Two best friends get the chance to run the swimming pool snack shack, that later comes to be the perfect scenario for transgression, fun, personal discovery and romance.'
-    },
-    {
-        movie_id: 'MV032',
-        name: 'Wicked Little Letters',
-        image: 'https://placehold.co/300x450/png?text=Movie+scxBFKKqBRxNDUSQgPLJMzvqNr.jpg',
-        duration: 100,
-        release_date: '2024-03-29',
-        end_date: '2024-05-29',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=maNLJkzyQuA',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'When people in Littlehampton begin receiving letters full of hilarious profanities, rowdy Irish migrant Rose Gooding is charged with the crime.'
-    },
-    {
-        movie_id: 'MV033',
-        name: 'Asphalt City',
-        image: 'https://placehold.co/300x450/png?text=Movie+rH3jY9JJkyXJ6kFAvJVdwgPKSOb.jpg',
-        duration: 125,
-        release_date: '2024-03-29',
-        end_date: '2024-05-29',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=wUHjf7JYG7E',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A young paramedic is paired with a seasoned partner on the night shift in New York City revealing a city in crisis.'
-    },
-    {
-        movie_id: 'MV034',
-        name: 'In the Land of Saints and Sinners',
-        image: 'https://placehold.co/300x450/png?text=Movie+jKhCS2MwL08IYKLhSt9p6TcDGaB.jpg',
-        duration: 106,
-        release_date: '2024-03-29',
-        end_date: '2024-05-29',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=7WJ_HUlX5cE',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'In a remote Irish village, a damaged Finbar Murphy is forced to fight for redemption after a lifetime of sins.'
-    },
-    {
-        movie_id: 'MV035',
-        name: 'La Chimera',
-        image: 'https://placehold.co/300x450/png?text=Movie+t5M3k0LWMy9WzcakEMKPGQChEyN.jpg',
-        duration: 130,
-        release_date: '2024-03-29',
-        end_date: '2024-05-29',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=pHjdwbP0OOc',
-        language: 'it',
-        status: 'showing',
-        synopsis: 'A group of archaeologists and the black market of historical artifacts.'
-    },
-    {
-        movie_id: 'MV036',
-        name: 'The Beast',
-        image: 'https://placehold.co/300x450/png?text=Movie+yEOEP9p7TUzr7yYYsXuNRl7ecO.jpg',
-        duration: 146,
-        release_date: '2024-04-05',
-        end_date: '2024-06-05',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=vINLhxXEIpg',
-        language: 'fr',
-        status: 'showing',
-        synopsis: 'In the near future where emotions have become a threat, Gabrielle finally decides to purify her DNA in a machine that will immerse her in her past lives.'
-    },
-    {
-        movie_id: 'MV037',
-        name: 'Housekeeping for Beginners',
-        image: 'https://placehold.co/300x450/png?text=Movie+izmx3v5Q8ULgaCfELKvXr3r8k5.jpg',
-        duration: 107,
-        release_date: '2024-04-05',
-        end_date: '2024-06-05',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=HlWmTF2tDGw',
-        language: 'mk',
-        status: 'showing',
-        synopsis: 'A woman is forced to raise her girlfriend\'s two daughters, who don\'t want to be a family.'
-    },
-    {
-        movie_id: 'MV038',
-        name: 'Someone Like You',
-        image: 'https://placehold.co/300x450/png?text=Movie+oGDvlyBGPz4u4ztCc8z7z0c0P4h.jpg',
-        duration: 118,
-        release_date: '2024-04-02',
-        end_date: '2024-06-02',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=N9bRTx_F-Qk',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'After the tragic loss of his best friend, a young architect launches a search for her secret twin sister.'
-    },
-    {
-        movie_id: 'MV039',
-        name: 'The Long Game',
-        image: 'https://placehold.co/300x450/png?text=Movie+pfmOl68gOmv7z1PomvL1xAZJPDA.jpg',
-        duration: 112,
-        release_date: '2024-04-12',
-        end_date: '2024-06-12',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=9hcEz3FjW_M',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'In 1955, five young Mexican-American caddies, out of the love for the game, were determined to learn how to play, so they created their own golf course in the middle of the South Texas brush country.'
-    },
-    {
-        movie_id: 'MV040',
-        name: 'Sasquatch Sunset',
-        image: 'https://placehold.co/300x450/png?text=Movie+aDrWzwR9hQkPW8v1Mg6yjHww4DE.jpg',
-        duration: 89,
-        release_date: '2024-04-12',
-        end_date: '2024-06-12',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=Z2E7YUZQijg',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A year in the life of a singular family. Sasquatch Sunset.'
-    },
-    {
-        movie_id: 'MV041',
-        name: 'Sting',
-        image: 'https://placehold.co/300x450/png?text=Movie+s2Nqy2FE9H3W7PrxPLg8NrJMiFe.jpg',
-        duration: 91,
-        release_date: '2024-04-12',
-        end_date: '2024-06-12',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=2lMZlDRvqR4',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'After raising an unnervingly talented spider in secret, 12-year-old Charlotte must face the facts about her pet—and fight for her family\'s survival.'
-    },
-    {
-        movie_id: 'MV042',
-        name: 'Arcadian',
-        image: 'https://placehold.co/300x450/png?text=Movie+d8PJJjJppjfxqUeEP7zKmwmhFQz.jpg',
-        duration: 92,
-        release_date: '2024-04-12',
-        end_date: '2024-06-12',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=0ZtiwzfWLN0',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'In a near future, normal life on Earth has been decimated. Paul and his two sons, Thomas and Joseph, have been living a half-life – tranquility by day and torment by night.'
-    },
-    {
-        movie_id: 'MV043',
-        name: 'Don\'t Tell Mom the Babysitter\'s Dead',
-        image: 'https://placehold.co/300x450/png?text=Movie+fvEo5NP9yPaGzUzf1RWqFI8D3qR.jpg',
-        duration: 99,
-        release_date: '2024-04-12',
-        end_date: '2024-06-12',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=gLz5l0MX9gQ',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Seventeen year old Tanya Crandell is looking forward to spending the summer with her friends in Europe, but her plans are cancelled when her mom decides to head to a wellness retreat in Thailand.'
-    },
-    {
-        movie_id: 'MV044',
-        name: 'Hard Miles',
-        image: 'https://placehold.co/300x450/png?text=Movie+gTQiXUUpR32eadqdgDhw6xqHDdD.jpg',
-        duration: 108,
-        release_date: '2024-04-19',
-        end_date: '2024-06-19',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=wK-6u75mhzU',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'A strong-willed social worker at a youth prison assembles a cycling team of teenage convicts and takes them on a transformative 1000-mile ride.'
-    },
-    {
-        movie_id: 'MV045',
-        name: 'We Grown Now',
-        image: 'https://placehold.co/300x450/png?text=Movie+h2OC7ZA5bRu4rEwNQg9O6xQwIAl.jpg',
-        duration: 93,
-        release_date: '2024-04-19',
-        end_date: '2024-06-19',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=dJDHcP0f7LE',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'In 1992 Chicago, as Michael Jordan cements himself as a champion, a story of two young legends in their own right begins.'
-    },
-    {
-        movie_id: 'MV046',
-        name: 'Stress Positions',
-        image: 'https://placehold.co/300x450/png?text=Movie+jMQYb4oYP6nfjrtxdNlUr7FHCyO.jpg',
-        duration: 95,
-        release_date: '2024-04-19',
-        end_date: '2024-06-19',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=vI5YU7l7mK8',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Terry Goon is keeping strict quarantine in his ex-husband\'s Brooklyn brownstone while caring for his nephew Bahlul, a 19-year-old model from Morocco.'
-    },
-    {
-        movie_id: 'MV047',
-        name: 'Boy Kills World',
-        image: 'https://placehold.co/300x450/png?text=Movie+kRHfB22qdqiRkPdcfvl9m6LiEjy.jpg',
-        duration: 111,
-        release_date: '2024-04-26',
-        end_date: '2024-06-26',
-        age_rating: 18,
-        trailer: 'https://www.youtube.com/watch?v=DR9UpN0gMKY',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'When his family is murdered, a deaf-mute named Boy escapes to the jungle and is trained by a mysterious shaman to repress his childish imagination and become an instrument of death.'
-    },
-    {
-        movie_id: 'MV048',
-        name: 'Unsung Hero',
-        image: 'https://placehold.co/300x450/png?text=Movie+lxnx7o8PZcMdj5XFNfzEDNcFqzb.jpg',
-        duration: 113,
-        release_date: '2024-04-26',
-        end_date: '2024-06-26',
-        age_rating: 0,
-        trailer: 'https://www.youtube.com/watch?v=JTzZN6AYQiE',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Based on a remarkable true story, a mom\'s faith stands against all odds; and inspires her husband and children to hold onto theirs.'
-    },
-    {
-        movie_id: 'MV049',
-        name: 'Breathe',
-        image: 'https://placehold.co/300x450/png?text=Movie+z6FpMYBnlLMHSKMvYGmHSXuuFQC.jpg',
-        duration: 93,
-        release_date: '2024-04-26',
-        end_date: '2024-06-26',
-        age_rating: 13,
-        trailer: 'https://www.youtube.com/watch?v=VQq3_VEjvB0',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'Air-supply is scarce in the near future, forcing a mother and daughter to fight for survival when two strangers arrive desperate for an oxygenated haven.'
-    },
-    {
-        movie_id: 'MV050',
-        name: 'Humane',
-        image: 'https://placehold.co/300x450/png?text=Movie+xdvYi5GvtKLgCBNPn0KMvcLfbEF.jpg',
-        duration: 93,
-        release_date: '2024-04-26',
-        end_date: '2024-06-26',
-        age_rating: 16,
-        trailer: 'https://www.youtube.com/watch?v=kqAy1Sf4TvM',
-        language: 'en',
-        status: 'showing',
-        synopsis: 'In the wake of an environmental collapse that is forcing humanity to shed 20% of its population, a family dinner erupts into chaos when a father\'s plan to enlist in the government\'s new euthanasia program goes horribly awry.'
+        status: 'upcoming',
+        synopsis: 'Eddie and Venom are on the run. Hunted by both of their worlds and with the net closing in, the duo are forced into a devastating decision.'
     }
 ];
 
@@ -737,20 +347,102 @@ export const MOCK_DIRECTORS: Director[] = [
     { movie_id: 'MV008', name: 'Wes Ball' },
     { movie_id: 'MV009', name: 'George Miller' },
     { movie_id: 'MV010', name: 'Kelsey Mann' },
+    { movie_id: 'MV011', name: 'Shawn Levy' },
+    { movie_id: 'MV012', name: 'Chris Renaud' },
+    { movie_id: 'MV013', name: 'Michael Sarnoski' },
+    { movie_id: 'MV014', name: 'Adil El Arbi' },
+    { movie_id: 'MV014', name: 'Bilall Fallah' },
+    { movie_id: 'MV015', name: 'Susumu Mitsunaka' },
+    { movie_id: 'MV016', name: 'Mark Dindal' },
+    { movie_id: 'MV017', name: 'John Krasinski' },
+    { movie_id: 'MV018', name: 'Luca Guadagnino' },
+    { movie_id: 'MV019', name: 'Todd Phillips' },
+    { movie_id: 'MV020', name: 'Kelly Marcel' }
 ];
 
 export const MOCK_ACTORS: Actor[] = [
+    // Dune 2
     { movie_id: 'MV001', name: 'Timothée Chalamet' },
     { movie_id: 'MV001', name: 'Zendaya' },
     { movie_id: 'MV001', name: 'Rebecca Ferguson' },
+    { movie_id: 'MV001', name: 'Austin Butler' },
+    { movie_id: 'MV001', name: 'Florence Pugh' },
+    // Kung Fu Panda 4
     { movie_id: 'MV002', name: 'Jack Black' },
     { movie_id: 'MV002', name: 'Awkwafina' },
+    { movie_id: 'MV002', name: 'Viola Davis' },
+    // Godzilla x Kong
     { movie_id: 'MV003', name: 'Rebecca Hall' },
     { movie_id: 'MV003', name: 'Brian Tyree Henry' },
+    { movie_id: 'MV003', name: 'Dan Stevens' },
+    // Exhuma
     { movie_id: 'MV004', name: 'Choi Min-sik' },
     { movie_id: 'MV004', name: 'Kim Go-eun' },
+    { movie_id: 'MV004', name: 'Lee Do-hyun' },
+    // Mai
     { movie_id: 'MV005', name: 'Phuong Anh Dao' },
     { movie_id: 'MV005', name: 'Tuan Tran' },
+    { movie_id: 'MV005', name: 'Hong Dao' },
+    // Civil War
+    { movie_id: 'MV006', name: 'Kirsten Dunst' },
+    { movie_id: 'MV006', name: 'Wagner Moura' },
+    { movie_id: 'MV006', name: 'Cailee Spaeny' },
+    // The Fall Guy
+    { movie_id: 'MV007', name: 'Ryan Gosling' },
+    { movie_id: 'MV007', name: 'Emily Blunt' },
+    { movie_id: 'MV007', name: 'Aaron Taylor-Johnson' },
+    // Planet of the Apes
+    { movie_id: 'MV008', name: 'Owen Teague' },
+    { movie_id: 'MV008', name: 'Freya Allan' },
+    { movie_id: 'MV008', name: 'Kevin Durand' },
+    // Furiosa
+    { movie_id: 'MV009', name: 'Anya Taylor-Joy' },
+    { movie_id: 'MV009', name: 'Chris Hemsworth' },
+    { movie_id: 'MV009', name: 'Tom Burke' },
+    // Inside Out 2
+    { movie_id: 'MV010', name: 'Amy Poehler' },
+    { movie_id: 'MV010', name: 'Maya Hawke' },
+    { movie_id: 'MV010', name: 'Phyllis Smith' },
+    // Deadpool 3
+    { movie_id: 'MV011', name: 'Ryan Reynolds' },
+    { movie_id: 'MV011', name: 'Hugh Jackman' },
+    { movie_id: 'MV011', name: 'Emma Corrin' },
+    // Despicable Me 4
+    { movie_id: 'MV012', name: 'Steve Carell' },
+    { movie_id: 'MV012', name: 'Kristen Wiig' },
+    { movie_id: 'MV012', name: 'Will Ferrell' },
+    // A Quiet Place: Day One
+    { movie_id: 'MV013', name: 'Lupita Nyong\'o' },
+    { movie_id: 'MV013', name: 'Joseph Quinn' },
+    { movie_id: 'MV013', name: 'Alex Wolff' },
+    // Bad Boys 4
+    { movie_id: 'MV014', name: 'Will Smith' },
+    { movie_id: 'MV014', name: 'Martin Lawrence' },
+    { movie_id: 'MV014', name: 'Vanessa Hudgens' },
+    // Haikyuu
+    { movie_id: 'MV015', name: 'Ayumu Murase' },
+    { movie_id: 'MV015', name: 'Kaito Ishikawa' },
+    { movie_id: 'MV015', name: 'Yuki Kaji' },
+    // Garfield
+    { movie_id: 'MV016', name: 'Chris Pratt' },
+    { movie_id: 'MV016', name: 'Samuel L. Jackson' },
+    { movie_id: 'MV016', name: 'Hannah Waddingham' },
+    // IF
+    { movie_id: 'MV017', name: 'Ryan Reynolds' },
+    { movie_id: 'MV017', name: 'John Krasinski' },
+    { movie_id: 'MV017', name: 'Cailey Fleming' },
+    // Challengers
+    { movie_id: 'MV018', name: 'Zendaya' },
+    { movie_id: 'MV018', name: 'Josh O\'Connor' },
+    { movie_id: 'MV018', name: 'Mike Faist' },
+    // Joker 2
+    { movie_id: 'MV019', name: 'Joaquin Phoenix' },
+    { movie_id: 'MV019', name: 'Lady Gaga' },
+    { movie_id: 'MV019', name: 'Zazie Beetz' },
+    // Venom 3
+    { movie_id: 'MV020', name: 'Tom Hardy' },
+    { movie_id: 'MV020', name: 'Juno Temple' },
+    { movie_id: 'MV020', name: 'Chiwetel Ejiofor' }
 ];
 
 // --- 4. SHOWTIMES ---
@@ -894,33 +586,205 @@ export const MOCK_ACCOUNTS: Account[] = [
 // --- 6. REVIEWS ---
 
 export const MOCK_REVIEWS: MovieReview[] = [
+    // Dune: Part Two (MV001)
     {
         phone_number: '0901234567',
         movie_id: 'MV001',
         date_written: '2024-03-05',
         star_rating: 5,
-        review_content: 'Tuyệt phẩm! Hình ảnh và âm thanh quá đỉnh.'
+        review_content: 'Tuyệt phẩm điện ảnh! Hình ảnh sa mạc hoành tráng, âm thanh chấn động. Denis Villeneuve đã tạo nên một kiệt tác sci-fi thực thụ!'
     },
     {
         phone_number: '0909876543',
         movie_id: 'MV001',
         date_written: '2024-03-06',
         star_rating: 4,
-        review_content: 'Phim hay nhưng hơi dài.'
+        review_content: 'Phim hay và hoành tráng nhưng hơi dài. Diễn xuất của Timothée Chalamet và Zendaya rất thuyết phục.'
     },
+    {
+        phone_number: '0912345678',
+        movie_id: 'MV001',
+        date_written: '2024-03-07',
+        star_rating: 5,
+        review_content: 'Phần 2 hay hơn phần 1 rất nhiều! Cảnh chiến đấu hoành tráng, CGI đẹp mắt. Must-watch trên màn hình lớn!'
+    },
+    {
+        phone_number: '0923456789',
+        movie_id: 'MV001',
+        date_written: '2024-03-08',
+        star_rating: 5,
+        review_content: 'Xứng đáng 5 sao! Câu chuyện sâu sắc, hình ảnh choáng ngợp. Đáng xem ở rạp IMAX!'
+    },
+    {
+        phone_number: '0934567890',
+        movie_id: 'MV001',
+        date_written: '2024-03-09',
+        star_rating: 4,
+        review_content: 'Phim rất tốt nhưng cần xem phần 1 trước mới hiểu hết. Nhạc phim của Hans Zimmer đỉnh cao.'
+    },
+    {
+        phone_number: '0945678901',
+        movie_id: 'MV001',
+        date_written: '2024-03-10',
+        star_rating: 5,
+        review_content: 'Masterpiece! Mỗi khung hình đều như tranh vẽ. Rebecca Ferguson diễn xuất quá đỉnh!'
+    },
+    {
+        phone_number: '0956789012',
+        movie_id: 'MV001',
+        date_written: '2024-03-11',
+        star_rating: 5,
+        review_content: 'Phim hay nhất năm 2024! Cảnh cưỡi giun cát epic nhất từng thấy. Recommend 10/10!'
+    },
+    {
+        phone_number: '0967890123',
+        movie_id: 'MV001',
+        date_written: '2024-03-12',
+        star_rating: 4,
+        review_content: 'Phim tuyệt vời! Chỉ trừ việc hơi khó hiểu với người chưa đọc sách. Nhưng vẫn rất đáng xem.'
+    },
+    {
+        phone_number: '0978901234',
+        movie_id: 'MV001',
+        date_written: '2024-03-13',
+        star_rating: 5,
+        review_content: 'Không có gì để chê! Visual stunning, story compelling, acting excellent. Best sci-fi ever!'
+    },
+    {
+        phone_number: '0989012345',
+        movie_id: 'MV001',
+        date_written: '2024-03-14',
+        star_rating: 3,
+        review_content: 'Phim hay nhưng hơi chậm ở một số đoạn. Tuy nhiên hình ảnh đẹp bù lại.'
+    },
+
+    // Kung Fu Panda 4 (MV002)
     {
         phone_number: '0912345678',
         movie_id: 'MV002',
         date_written: '2024-03-10',
         star_rating: 4,
-        review_content: 'Vui nhộn, thích hợp giải trí cuối tuần.'
+        review_content: 'Vui nhộn, thích hợp giải trí cuối tuần. Po vẫn dễ thương như ngày nào.'
     },
+    {
+        phone_number: '0901234567',
+        movie_id: 'MV002',
+        date_written: '2024-03-11',
+        star_rating: 3,
+        review_content: 'Cốt truyện hơi đơn giản so với các phần trước, nhưng hình ảnh đẹp.'
+    },
+    {
+        phone_number: '0909876543',
+        movie_id: 'MV002',
+        date_written: '2024-03-12',
+        star_rating: 5,
+        review_content: 'Cười bể bụng! Jack Black lồng tiếng quá đỉnh. Phản diện tắc kè hoa rất ấn tượng.'
+    },
+    {
+        phone_number: '0988888888',
+        movie_id: 'MV002',
+        date_written: '2024-03-13',
+        star_rating: 4,
+        review_content: 'Phim gia đình tuyệt vời. Các bé nhà mình rất thích.'
+    },
+    {
+        phone_number: '0902222222',
+        movie_id: 'MV002',
+        date_written: '2024-03-14',
+        star_rating: 4,
+        review_content: 'Hành động mãn nhãn, hài hước duyên dáng. Một cái kết đẹp cho Po.'
+    },
+
+    // Godzilla x Kong: The New Empire (MV003)
+    {
+        phone_number: '0903333333',
+        movie_id: 'MV003',
+        date_written: '2024-03-30',
+        star_rating: 5,
+        review_content: 'Đánh nhau sướng mắt! Godzilla hồng quá ngầu. Kong có thêm găng tay đấm phát chết luôn.'
+    },
+    {
+        phone_number: '0904444444',
+        movie_id: 'MV003',
+        date_written: '2024-03-31',
+        star_rating: 3,
+        review_content: 'Kịch bản hơi yếu, chủ yếu xem kỹ xảo và đánh nhau. Con Scar King nhìn hơi phèn.'
+    },
+    {
+        phone_number: '0905555555',
+        movie_id: 'MV003',
+        date_written: '2024-04-01',
+        star_rating: 4,
+        review_content: 'Giải trí tốt. Âm thanh hình ảnh đỉnh cao. Xem IMAX bao phê.'
+    },
+    {
+        phone_number: '0906666666',
+        movie_id: 'MV003',
+        date_written: '2024-04-02',
+        star_rating: 5,
+        review_content: 'Team Godzilla điểm danh! Màn combat cuối phim quá đã.'
+    },
+
+    // Exhuma (MV004)
     {
         phone_number: '0901234567',
         movie_id: 'MV004',
         date_written: '2024-03-20',
         star_rating: 5,
-        review_content: 'Sợ thật sự, diễn xuất đỉnh cao.'
+        review_content: 'Sợ thật sự, diễn xuất đỉnh cao. Kim Go-eun đóng vai pháp sư quá đạt.'
+    },
+    {
+        phone_number: '0907777777',
+        movie_id: 'MV004',
+        date_written: '2024-03-21',
+        star_rating: 4,
+        review_content: 'Phim kinh dị Hàn Quốc hay nhất gần đây. Cốt truyện lôi cuốn, nhiều plot twist.'
+    },
+    {
+        phone_number: '0908888888',
+        movie_id: 'MV004',
+        date_written: '2024-03-22',
+        star_rating: 5,
+        review_content: 'Không khí phim u ám, rùng rợn. Đoạn làm lễ quật mộ xem nổi da gà.'
+    },
+
+    // Mai (MV005)
+    {
+        phone_number: '0909999999',
+        movie_id: 'MV005',
+        date_written: '2024-02-15',
+        star_rating: 4,
+        review_content: 'Phim Trấn Thành làm ngày càng lên tay. Phương Anh Đào diễn xuất sắc.'
+    },
+    {
+        phone_number: '0911111111',
+        movie_id: 'MV005',
+        date_written: '2024-02-16',
+        star_rating: 5,
+        review_content: 'Khóc hết nước mắt. Câu chuyện đời thường nhưng chạm đến trái tim.'
+    },
+    {
+        phone_number: '0912222222',
+        movie_id: 'MV005',
+        date_written: '2024-02-17',
+        star_rating: 3,
+        review_content: 'Phim hơi dài dòng, thoại nhiều chỗ chưa tự nhiên. Nhưng tổng thể ổn.'
+    },
+
+    // Inside Out 2 (MV010)
+    {
+        phone_number: '0913333333',
+        movie_id: 'MV010',
+        date_written: '2024-06-15',
+        star_rating: 5,
+        review_content: 'Pixar không bao giờ làm thất vọng. Anxiety là nhân vật mình thích nhất.'
+    },
+    {
+        phone_number: '0914444444',
+        movie_id: 'MV010',
+        date_written: '2024-06-16',
+        star_rating: 5,
+        review_content: 'Phim ý nghĩa cho cả người lớn và trẻ em. Bài học về việc chấp nhận mọi cảm xúc.'
     }
 ];
 
@@ -929,7 +793,16 @@ export const MOCK_REVIEWS: MovieReview[] = [
 export const MOCK_FOODS: Food[] = [
     {
         food_id: 'F001',
-        bill_id: '', // Placeholder
+        bill_id: '',
+        name: 'Bắp Ngọt (M)',
+        description: 'Bắp rang bơ vị ngọt size vừa',
+        price: 65000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F002',
+        bill_id: '',
         name: 'Bắp Ngọt (L)',
         description: 'Bắp rang bơ vị ngọt size lớn',
         price: 75000,
@@ -937,7 +810,16 @@ export const MOCK_FOODS: Food[] = [
         expiration_date: '2024-12-31'
     },
     {
-        food_id: 'F002',
+        food_id: 'F003',
+        bill_id: '',
+        name: 'Bắp Phô Mai (M)',
+        description: 'Bắp rang bơ vị phô mai size vừa',
+        price: 75000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F004',
         bill_id: '',
         name: 'Bắp Phô Mai (L)',
         description: 'Bắp rang bơ vị phô mai size lớn',
@@ -946,11 +828,83 @@ export const MOCK_FOODS: Food[] = [
         expiration_date: '2024-12-31'
     },
     {
-        food_id: 'F003',
+        food_id: 'F005',
+        bill_id: '',
+        name: 'Bắp Caramel (M)',
+        description: 'Bắp rang bơ vị caramel size vừa',
+        price: 75000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F006',
+        bill_id: '',
+        name: 'Bắp Caramel (L)',
+        description: 'Bắp rang bơ vị caramel size lớn',
+        price: 85000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F007',
+        bill_id: '',
+        name: 'Coca Cola (M)',
+        description: 'Nước ngọt có ga size vừa',
+        price: 35000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F008',
         bill_id: '',
         name: 'Coca Cola (L)',
         description: 'Nước ngọt có ga size lớn',
         price: 45000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F009',
+        bill_id: '',
+        name: 'Pepsi (M)',
+        description: 'Nước ngọt có ga size vừa',
+        price: 35000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F010',
+        bill_id: '',
+        name: 'Pepsi (L)',
+        description: 'Nước ngọt có ga size lớn',
+        price: 45000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F011',
+        bill_id: '',
+        name: 'Combo Solo',
+        description: '1 Bắp (M) + 1 Nước (M)',
+        price: 95000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F012',
+        bill_id: '',
+        name: 'Combo Couple',
+        description: '1 Bắp (L) + 2 Nước (L)',
+        price: 155000,
+        production_date: '2024-01-01',
+        expiration_date: '2024-12-31'
+    },
+    {
+        food_id: 'F013',
+        bill_id: '',
+        name: 'Hotdog',
+        description: 'Xúc xích nóng hổi',
+        price: 40000,
         production_date: '2024-01-01',
         expiration_date: '2024-12-31'
     }
@@ -1094,7 +1048,7 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
     {
         promotional_id: 'PROMO001',
         event_id: 'EVT002',
-        description: 'Giảm giá chào mừng thành viên mới',
+        description: 'Giảm 50% vé cho thành viên mới. Áp dụng cho lần đầu tiên mua vé online.',
         start_date: '2025-01-01',
         end_date: '2025-12-31',
         level: 'copper'
@@ -1102,7 +1056,7 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
     {
         promotional_id: 'PROMO002',
         event_id: 'EVT001',
-        description: 'Giảm giá mùa hè',
+        description: 'Giảm 20% vé cho nhóm từ 4 người. Combo bắp nước giá ưu đãi.',
         start_date: '2025-06-01',
         end_date: '2025-08-31',
         level: 'copper'
@@ -1110,7 +1064,7 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
     {
         promotional_id: 'PROMO003',
         event_id: 'EVT005',
-        description: 'Tặng Combo Bắp Nước',
+        description: 'Tặng Combo Bắp Nước khi xem phim vào thứ 5. Trị giá 100.000đ.',
         start_date: '2025-05-01',
         end_date: '2025-05-31',
         level: 'gold'
@@ -1118,7 +1072,7 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
     {
         promotional_id: 'PROMO004',
         event_id: 'EVT003',
-        description: 'Giảm giá VIP',
+        description: 'Giảm 30% cho ghế VIP từ thứ 2 đến thứ 5. Áp dụng tất cả suất chiếu.',
         start_date: '2025-01-01',
         end_date: '2025-12-31',
         level: 'vip'
@@ -1126,7 +1080,7 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
     {
         promotional_id: 'PROMO005',
         event_id: 'EVT007',
-        description: 'Quà tặng thành viên mới',
+        description: 'Tặng 1 bắp ngọt miễn phí khi đăng ký thành viên đồng. Nhận ngay sau 24h.',
         start_date: '2025-01-01',
         end_date: '2025-12-31',
         level: 'copper'
@@ -1134,10 +1088,82 @@ export const MOCK_PROMOTIONALS: Promotional[] = [
     {
         promotional_id: 'PROMO006',
         event_id: 'EVT008',
-        description: 'Ưu đãi cuối tuần',
+        description: 'Giảm 10% vé cuối tuần. Áp dụng thứ 7 và Chủ Nhật, tất cả suất chiếu.',
         start_date: '2025-01-01',
         end_date: '2025-12-31',
         level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO007',
+        event_id: 'EVT004',
+        description: 'Tặng bắp nước khi xem phim kinh dị sau 22h. Halloween đáng sợ hơn với CinemaHub!',
+        start_date: '2025-10-25',
+        end_date: '2025-10-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO008',
+        event_id: 'EVT006',
+        description: 'Mua 2 vé tặng 1 poster anime giới hạn. Chỉ có trong tuần lễ anime!',
+        start_date: '2025-07-15',
+        end_date: '2025-07-21',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO009',
+        event_id: 'EVT001',
+        description: 'Học sinh - Sinh viên giảm ngay 25% khi xuất trình thẻ. Áp dụng tất cả phim.',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO010',
+        event_id: 'EVT002',
+        description: 'Đồng giá 50k mọi suất chiếu vào thứ 3. Tất cả ghế, tất cả phim!',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO011',
+        event_id: 'EVT005',
+        description: 'Tích 3 vé trúng iPhone 16 Pro Max. Tháng phim bom tấn - May mắn vô cùng!',
+        start_date: '2025-05-01',
+        end_date: '2025-05-31',
+        level: 'gold'
+    },
+    {
+        promotional_id: 'PROMO012',
+        event_id: 'EVT003',
+        description: 'Phim Việt giảm 30% nhân dịp Quốc Khánh 2/9. Tự hào dân tộc Việt Nam!',
+        start_date: '2025-08-25',
+        end_date: '2025-09-05',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO013',
+        event_id: 'EVT008',
+        description: 'Combo đôi: 2 vé + 2 bắp + 2 nước chỉ 299k. Tiết kiệm đến 40%!',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'copper'
+    },
+    {
+        promotional_id: 'PROMO014',
+        event_id: 'EVT004',
+        description: 'Trải nghiệm 4DX giảm 15%. Cảm giác chân thực, hành trình bùng nổ!',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'gold'
+    },
+    {
+        promotional_id: 'PROMO015',
+        event_id: 'EVT007',
+        description: 'Tặng 50 điểm thành viên khi mua vé qua app. Tích điểm đổi quà siêu hấp dẫn!',
+        start_date: '2025-01-01',
+        end_date: '2025-12-31',
+        level: 'vip'
     }
 ];
 

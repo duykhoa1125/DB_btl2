@@ -49,9 +49,9 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-muted-foreground transition-colors hover:text-primary flex items-center gap-2 group"
+                    className="text-muted-foreground transition-all hover:text-primary hover:translate-x-1 flex items-center gap-2 group"
                   >
-                    <span className="h-1 w-1 rounded-full bg-primary/50 opacity-0 transition-all group-hover:opacity-100" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary opacity-0 transition-all group-hover:opacity-100 group-hover:scale-125" />
                     {link.label}
                   </Link>
                 </li>

@@ -1,54 +1,64 @@
-import axios from "axios";
+import axios from 'axios';
 
-// Determine the base URL dynamically
-// - On client-side: Use relative URL "/api" which works on any domain
-// - On server-side: Use NEXT_PUBLIC_API_URL if set, otherwise fall back to relative URL
-const getBaseURL = () => {
-  // Client-side: Always use relative URL
-  if (typeof window !== "undefined") {
-    return "/api";
+// Helper to get base URL for both client and server
+function getBaseURL() {
+  // Client-side: use relative URL
+  if (typeof window !== 'undefined') {
+    return '/api';
   }
-  // Server-side: Use environment variable or relative URL
-  return process.env.NEXT_PUBLIC_API_URL || "/api";
-};
+
+  // Server-side: use absolute URL
+  // Check if we have NEXTAUTH_URL or similar
+  if (process.env.NEXTAUTH_URL) {
+    return `${process.env.NEXTAUTH_URL}/api`;
+  }
+
+  // Fallback to localhost
+  const port = process.env.PORT || 3000;
+  return `http://localhost:${port}/api`;
+}
 
 const axiosClient = axios.create({
   baseURL: getBaseURL(),
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
-  timeout: 10000,
 });
 
-axiosClient.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      // Only redirect on client-side
-      if (typeof window !== "undefined") {
-        console.error("Unauthorized! Redirecting to login...");
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Request interceptor to add authorization token
+// Request interceptor: Auto-attach token to every request (client-side only)
 axiosClient.interceptors.request.use(
   (config) => {
-    // Only access localStorage on client-side
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
+    // Only attach token on client-side
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor: Handle 401 errors globally (client-side only)
+axiosClient.interceptors.response.use(
+  (response) => {
+    // Extract data from response
+    return response.data;
+  },
+  (error) => {
+    // Handle 401 Unauthorized - clear tokens and redirect to login (client-side only)
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
+      // Only redirect if not already on login page
+      if (!window.location.pathname.includes('/account/login')) {
+        window.location.href = '/account/login';
+      }
+    }
+
     return Promise.reject(error);
   }
 );

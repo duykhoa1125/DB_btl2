@@ -23,10 +23,49 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "CinemaHub - Đặt vé phim trực tuyến",
+  title: {
+    default: "CinemaHub - Đặt vé phim trực tuyến",
+    template: "%s | CinemaHub",
+  },
   description:
-    "Đặt vé phim online dễ dàng, nhanh chóng tại CinemaHub. Chọn ghế, đồ ăn và thanh toán trong vài phút.",
-  generator: "v0.app",
+    "Đặt vé phim online dễ dàng, nhanh chóng tại CinemaHub. Chọn ghế, đồ ăn và thanh toán trong vài phút. Trải nghiệm điện ảnh đỉnh cao với hệ thống rạp chiếu phim hiện đại.",
+  keywords: [
+    "đặt vé phim",
+    "rạp chiếu phim",
+    "cinema online",
+    "booking phim",
+    "đặt vé online",
+    "xem phim",
+    "lịch chiếu phim",
+    "CinemaHub",
+  ],
+  authors: [{ name: "CinemaHub Team" }],
+  openGraph: {
+    type: "website",
+    locale: "vi_VN",
+    siteName: "CinemaHub",
+    title: "CinemaHub - Đặt vé phim trực tuyến",
+    description:
+      "Đặt vé phim online dễ dàng, nhanh chóng tại CinemaHub. Chọn ghế, đồ ăn và thanh toán trong vài phút.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CinemaHub - Đặt vé phim trực tuyến",
+    description:
+      "Đặt vé phim online dễ dàng, nhanh chóng. Trải nghiệm điện ảnh đỉnh cao.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  generator: "Next.js",
 };
 
 export default function RootLayout({

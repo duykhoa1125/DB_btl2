@@ -7,20 +7,34 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { User, Mail, Lock, Loader2, Calendar, Users } from "lucide-react";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState<"male" | "female" | "unknown">(
+    "unknown"
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
   const router = useRouter();
@@ -41,7 +55,13 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      const success = await signup(email, password, fullName);
+      const success = await signup(
+        email,
+        password,
+        fullName,
+        birthDate,
+        gender
+      );
       if (success) {
         toast({
           title: "Đăng ký thành công",
@@ -61,34 +81,82 @@ export function RegisterForm() {
   };
 
   return (
-    <div className="flex items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Đăng ký tài khoản</CardTitle>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+      <Card className="w-full max-w-md shadow-2xl border-border/50">
+        <CardHeader className="space-y-2 text-center">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Đăng ký tài khoản
+          </CardTitle>
           <CardDescription>
             Tạo tài khoản CinemaHub mới để bắt đầu
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="fullName" className="text-sm font-medium">
+              <Label htmlFor="fullName" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
                 Họ tên
-              </label>
+              </Label>
               <Input
                 id="fullName"
                 type="text"
-                placeholder="Nhập họ tên"
+                placeholder="Nguyễn Văn A"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
               />
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="birthDate" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Ngày sinh
+                </Label>
+                <Input
+                  id="birthDate"
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  className="transition-all focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gender" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Giới tính
+                </Label>
+                <Select
+                  value={gender}
+                  onValueChange={(val: "male" | "female" | "unknown") =>
+                    setGender(val)
+                  }
+                  disabled={isLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn giới tính" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Nam</SelectItem>
+                    <SelectItem value="female">Nữ</SelectItem>
+                    <SelectItem value="unknown">Khác</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
+              <Label htmlFor="email" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
                 Email
-              </label>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -97,51 +165,78 @@ export function RegisterForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
               />
             </div>
+
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
+              <Label htmlFor="password" className="flex items-center gap-2">
+                <Lock className="h-4 w-4" />
                 Mật khẩu
-              </label>
+              </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Nhập mật khẩu"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
                 disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
               />
             </div>
+
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
+              <Label
+                htmlFor="confirmPassword"
+                className="flex items-center gap-2"
+              >
+                <Lock className="h-4 w-4" />
                 Xác nhận mật khẩu
-              </label>
+              </Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Nhập lại mật khẩu"
+                placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                minLength={6}
                 disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Đang tạo tài khoản..." : "Đăng ký"}
-            </Button>
-          </form>
+          </CardContent>
 
-          <div className="mt-4 text-center text-sm">
-            <span className="text-muted-foreground">Đã có tài khoản? </span>
-            <Link
-              href="/account/login"
-              className="text-red-600 hover:underline font-medium"
+          <CardFooter className="flex flex-col space-y-4">
+            <Button
+              type="submit"
+              className="w-full shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+              disabled={isLoading}
+              size="lg"
             >
-              Đăng nhập
-            </Link>
-          </div>
-        </CardContent>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang tạo tài khoản...
+                </>
+              ) : (
+                "Đăng ký"
+              )}
+            </Button>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Đã có tài khoản?{" "}
+              <Link
+                href="/account/login"
+                className="font-medium text-primary hover:underline"
+              >
+                Đăng nhập
+              </Link>
+            </div>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

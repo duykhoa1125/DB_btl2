@@ -19,21 +19,32 @@ export function AdminPageHeader({
   className,
 }: AdminPageHeaderProps) {
   return (
-    <div className={cn("flex items-center justify-between mb-8", className)}>
-      <div>
+    <div 
+      className={cn(
+        "flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 p-6 rounded-3xl bg-card/30 backdrop-blur-xl border border-border/40 shadow-sm", 
+        className
+      )}
+    >
+      <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
           {title}
         </h1>
         {description && (
-          <p className="text-muted-foreground mt-2 text-lg">
+          <p className="text-muted-foreground text-base font-medium">
             {description}
           </p>
         )}
       </div>
+      
       {actionLabel && actionLink && (
-        <Button asChild className="gap-2 shadow-lg hover:shadow-primary/20 transition-all">
-          <Link href={actionLink}>
-            <Plus className="h-4 w-4" />
+        <Button 
+          asChild 
+          className="h-12 px-6 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5"
+        >
+          <Link href={actionLink} className="flex items-center gap-2 font-semibold">
+            <div className="p-1 bg-white/20 rounded-full">
+              <Plus className="h-4 w-4" />
+            </div>
             {actionLabel}
           </Link>
         </Button>

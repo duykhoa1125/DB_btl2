@@ -116,6 +116,48 @@ export interface AccountMembership {
     join_date: string;
 }
 
+/**
+ * AUTHENTICATION TYPES
+ * Types for role-based authentication (User & Admin)
+ */
+
+// Extend Account với role
+export interface AccountWithRole extends Account {
+    role: 'user';
+}
+
+// Extend Staff với role và password
+export interface StaffWithRole extends Omit<Staff, 'manage_id' | 'cinema_id'> {
+    role: 'admin';
+    password?: string; // Optional vì không trả về client
+    cinema_id?: string; // Optional khi return
+    manage_id?: string | null;
+}
+
+// Union type cho authenticated user
+export type AuthenticatedUser = AccountWithRole | StaffWithRole;
+
+// Auth response from login/register
+export interface AuthResponse {
+    token: string;
+    user: AuthenticatedUser;
+}
+
+// Login request payload
+export interface LoginRequest {
+    identifier: string; // email or phone_number
+    password: string;
+}
+
+// Register request payload
+export interface RegisterRequest {
+    email: string;
+    password: string;
+    fullname: string;
+    birth_date: string;
+    gender: Gender;
+}
+
 // 5. BOOKING & TICKET
 export interface Bill {
     bill_id: string;

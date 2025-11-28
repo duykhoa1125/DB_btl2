@@ -1,46 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { type Showtime, type Cinema, type Room } from "@/services/types";
-import { cinemaService, roomService } from "@/services";
-import { Calendar, Clock, MapPin, Ticket, ChevronRight } from "lucide-react";
+import { Calendar, Clock, MapPin, Ticket, ChevronRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ShowtimeSelectorProps {
   showtimes: Showtime[];
   movie_id: string;
+  cinemas: Cinema[];
+  rooms: Room[];
 }
 
+/**
+ * Client Component chỉ quản lý UI state (selected date, selected showtime)
+ * Data (cinemas, rooms) được fetch ở server và pass xuống qua props
+ */
 export function ShowtimeSelector({
   showtimes,
   movie_id,
+  cinemas,
+  rooms,
 }: ShowtimeSelectorProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<string | null>(null);
-  const [cinemas, setCinemas] = useState<Cinema[]>([]);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([
-      cinemaService.getAll(),
-      roomService.getAll()
-    ]).then(([cinemasData, roomsData]) => {
-      setCinemas(cinemasData);
-      setRooms(roomsData);
-      setLoading(false);
-    }).catch((error) => {
-      console.error('Failed to load cinemas/rooms:', error);
-      setLoading(false);
-    });
-  }, []);
 
   // Format time from start_time (HH:mm:ss)
   const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':');
+    const [hours, minutes] = time.split(":");
     return `${hours}:${minutes}`;
   };
 
@@ -85,7 +75,9 @@ export function ShowtimeSelector({
           <Calendar className="h-6 w-6" />
         </div>
         <div>
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Lịch chiếu</h3>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            Lịch chiếu
+          </h3>
           <p className="text-sm text-muted-foreground">
             Chọn ngày và suất chiếu phù hợp
           </p>
@@ -131,9 +123,7 @@ export function ShowtimeSelector({
                 <span
                   className={cn(
                     "text-3xl font-black",
-                    isSelected
-                      ? "text-white"
-                      : "text-foreground"
+                    isSelected ? "text-white" : "text-foreground"
                   )}
                 >
                   {dayNum}
@@ -160,7 +150,10 @@ export function ShowtimeSelector({
           <div className="flex items-center gap-2 px-1">
             <Clock className="h-4 w-4 text-primary" />
             <p className="text-sm font-medium text-foreground">
-              Lịch chiếu ngày <span className="font-bold text-primary">{formatDate(selectedDate)}</span>
+              Lịch chiếu ngày{" "}
+              <span className="font-bold text-primary">
+                {formatDate(selectedDate)}
+              </span>
             </p>
           </div>
 
@@ -169,9 +162,9 @@ export function ShowtimeSelector({
             const showtimesForDate = groupedShowtimes[selectedDate];
             // Group by room (which contains cinema info via room_id)
             const showtimesByRoom = showtimesForDate.reduce((acc, showtime) => {
-              const room = rooms.find(r => r.room_id === showtime.room_id);
-              const cinema_id = room?.cinema_id || 'unknown';
-              
+              const room = rooms.find((r) => r.room_id === showtime.room_id);
+              const cinema_id = room?.cinema_id || "unknown";
+
               if (!acc[cinema_id]) {
                 acc[cinema_id] = [];
               }
@@ -179,94 +172,110 @@ export function ShowtimeSelector({
               return acc;
             }, {} as Record<string, Showtime[]>);
 
-            return Object.entries(showtimesByRoom).map(([cinema_id, cinemaShowtimes]) => {
-              const cinema = cinemas.find((c) => c.cinema_id === cinema_id);
-              
-              return (
-                <div key={cinema_id} className="space-y-4">
-                  {/* Cinema Header */}
-                  <div className="flex items-center gap-2 border-l-4 border-primary pl-4 py-1 bg-muted/30 rounded-r-lg">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <h4 className="text-lg font-bold text-foreground">
-                      {cinema?.name || "Unknown Cinema"}
-                    </h4>
-                  </div>
+            return Object.entries(showtimesByRoom).map(
+              ([cinema_id, cinemaShowtimes]) => {
+                const cinema = cinemas.find((c) => c.cinema_id === cinema_id);
 
-                  {/* Showtimes Grid */}
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 pl-4">
-                    {cinemaShowtimes.map((showtime) => {
-                      const isSelected = selectedShowtime === showtime.showtime_id;
+                return (
+                  <div key={cinema_id} className="space-y-4">
+                    {/* Cinema Header */}
+                    <div className="flex items-center gap-2 border-l-4 border-primary pl-4 py-1 bg-muted/30 rounded-r-lg">
+                      <MapPin className="h-5 w-5 text-primary" />
+                      <h4 className="text-lg font-bold text-foreground">
+                        {cinema?.name || "Unknown Cinema"}
+                      </h4>
+                    </div>
 
-                      return (
-                        <div
-                          key={showtime.showtime_id}
-                          onClick={() =>
-                            setSelectedShowtime(
-                              isSelected ? null : showtime.showtime_id
-                            )
-                          }
-                          className={cn(
-                            "group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300",
-                            isSelected
-                              ? "border-primary bg-primary/5 shadow-xl shadow-primary/10 ring-1 ring-primary/50"
-                              : "border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card hover:shadow-lg hover:-translate-y-1"
-                          )}
-                        >
-                          <div className="p-5">
-                            {/* Status Badge */}
+                    {/* Showtimes Grid */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 pl-4">
+                      {cinemaShowtimes.map((showtime) => {
+                        const isSelected =
+                          selectedShowtime === showtime.showtime_id;
 
-
-                            {/* Time Display */}
-                            <div className="mb-4 flex items-baseline gap-2">
-                              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                                <Clock className="h-6 w-6" />
-                              </div>
-                              <span className="text-3xl font-black tracking-tight text-foreground">
-                                {formatTime(showtime.start_time)}
-                              </span>
-                            </div>
-
-                            {/* Room Info (Cinema name removed as it's in header) */}
-                            <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-                              {(() => {
-                                const room = rooms.find(r => r.room_id === showtime.room_id);
-                                return (
-                                  <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
-                                    {room?.name || showtime.room_id}
-                                  </span>
-                                );
-                              })()}
-                            </div>
-
-                            {/* Price */}
-                            {isSelected && (
-                              <div className="mt-4 h-1 w-full rounded-full bg-primary animate-pulse" />
+                        return (
+                          <div
+                            key={showtime.showtime_id}
+                            onClick={() =>
+                              setSelectedShowtime(
+                                isSelected ? null : showtime.showtime_id
+                              )
+                            }
+                            className={cn(
+                              "group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300",
+                              isSelected
+                                ? "border-2 border-primary bg-gradient-to-br from-primary/10 to-background shadow-xl shadow-primary/10 scale-[1.02]"
+                                : "border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card hover:shadow-lg hover:-translate-y-1"
                             )}
-                          </div>
+                          >
+                            {/* Selected Indicator */}
+                            {isSelected && (
+                              <div className="absolute top-0 right-0 p-2">
+                                <div className="bg-primary text-primary-foreground rounded-bl-xl rounded-tr-lg p-1 shadow-sm">
+                                  <Check className="h-4 w-4" strokeWidth={3} />
+                                </div>
+                              </div>
+                            )}
 
-                          {/* Book Button Overlay */}
-                          <div className={cn(
-                            "absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center transition-all duration-300",
-                            isSelected ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-                          )}>
-                            <Link
-                              href={`/book-ticket/${showtime.showtime_id}`}
-                              className="w-full px-6"
+                            <div className="p-5">
+                              {/* Status Badge */}
+
+                              {/* Time Display */}
+                              <div className="mb-4 flex items-baseline gap-2">
+                                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted/50 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                                  <Clock className="h-6 w-6" />
+                                </div>
+                                <span className="text-3xl font-black tracking-tight text-foreground">
+                                  {formatTime(showtime.start_time)}
+                                </span>
+                              </div>
+
+                              {/* Room Info (Cinema name removed as it's in header) */}
+                              <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+                                {(() => {
+                                  const room = rooms.find(
+                                    (r) => r.room_id === showtime.room_id
+                                  );
+                                  return (
+                                    <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
+                                      {room?.name || showtime.room_id}
+                                    </span>
+                                  );
+                                })()}
+                              </div>
+
+                              {/* Price */}
+                              {isSelected && (
+                                <div className="mt-4 h-1 w-full rounded-full bg-primary animate-pulse" />
+                              )}
+                            </div>
+
+                            {/* Book Button Overlay */}
+                            <div
+                              className={cn(
+                                "absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center transition-all duration-300",
+                                isSelected
+                                  ? "opacity-100 visible"
+                                  : "opacity-0 invisible pointer-events-none"
+                              )}
                             >
-                              <Button
-                                className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg shadow-primary/25 text-lg font-bold h-12 rounded-xl group-hover:scale-105 transition-transform"
+                              <Link
+                                href={`/book-ticket/${showtime.showtime_id}`}
+                                className="w-full px-6"
                               >
-                                Đặt vé ngay <ChevronRight className="ml-2 h-5 w-5" />
-                              </Button>
-                            </Link>
+                                <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg shadow-primary/25 text-lg font-bold h-12 rounded-xl group-hover:scale-105 transition-transform">
+                                  Đặt vé ngay{" "}
+                                  <ChevronRight className="ml-2 h-5 w-5" />
+                                </Button>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            });
+                );
+              }
+            );
           })()}
         </div>
       )}
@@ -277,7 +286,9 @@ export function ShowtimeSelector({
           <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-muted/30 flex items-center justify-center">
             <Calendar className="h-8 w-8 text-muted-foreground/50" />
           </div>
-          <h4 className="text-xl font-bold text-foreground mb-2">Chưa có lịch chiếu</h4>
+          <h4 className="text-xl font-bold text-foreground mb-2">
+            Chưa có lịch chiếu
+          </h4>
           <p className="text-muted-foreground">
             Vui lòng quay lại sau để xem lịch chiếu mới nhất
           </p>

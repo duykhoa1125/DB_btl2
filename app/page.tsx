@@ -1,38 +1,69 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { Carousel } from "@/components/carousel";
-import { movieService } from "@/services";
+import { movieService, cinemaService, eventService } from "@/services";
 import { MovieTabs } from "@/components/movie-tabs";
+import { CinemaCard } from "@/components/cinema-card";
+import { EventCard } from "@/components/event-card";
 import Link from "next/link";
-import { Sparkles, ArrowRight, Film, Loader2 } from "lucide-react";
-import type { MovieDetail } from "@/services/types";
+import { Sparkles, ArrowRight, Film, MapPin, Calendar } from "lucide-react";
+import type { MovieDetail, Cinema, Event } from "@/services/types";
+import type { Metadata } from "next";
 
-export default function Home() {
-  const [allMovies, setAllMovies] = useState<MovieDetail[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const metadata: Metadata = {
+  title: "Trang chủ - CinemaHub | Đặt vé phim online nhanh chóng",
+  description:
+    "Khám phá những bộ phim blockbuster và các tác phẩm nghệ thuật đặc sắc. Đặt vé phim online dễ dàng với hệ thống đặt vé thông minh tại CinemaHub. Trải nghiệm điện ảnh đỉnh cao.",
+  keywords: [
+    "đặt vé phim",
+    "rạp chiếu phim",
+    "phim đang chiếu",
+    "phim sắp chiếu",
+    "cinema",
+    "movie tickets",
+    "đặt vé online",
+  ],
+  openGraph: {
+    title: "CinemaHub - Đặt vé phim online nhanh chóng",
+    description: "Trải nghiệm điện ảnh đỉnh cao với hệ thống đặt vé thông minh",
+    type: "website",
+  },
+};
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        setLoading(true);
-        const movies = await movieService.getAllWithDetails();
-        // Ensure we always have an array
-        setAllMovies(Array.isArray(movies) ? movies : []);
-      } catch (err) {
-        console.error("Failed to fetch movies:", err);
-        setError("Không thể tải danh sách phim. Vui lòng thử lại sau.");
-        setAllMovies([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMovies();
-  }, []);
+export default async function Home() {
+  // Fetch data in parallel
+  let allMovies: MovieDetail[] = [];
+  let cinemas: Cinema[] = [];
+  let events: Event[] = [];
+  let error: string | null = null;
+
+  try {
+    const [moviesData, cinemasData, eventsData] = await Promise.all([
+      movieService.getAllWithDetails(),
+      cinemaService.getAll(),
+      eventService.getAll(),
+    ]);
+
+    allMovies = Array.isArray(moviesData) ? moviesData : [];
+    cinemas = Array.isArray(cinemasData) ? cinemasData : [];
+    events = Array.isArray(eventsData) ? eventsData : [];
+  } catch (err) {
+    console.error("Failed to fetch data:", err);
+    error = "Không thể tải dữ liệu. Vui lòng thử lại sau.";
+    // Fallback to empty arrays to allow partial rendering
+    allMovies = [];
+    cinemas = [];
+    events = [];
+  }
 
   const nowShowingMovies = allMovies.filter((m) => m.status === "showing");
   const comingSoonMovies = allMovies.filter((m) => m.status === "upcoming");
+  
+  // Filter active events and take top 3
+  const activeEvents = events
+    .filter((e) => new Date(e.end_date) >= new Date())
+    .slice(0, 3);
+    
+  // Take top 3 cinemas
+  const featuredCinemas = cinemas.slice(0, 3);
 
   return (
     <div className="bg-background relative">
@@ -41,6 +72,9 @@ export default function Home() {
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
       </div>
+      
+      {/* Grid Pattern Background */}
+      <div className="fixed inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       {/* Hero Section */}
       <section className="relative mx-auto max-w-7xl px-6 pt-8 pb-6">
@@ -59,14 +93,7 @@ export default function Home() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="h-[500px] w-full flex items-center justify-center rounded-3xl bg-card/50 border border-border/50">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="text-muted-foreground">Đang tải phim...</p>
-            </div>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="h-[500px] w-full flex items-center justify-center rounded-3xl bg-card/50 border border-border/50">
             <div className="flex flex-col items-center gap-4 text-center px-4">
               <Film className="h-12 w-12 text-muted-foreground" />
@@ -104,6 +131,62 @@ export default function Home() {
           comingSoonMovies={comingSoonMovies}
         />
       </section>
+
+      {/* Featured Events Section */}
+      {activeEvents.length > 0 && (
+        <section className="bg-muted/30 py-20 border-y border-border/40">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 text-primary font-semibold mb-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>Tin tức & Sự kiện</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold">Sự kiện nổi bật</h2>
+              </div>
+              <Link href="/events">
+                <span className="group flex items-center gap-2 text-primary font-medium hover:underline">
+                  Xem tất cả <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {activeEvents.map(event => (
+                <EventCard key={event.event_id} event={event} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Cinemas Section */}
+      {featuredCinemas.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 py-20">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 text-primary font-semibold mb-2">
+                <MapPin className="w-4 h-4" />
+                <span>Hệ thống rạp</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold">Rạp chiếu phim</h2>
+            </div>
+            <Link href="/cinemas">
+              <span className="group flex items-center gap-2 text-primary font-medium hover:underline">
+                Tìm rạp gần bạn <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredCinemas.map(cinema => (
+              <div key={cinema.cinema_id} className="h-full">
+                <CinemaCard cinema={cinema} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Promotional Section */}
       <section className="border-y border-border/40 bg-gradient-to-b from-card/30 via-card/50 to-background py-20">

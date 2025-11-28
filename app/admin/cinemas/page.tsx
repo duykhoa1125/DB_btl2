@@ -91,7 +91,7 @@ export default function CinemasPage() {
           filteredCinemas.map((cinema) => (
             <div
               key={cinema.cinema_id}
-              className="group overflow-hidden rounded-xl border border-border/50 bg-card transition-all hover:shadow-lg hover:border-primary/50"
+              className="group overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/50"
             >
               {/* Decorative Header */}
               <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 group-hover:from-primary/20 transition-colors duration-500">

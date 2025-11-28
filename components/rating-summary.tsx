@@ -1,5 +1,3 @@
-"use client";
-
 import type { MovieDetail } from "@/services/types";
 import { StarIcon } from "lucide-react";
 
@@ -11,7 +9,7 @@ interface RatingSummaryProps {
 export function RatingSummary({ movie, reviewCount }: RatingSummaryProps) {
   // Use avg_rating from movie reviews (1-5 scale)
   const avgRating = movie.avg_rating || 0;
-  
+
   // Calculate rating distribution (simulated)
   const ratingDistribution = {
     5: 45,
@@ -42,7 +40,9 @@ export function RatingSummary({ movie, reviewCount }: RatingSummaryProps) {
               />
             ))}
           </div>
-          <p className="text-xs font-medium text-muted-foreground">{reviewCount} đánh giá</p>
+          <p className="text-xs font-medium text-muted-foreground">
+            {reviewCount} đánh giá
+          </p>
         </div>
 
         {/* Rating Distribution */}
@@ -55,17 +55,19 @@ export function RatingSummary({ movie, reviewCount }: RatingSummaryProps) {
             return (
               <div key={rating} className="flex items-center gap-3 group">
                 <div className="flex items-center gap-1 w-12 justify-end">
-                  <span className="text-sm font-bold text-foreground">{rating}</span>
+                  <span className="text-sm font-bold text-foreground">
+                    {rating}
+                  </span>
                   <StarIcon className="h-3 w-3 text-yellow-400 fill-yellow-400" />
                 </div>
-                
+
                 <div className="h-2.5 flex-1 rounded-full bg-muted/50 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-[0_0_10px_rgba(250,204,21,0.3)] transition-all duration-500 group-hover:brightness-110"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                
+
                 <span className="w-8 text-xs font-medium text-muted-foreground text-right">
                   {count}
                 </span>

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Gift, Calendar, Percent, Tag, Sparkles } from "lucide-react";
 import { voucherService } from "@/services";
 import { useAuth } from "@/lib/auth-context";
+import { AccountWithRole } from "@/services/types";
 
 // VoucherDetail type - matching mock-data structure
 interface VoucherDetail {
@@ -42,16 +43,20 @@ export default function PromotionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Derived user
+  const user =
+    currentUser && currentUser.role === "user"
+      ? (currentUser as AccountWithRole)
+      : null;
+
   useEffect(() => {
-    if (!currentUser) return;
+    if (!user) return;
 
     const fetchVouchers = async () => {
       try {
         setLoading(true);
         // Get basic vouchers for user
-        const vouchers = await voucherService.getByUser(
-          currentUser.phone_number
-        );
+        const vouchers = await voucherService.getByUser(user.phone_number);
         const vouchersArray = Array.isArray(vouchers) ? vouchers : [];
 
         // Fetch details for each voucher
@@ -82,20 +87,22 @@ export default function PromotionsPage() {
     };
 
     fetchVouchers();
-  }, [currentUser]);
+  }, [user]);
 
   // Filter vouchers
   const activeVouchers = userVouchers.filter((v) => v.state === "active");
   const usedVouchers = userVouchers.filter((v) => v.state === "used");
   const expiredVouchers = userVouchers.filter((v) => v.state === "expired");
 
-  if (!currentUser) {
+  if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Vui lòng đăng nhập</h1>
-          <Button asChild>
-            <Link href="/account/login">Đăng nhập</Link>
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+         {/* Ambient Background */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
+        <div className="text-center z-10">
+          <h1 className="text-3xl font-bold mb-6">Vui lòng đăng nhập</h1>
+          <Button asChild size="lg" className="rounded-xl font-bold shadow-lg hover:shadow-primary/20">
+            <Link href="/account/login">Đăng nhập ngay</Link>
           </Button>
         </div>
       </div>
@@ -103,11 +110,11 @@ export default function PromotionsPage() {
   }
 
   const userLevel =
-    currentUser.membership_points >= 5000
+    user.membership_points >= 5000
       ? "vip"
-      : currentUser.membership_points >= 2500
+      : user.membership_points >= 2500
       ? "diamond"
-      : currentUser.membership_points >= 1000
+      : user.membership_points >= 1000
       ? "gold"
       : "copper";
 
@@ -174,7 +181,7 @@ export default function PromotionsPage() {
     return (
       <Badge
         variant="outline"
-        className={`${badge.color} border-none font-semibold`}
+        className={`${badge.color} border-none font-bold px-3 py-1 text-sm`}
       >
         {badge.icon} {badge.label}
       </Badge>
@@ -188,64 +195,64 @@ export default function PromotionsPage() {
 
     return (
       <Card
-        className={`group relative overflow-hidden border border-border/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/50`}
+        className={`group relative overflow-hidden border border-border/50 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/30 rounded-2xl`}
       >
         {/* Glow Effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-5 blur-xl transition-opacity duration-500" />
 
         <div className="relative p-6 flex items-start justify-between gap-6">
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-5">
             {/* Type Badge & Discount Value */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-5">
               <div
-                className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ${
+                className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:scale-110 duration-500 ${
                   isGift
                     ? "bg-gradient-to-br from-pink-500 to-rose-600 text-white"
                     : "bg-gradient-to-br from-green-500 to-green-600 text-white"
                 }`}
               >
                 {isGift ? (
-                  <Gift className="w-7 h-7" />
+                  <Gift className="w-8 h-8" />
                 ) : (
-                  <Percent className="w-7 h-7" />
+                  <Percent className="w-8 h-8" />
                 )}
               </div>
               <div>
-                <span className="font-bold text-3xl text-foreground tracking-tight">
+                <span className="font-black text-4xl text-foreground tracking-tight leading-none">
                   {formatDiscount(voucher)}
                 </span>
-                <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                  {isGift ? "Quà Tặng" : "Giảm Giá"}
+                <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide mt-1">
+                  {isGift ? "Quà Tặng Độc Quyền" : "Ưu Đãi Giảm Giá"}
                 </p>
               </div>
             </div>
 
             {/* Event & Promo Name */}
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs text-primary font-semibold">
-                <Sparkles className="w-4 h-4" />
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider">
+                <Sparkles className="w-3 h-3" />
                 {voucher.promotional?.event_id}
               </div>
-              <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
+              <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors leading-tight">
                 {voucher.promotional?.description}
               </h3>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Tag className="w-3 h-3" />
-                <code className="rounded bg-muted px-2 py-0.5 font-mono font-bold text-foreground border border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground pt-1">
+                <Tag className="w-4 h-4" />
+                <code className="rounded-lg bg-muted px-2 py-1 font-mono font-bold text-foreground border border-border">
                   {voucher.code}
                 </code>
               </div>
             </div>
 
             {/* Badges */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               {voucher.promotional &&
                 getMemberLevelBadge(voucher.promotional.level)}
 
               {isGift && voucher.gift && (
                 <Badge
                   variant="secondary"
-                  className="bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-none"
+                  className="bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-none font-medium"
                 >
                   🎁 {voucher.gift.name}
                 </Badge>
@@ -254,7 +261,7 @@ export default function PromotionsPage() {
               {!isGift && voucher.discount && (
                 <Badge
                   variant="secondary"
-                  className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-none"
+                  className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-none font-medium"
                 >
                   💰 Tối đa ₫
                   {voucher.discount.max_price_can_reduce.toLocaleString(
@@ -270,7 +277,7 @@ export default function PromotionsPage() {
                     isExpiringSoon
                       ? "text-destructive border-destructive/30 bg-destructive/5"
                       : "border-border/50"
-                  }`}
+                  } font-medium`}
                 >
                   <Calendar className="w-3 h-3 mr-1" />
                   Còn {daysLeft} ngày
@@ -279,7 +286,7 @@ export default function PromotionsPage() {
             </div>
 
             {/* Details */}
-            <div className="text-xs text-muted-foreground pt-4 border-t border-border/50 flex flex-col gap-1">
+            <div className="text-xs text-muted-foreground pt-5 border-t border-border/50 flex flex-col gap-1">
               <p>
                 Hạn sử dụng:{" "}
                 <span className="font-medium text-foreground">
@@ -294,16 +301,16 @@ export default function PromotionsPage() {
             <Link href={`/book-ticket/st_001?voucher=${voucher.code}`}>
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold"
+                className="h-14 px-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold rounded-xl"
               >
                 {isGift ? (
                   <>
-                    <Gift className="w-4 h-4 mr-2" />
+                    <Gift className="w-5 h-5 mr-2" />
                     Nhận Ngay
                   </>
                 ) : (
                   <>
-                    <Percent className="w-4 h-4 mr-2" />
+                    <Percent className="w-5 h-5 mr-2" />
                     Dùng Ngay
                   </>
                 )}
@@ -319,26 +326,30 @@ export default function PromotionsPage() {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
+      
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-16">
         {/* Hero Section */}
         <div className="mb-16 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Gift className="w-4 h-4" />
             <span>Ưu Đãi Dành Riêng Cho Bạn</span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 tracking-tight">
             Voucher & Quà Tặng
           </h1>
 
-          <div className="flex items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            <p className="text-xl text-muted-foreground max-w-2xl font-light">
-              Bạn đang là thành viên
+          <div className="flex items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 bg-card/50 backdrop-blur-sm border border-border/50 rounded-full px-6 py-2 w-fit mx-auto">
+            <p className="text-lg text-muted-foreground font-medium">
+              Hạng thành viên:
             </p>
             {getMemberLevelBadge(userLevel)}
-            <p className="text-xl text-muted-foreground">
-              với {currentUser.membership_points} điểm
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
+            <p className="text-lg text-muted-foreground">
+              <span className="font-bold text-primary">{user.membership_points}</span> điểm
             </p>
           </div>
         </div>
@@ -363,17 +374,17 @@ export default function PromotionsPage() {
         {!loading && !error && (
           <>
             {/* Search and Filter */}
-            <div className="mb-12 space-y-6 max-w-2xl mx-auto">
+            <div className="mb-16 max-w-2xl mx-auto space-y-6">
               <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
-                <div className="relative flex items-center bg-background rounded-xl border border-border/50 shadow-sm">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+                <div className="relative flex items-center bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50 shadow-sm">
                   <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
                   <Input
                     type="text"
                     placeholder="Tìm kiếm voucher..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-12 h-12 border-none bg-transparent focus-visible:ring-0 text-lg"
+                    className="pl-12 h-14 border-none bg-transparent focus-visible:ring-0 text-lg placeholder:text-muted-foreground/70"
                   />
                 </div>
               </div>
@@ -385,22 +396,22 @@ export default function PromotionsPage() {
                 }
                 className="w-full"
               >
-                <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1 rounded-xl h-12">
+                <TabsList className="grid w-full grid-cols-3 bg-card/50 backdrop-blur-sm p-1 rounded-xl h-14 border border-border/50">
                   <TabsTrigger
                     value="all"
-                    className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                    className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all font-medium text-base"
                   >
                     Tất cả
                   </TabsTrigger>
                   <TabsTrigger
                     value="discount"
-                    className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                    className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all font-medium text-base"
                   >
                     Giảm Giá
                   </TabsTrigger>
                   <TabsTrigger
                     value="gift"
-                    className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                    className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all font-medium text-base"
                   >
                     Quà Tặng
                   </TabsTrigger>
@@ -409,15 +420,15 @@ export default function PromotionsPage() {
             </div>
 
             {/* Active Vouchers */}
-            <section className="mb-20">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-10 w-1.5 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-                <h2 className="text-3xl font-bold text-foreground">
+            <section className="mb-24">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="h-12 w-1.5 bg-gradient-to-b from-primary to-accent rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"></div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
                   Voucher Khả Dụng
                 </h2>
                 <Badge
                   variant="secondary"
-                  className="ml-auto bg-primary/10 text-primary"
+                  className="ml-auto bg-primary/10 text-primary border border-primary/20 px-3 py-1"
                 >
                   {filteredVouchers.length} voucher
                 </Badge>
@@ -430,15 +441,15 @@ export default function PromotionsPage() {
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/20">
-                  <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center mb-4">
-                    <Gift className="w-10 h-10 text-muted-foreground" />
+                <div className="flex flex-col items-center justify-center py-24 text-center border-2 border-dashed border-border/50 rounded-3xl bg-card/30">
+                  <div className="h-24 w-24 bg-muted/50 rounded-full flex items-center justify-center mb-6">
+                    <Gift className="w-12 h-12 text-muted-foreground/50" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">
                     Không tìm thấy voucher nào
                   </h3>
-                  <p className="text-muted-foreground">
-                    Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
+                  <p className="text-muted-foreground max-w-sm mx-auto">
+                    Thử thay đổi từ khóa tìm kiếm hoặc chọn loại voucher khác.
                   </p>
                 </div>
               )}
@@ -446,18 +457,18 @@ export default function PromotionsPage() {
 
             {/* Used Vouchers */}
             {usedVouchers.length > 0 && (
-              <section className="mb-20 opacity-60">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="h-10 w-1.5 bg-muted rounded-full"></div>
-                  <h2 className="text-3xl font-bold text-muted-foreground">
+              <section className="mb-24 opacity-70 hover:opacity-100 transition-opacity duration-500">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="h-12 w-1.5 bg-muted rounded-full"></div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-muted-foreground tracking-tight">
                     Đã Sử Dụng
                   </h2>
-                  <Badge variant="outline" className="ml-auto">
+                  <Badge variant="outline" className="ml-auto border-border/50 px-3 py-1">
                     {usedVouchers.length} voucher
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 grayscale">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 grayscale hover:grayscale-0 transition-all duration-500">
                   {usedVouchers.slice(0, 4).map((voucher) => (
                     <VoucherCard key={voucher.code} voucher={voucher} />
                   ))}
@@ -466,32 +477,32 @@ export default function PromotionsPage() {
             )}
 
             {/* CTA Section */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-12 text-center text-primary-foreground shadow-2xl">
-              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
-              <div className="absolute -top-24 -right-24 h-64 w-64 bg-white/20 blur-3xl rounded-full"></div>
-              <div className="absolute -bottom-24 -left-24 h-64 w-64 bg-white/20 blur-3xl rounded-full"></div>
+            <div className="relative overflow-hidden rounded-3xl bg-primary p-16 text-center text-primary-foreground shadow-2xl border border-white/10">
+              {/* Animated Background Effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-accent mix-blend-multiply" />
+              <div className="absolute -top-32 -right-32 h-96 w-96 bg-white/20 blur-3xl rounded-full animate-pulse" />
+              <div className="absolute -bottom-32 -left-32 h-96 w-96 bg-white/20 blur-3xl rounded-full animate-pulse delay-1000" />
 
-              <div className="relative z-10 space-y-6">
-                <h3 className="text-3xl md:text-4xl font-bold">
-                  Nâng Hạng Thành Viên!
+              <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
+                <h3 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
+                  Nâng Hạng Thành Viên Ngay!
                 </h3>
-                <p className="text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto font-light">
-                  Nâng cấp hạng thành viên để nhận thêm nhiều ưu đãi độc quyền,
-                  voucher giảm giá và quà tặng đặc biệt.
+                <p className="text-xl text-primary-foreground/90 font-light leading-relaxed">
+                  Tích lũy điểm thưởng để mở khóa hạng thành viên VIP và nhận thêm hàng ngàn ưu đãi độc quyền chỉ dành cho bạn.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
                   <Button
                     size="lg"
                     variant="secondary"
-                    className="bg-white text-primary hover:bg-white/90 font-bold shadow-lg h-12 px-8"
+                    className="bg-background text-foreground hover:bg-background/90 font-bold shadow-xl h-14 px-10 rounded-xl border-2 border-transparent hover:border-primary transition-all text-lg"
                     asChild
                   >
-                    <Link href="/account/profile">Xem Hồ Sơ</Link>
+                    <Link href="/account/profile">Xem Hồ Sơ & Tích Điểm</Link>
                   </Button>
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white/30 text-white font-bold shadow-lg hover:bg-white/10 h-12 px-8"
+                    className="bg-transparent border-white/40 text-white hover:bg-white/10 font-bold h-14 px-10 rounded-xl backdrop-blur-sm transition-all text-lg"
                     asChild
                   >
                     <Link href="/">Đặt Vé Ngay</Link>

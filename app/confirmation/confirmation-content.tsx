@@ -33,9 +33,15 @@ export function ConfirmationContent() {
   })
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background">
+    <main className="min-h-screen bg-background relative overflow-hidden">
+      {/* Ambient Background */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
+      
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
       {/* Breadcrumb */}
-      <div className="border-b border-border/40 bg-card/50">
+      <div className="border-b border-border/40 bg-card/50 backdrop-blur-md sticky top-0 z-40">
         <div className="mx-auto max-w-4xl px-6 py-4">
           <Breadcrumb 
             items={[
@@ -46,110 +52,105 @@ export function ConfirmationContent() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="relative mx-auto max-w-4xl px-6 py-16">
         {/* Success Header */}
-        <div className="mb-10 text-center">
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/50">
-              <CheckCircle2 className="h-10 w-10 text-white" strokeWidth={2.5} />
+        <div className="mb-12 text-center space-y-6">
+          <div className="inline-flex justify-center animate-in zoom-in duration-500">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-2xl shadow-green-500/30">
+              <CheckCircle2 className="h-12 w-12 text-white" strokeWidth={3} />
             </div>
           </div>
-          <h1 className="mb-3 text-4xl font-bold">Đặt vé thành công!</h1>
-          <p className="text-lg text-muted-foreground">
-            Cảm ơn bạn đã chọn CinemaHub. Chúc bạn có trải nghiệm tuyệt vời!
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent tracking-tight">
+            Đặt Vé Thành Công!
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-xl mx-auto">
+            Cảm ơn bạn đã chọn CinemaHub. Vé điện tử đã được gửi đến email của bạn.
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="space-y-8 lg:col-span-2">
             {/* Booking Details Card */}
-            <div className="overflow-hidden rounded-2xl border-2 border-green-200 bg-card shadow-xl">
+            <div className="overflow-hidden rounded-3xl border border-green-500/20 bg-card/50 backdrop-blur-sm shadow-xl">
               {/* Header */}
-              <div className="border-b border-border bg-gradient-to-r from-green-50 to-green-100/50 px-8 py-6">
-                <div className="mb-3 text-center">
-                  <p className="mb-1 text-sm font-medium text-muted-foreground">
-                    Mã đặt vé
-                  </p>
-                  <p className="font-mono text-3xl font-bold tracking-tight text-green-600">
-                    {bookingRef}
-                  </p>
-                </div>
+              <div className="border-b border-green-500/10 bg-gradient-to-r from-green-500/10 to-transparent px-8 py-8 text-center">
+                <p className="mb-2 text-sm font-medium text-muted-foreground uppercase tracking-widest">
+                  Mã đặt vé
+                </p>
+                <p className="font-mono text-4xl font-black tracking-tight text-green-600 drop-shadow-sm">
+                  {bookingRef}
+                </p>
               </div>
 
               {/* Content */}
-              <div className="space-y-6 p-8">
+              <div className="space-y-8 p-8">
                 {/* Movie Info */}
-                <div>
-                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                    <span className="w-1 h-4 bg-primary rounded-full"></span>
                     Thông tin phim
                   </h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Phim:</span>
-                      <span className="font-semibold">Avengers: Endgame</span>
+                  <div className="grid gap-4 rounded-2xl bg-background/50 border border-border/50 p-5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Phim</span>
+                      <span className="font-bold text-lg text-right">Avengers: Endgame</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Rạp:</span>
-                      <span className="font-semibold">CinemaHub - Tân Bình</span>
+                    <div className="h-px w-full bg-border/50 border-dashed" />
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Rạp</span>
+                      <span className="font-medium text-right">CinemaHub - Tân Bình</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Phòng:</span>
-                      <span className="font-semibold">Room 1</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Phòng</span>
+                      <span className="font-medium text-right">Room 1</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Suất chiếu:</span>
-                      <span className="font-semibold">{showTime}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Suất chiếu</span>
+                      <span className="font-medium text-right text-primary">{showTime}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-border" />
-
                 {/* Booking Details */}
-                <div>
-                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                    Chi tiết đặt vé
+                <div className="space-y-4">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                    <span className="w-1 h-4 bg-primary rounded-full"></span>
+                    Chi tiết thanh toán
                   </h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-                      <span className="text-muted-foreground">Số vé:</span>
-                      <span className="font-bold">{seats} vé</span>
-                    </div>
-                    <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-                      <span className="text-muted-foreground">Ghế:</span>
-                      <span className="font-semibold">C5, C6</span>
+                    <div className="flex items-center justify-between rounded-xl bg-muted/30 p-4">
+                      <span className="text-muted-foreground">Số vé</span>
+                      <span className="font-bold">{seats} vé <span className="font-normal text-muted-foreground text-sm">(C5, C6)</span></span>
                     </div>
                     {Number(discount) > 0 && (
-                      <div className="flex items-center justify-between rounded-lg bg-green-50 p-3">
-                        <span className="text-green-700">Giảm giá:</span>
+                      <div className="flex items-center justify-between rounded-xl bg-green-500/10 p-4 border border-green-500/20">
+                        <span className="text-green-700 font-medium">Khuyến mãi</span>
                         <span className="font-bold text-green-700">
                           −{Number(discount).toLocaleString("vi-VN")}₫
                         </span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between rounded-lg bg-primary/10 p-4">
-                      <span className="text-lg font-semibold">Tổng tiền:</span>
-                      <span className="text-2xl font-bold text-primary">
+                    <div className="flex items-center justify-between rounded-xl bg-primary/10 p-5 border border-primary/20">
+                      <span className="text-lg font-bold">Tổng thanh toán</span>
+                      <span className="text-3xl font-black text-primary">
                         {Number(total).toLocaleString("vi-VN")}₫
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-border" />
-
                 {/* Metadata */}
-                <div className="space-y-2 text-sm">
+                <div className="rounded-xl bg-muted/30 p-4 text-sm space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Thời gian đặt:</span>
                     <span className="font-medium">{bookingTime}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Trạng thái:</span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
-                      <div className="h-1.5 w-1.5 rounded-full bg-green-600" />
-                      Đã xác nhận
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-0.5 text-xs font-bold text-green-600 border border-green-500/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-green-600" />
+                      ĐÃ XÁC NHẬN
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -161,44 +162,36 @@ export function ConfirmationContent() {
             </div>
 
             {/* Next Steps */}
-            <div className="rounded-2xl border border-border bg-gradient-to-br from-blue-50/50 to-card p-6">
-              <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-blue-900">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-white">
-                  ℹ️
+            <div className="rounded-3xl border border-blue-200/50 bg-blue-50/30 backdrop-blur-sm p-8">
+              <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-blue-900">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-white shadow-md">
+                  i
                 </div>
                 Hướng dẫn sử dụng vé
               </h3>
-              <ul className="space-y-3">
-                <li className="flex gap-3">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+              <ul className="space-y-4">
+                <li className="flex gap-4 items-start">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200 mt-0.5">
                     1
                   </div>
-                  <span className="text-sm leading-relaxed text-blue-900">
-                    Email xác nhận đã được gửi đến địa chỉ email của bạn
+                  <span className="text-sm leading-relaxed text-blue-900/80 font-medium">
+                    Email xác nhận đã được gửi đến địa chỉ email của bạn. Vui lòng kiểm tra cả hộp thư spam.
                   </span>
                 </li>
-                <li className="flex gap-3">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                <li className="flex gap-4 items-start">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200 mt-0.5">
                     2
                   </div>
-                  <span className="text-sm leading-relaxed text-blue-900">
-                    Vui lòng đến rạp trước 15 phút để làm thủ tục
+                  <span className="text-sm leading-relaxed text-blue-900/80 font-medium">
+                    Vui lòng đến rạp trước 15 phút để làm thủ tục in vé (nếu cần) hoặc mua bắp nước.
                   </span>
                 </li>
-                <li className="flex gap-3">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                <li className="flex gap-4 items-start">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700 border border-blue-200 mt-0.5">
                     3
                   </div>
-                  <span className="text-sm leading-relaxed text-blue-900">
-                    Xuất trình mã QR hoặc mã đặt vé tại quầy để nhận vé
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
-                    4
-                  </div>
-                  <span className="text-sm leading-relaxed text-blue-900">
-                    Mang theo giấy tờ tùy thân nếu xem phim giới hạn độ tuổi
+                  <span className="text-sm leading-relaxed text-blue-900/80 font-medium">
+                    Xuất trình mã QR hoặc mã đặt vé tại quầy soát vé để vào phòng chiếu.
                   </span>
                 </li>
               </ul>
@@ -208,16 +201,16 @@ export function ConfirmationContent() {
           {/* Sidebar */}
           <div className="space-y-6 lg:col-span-1">
             {/* QR Code */}
-            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-              <div className="border-b border-border bg-muted/30 px-6 py-4">
-                <p className="text-center font-semibold">Mã QR vé điện tử</p>
+            <div className="overflow-hidden rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
+              <div className="border-b border-border/50 bg-muted/30 px-6 py-4">
+                <p className="text-center font-bold text-foreground">Vé Điện Tử (QR)</p>
               </div>
-              <div className="p-6">
-                <div className="mb-4 overflow-hidden rounded-xl bg-white p-4 shadow-inner">
-                <QrCode className="w-48 h-48 text-black" />
+              <div className="p-8 flex flex-col items-center gap-4">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-border/20">
+                  <QrCode className="w-40 h-40 text-black" />
                 </div>
-                <p className="text-center text-xs text-muted-foreground">
-                  Quét mã QR này tại quầy bán vé
+                <p className="text-center text-xs text-muted-foreground leading-relaxed">
+                  Đưa mã này cho nhân viên tại quầy soát vé
                 </p>
               </div>
             </div>
@@ -226,7 +219,7 @@ export function ConfirmationContent() {
             <div className="space-y-3">
               <Button
                 variant="outline"
-                className="w-full justify-start gap-3 bg-card shadow-sm hover:shadow-md"
+                className="w-full justify-start gap-3 h-12 rounded-xl border-border/50 bg-card/50 hover:bg-card hover:border-primary/30 transition-all shadow-sm"
                 onClick={() => window.print()}
               >
                 <Download className="h-4 w-4" />
@@ -234,28 +227,28 @@ export function ConfirmationContent() {
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-3 bg-card shadow-sm hover:shadow-md"
+                className="w-full justify-start gap-3 h-12 rounded-xl border-border/50 bg-card/50 hover:bg-card hover:border-primary/30 transition-all shadow-sm"
               >
                 <Share2 className="h-4 w-4" />
-                <span>Chia sẻ</span>
+                <span>Chia sẻ vé</span>
               </Button>
             </div>
 
             {/* Help */}
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h4 className="mb-3 font-semibold">Cần hỗ trợ?</h4>
-              <p className="mb-4 text-sm text-muted-foreground">
-                Liên hệ với chúng tôi nếu bạn cần trợ giúp
+            <div className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-6">
+              <h4 className="mb-3 font-bold">Cần hỗ trợ?</h4>
+              <p className="mb-4 text-sm text-muted-foreground leading-relaxed">
+                Liên hệ với chúng tôi nếu bạn cần trợ giúp hoặc muốn thay đổi lịch đặt.
               </p>
-              <div className="space-y-2 text-sm">
-                <p className="flex items-center gap-2">
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
                   <span className="text-muted-foreground">Hotline:</span>
-                  <span className="font-semibold">1900-1234</span>
-                </p>
-                <p className="flex items-center gap-2">
+                  <span className="font-bold text-primary ml-auto">1900-1234</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
                   <span className="text-muted-foreground">Email:</span>
-                  <span className="font-semibold">support@cinemahub.vn</span>
-                </p>
+                  <span className="font-bold text-primary ml-auto truncate max-w-[120px]">support@cinemahub.vn</span>
+                </div>
               </div>
             </div>
           </div>
