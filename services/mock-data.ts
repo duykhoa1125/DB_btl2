@@ -586,7 +586,7 @@ export const MOCK_ACCOUNTS: Account[] = [
         email: 'test.user@example.com',
         fullname: 'Test User',
         birth_date: '2000-01-01',
-        gender: 'other',
+        gender: 'unknown',
         membership_points: 0,
         registration_date: '2025-11-27',
         avatar: ''
@@ -1589,7 +1589,7 @@ export const MOCK_TICKETS: Ticket[] = [
 // --- GENERATE RANDOM BOOKED SEATS FOR ALL SHOWTIMES ---
 MOCK_SHOWTIMES.forEach(showtime => {
     // Generate 5 to 10 random booked seats per showtime
-    const numTickets = Math.floor(Math.random() * 6) + 5; 
+    const numTickets = Math.floor(Math.random() * 6) + 5;
     const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     const usedSeats = new Set<string>();
 
