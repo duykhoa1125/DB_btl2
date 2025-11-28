@@ -13,6 +13,7 @@ import {
   showtimeService,
   movieService,
   membershipService,
+  roomService,
 } from "@/services";
 import {
   ChevronDown,
@@ -45,6 +46,7 @@ interface EnrichedBill {
   tickets: any[];
   showtime: any;
   movie: any;
+  room: any;
 }
 
 export function ProfileContent() {
@@ -101,6 +103,7 @@ export function ProfileContent() {
                 const showtime = await showtimeService.getById(firstTicket.showtime_id);
                 if (showtime) {
                   const movie = await movieService.getWithDetails(showtime.movie_id);
+                  const room = await roomService.getById(showtime.room_id);
                   enrichedBills.push({
                     bill_id: bill.bill_id,
                     total_price: bill.total_price,
@@ -108,6 +111,7 @@ export function ProfileContent() {
                     tickets,
                     showtime,
                     movie,
+                    room,
                   });
                 }
               }
@@ -380,7 +384,7 @@ export function ProfileContent() {
                         </div>
                       ) : (
                         userBills.map((bill) => {
-                           const { tickets, movie } = bill;
+                           const { tickets, movie, room } = bill;
                            const isExpanded = expandedBill === bill.bill_id;
 
                            return (
@@ -420,7 +424,7 @@ export function ProfileContent() {
                                     <div className="px-4 pb-4 pt-0 animate-in slide-in-from-top-1 duration-200">
                                        <div className="rounded-lg bg-muted/30 p-4 text-sm space-y-3 border border-border/50">
                                           <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground mb-2">
-                                             <div className="flex items-center gap-1"><MapPin className="w-3 h-3"/> {bill.showtime.room_id}</div>
+                                             <div className="flex items-center gap-1"><MapPin className="w-3 h-3"/> {room?.name || bill.showtime.room_id}</div>
                                              <div className="flex items-center gap-1"><Clock className="w-3 h-3"/> {bill.showtime.start_time}</div>
                                           </div>
                                           <Separator className="bg-border/50" />
