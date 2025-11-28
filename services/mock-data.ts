@@ -90,7 +90,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV002',
         name: 'Kung Fu Panda 4',
-        image: 'https://images.unsplash.com/photo-1535016120720-40c6874c3b1c?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 94,
         release_date: '2024-03-08',
         end_date: '2024-05-08',
@@ -116,7 +116,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV004',
         name: 'Exhuma',
-        image: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cd4?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 134,
         release_date: '2024-03-15',
         end_date: '2024-05-15',
@@ -155,7 +155,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV007',
         name: 'The Fall Guy',
-        image: 'https://images.unsplash.com/photo-1511875762315-c77a168d75a4?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 126,
         release_date: '2024-05-03',
         end_date: '2024-07-03',
@@ -194,7 +194,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV010',
         name: 'Inside Out 2',
-        image: 'https://images.unsplash.com/photo-1598899134739-967d535cc43d?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 100,
         release_date: '2024-06-14',
         end_date: '2024-08-14',
@@ -220,7 +220,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV012',
         name: 'Despicable Me 4',
-        image: 'https://images.unsplash.com/photo-1613310023042-ad79320c00fc?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 95,
         release_date: '2024-07-03',
         end_date: '2024-09-03',
@@ -272,7 +272,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV016',
         name: 'The Garfield Movie',
-        image: 'https://images.unsplash.com/photo-1517604931442-710e8e9d53c1?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 101,
         release_date: '2024-05-24',
         end_date: '2024-07-24',
@@ -285,7 +285,7 @@ export const MOCK_MOVIES: Movie[] = [
     {
         movie_id: 'MV017',
         name: 'IF',
-        image: 'https://images.unsplash.com/photo-1478720568477-152d9b164e63?auto=format&fit=crop&w=500&q=60',
+        image: 'https://images.unsplash.com/photo-1761839257874-e56dfa2260cb?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         duration: 104,
         release_date: '2024-05-17',
         end_date: '2024-07-17',

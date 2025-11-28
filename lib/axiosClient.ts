@@ -2,18 +2,34 @@ import axios from 'axios';
 
 // Helper to get base URL for both client and server
 function getBaseURL() {
-  // Client-side: use relative URL
+  // Client-side: use relative URL (unless NEXT_PUBLIC_API_URL is explicitly set)
   if (typeof window !== 'undefined') {
-    return '/api';
+    return process.env.NEXT_PUBLIC_API_URL || '/api';
   }
 
-  // Server-side: use absolute URL
-  // Check if we have NEXTAUTH_URL or similar
+  // Server-side: use absolute URL with priority order
+
+  // 1. Explicit API URL (highest priority)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // 2. Base URL + /api suffix
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return `${process.env.NEXT_PUBLIC_BASE_URL}/api`;
+  }
+
+  // 3. Vercel auto-detection
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}/api`;
+  }
+
+  // 4. NextAuth URL (if using NextAuth)
   if (process.env.NEXTAUTH_URL) {
     return `${process.env.NEXTAUTH_URL}/api`;
   }
 
-  // Fallback to localhost
+  // 5. Fallback to localhost for local development
   const port = process.env.PORT || 3000;
   return `http://localhost:${port}/api`;
 }
