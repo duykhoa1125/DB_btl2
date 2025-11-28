@@ -7,10 +7,6 @@ import { Voucher } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,8 +18,13 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  Gift,
+  Percent,
+  Tag,
+  Wallet
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface VoucherWalletProps {
   phoneNumber: string;
@@ -45,7 +46,7 @@ export function VoucherWallet({ phoneNumber }: VoucherWalletProps) {
         setLoading(true);
         const data = await voucherService.getByUser(phoneNumber);
 
-        // Fetch details for each voucher to get description, discount info, etc.
+        // Fetch details for each voucher
         const enrichedVouchers = await Promise.all(
           data.map(async (v) => {
             try {
@@ -84,200 +85,166 @@ export function VoucherWallet({ phoneNumber }: VoucherWalletProps) {
   };
 
   const handleUseNow = (code: string) => {
-    // Save to session storage to auto-apply later (optional implementation)
     sessionStorage.setItem("selectedVoucher", code);
-
     toast({
       title: "Voucher sẵn sàng!",
       description: "Đang chuyển hướng đến trang đặt vé...",
     });
-
-    // Redirect to home page to start booking flow
     setTimeout(() => {
       router.push("/");
     }, 1000);
   };
 
-  const getStatusColor = (state: string) => {
-    switch (state) {
-      case "active":
-        return "text-green-600 bg-green-100 border-green-200";
-      case "used":
-        return "text-blue-600 bg-blue-100 border-blue-200";
-      case "expired":
-        return "text-gray-600 bg-gray-100 border-gray-200";
-      default:
-        return "text-gray-600 bg-gray-100 border-gray-200";
-    }
-  };
-
-  const getStatusLabel = (state: string) => {
-    switch (state) {
-      case "active":
-        return "Có thể dùng";
-      case "used":
-        return "Đã sử dụng";
-      case "expired":
-        return "Đã hết hạn";
-      default:
-        return state;
-    }
-  };
-
-  const getStatusIcon = (state: string) => {
-    switch (state) {
-      case "active":
-        return <CheckCircle2 className="w-4 h-4" />;
-      case "used":
-        return <Ticket className="w-4 h-4" />;
-      case "expired":
-        return <XCircle className="w-4 h-4" />;
-      default:
-        return null;
-    }
-  };
-
   if (loading) {
-    return <div className="text-center py-8">Đang tải voucher...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+         <p className="text-sm text-muted-foreground">Đang tải ví voucher...</p>
+      </div>
+    );
   }
 
   const activeVouchers = vouchers.filter((v) => v.state === "active");
   const usedVouchers = vouchers.filter((v) => v.state === "used");
   const expiredVouchers = vouchers.filter((v) => v.state === "expired");
 
-  const VoucherList = ({ items }: { items: VoucherWithDetails[] }) => {
-    if (items.length === 0) {
-      return (
-        <div className="text-center py-12 border-2 border-dashed rounded-xl">
-          <Ticket className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">
-            Không có voucher nào trong danh mục này.
-          </p>
+  const VoucherItem = ({ voucher }: { voucher: VoucherWithDetails }) => {
+     const isGift = !!voucher.details?.gift;
+     const isActive = voucher.state === "active";
+
+     return (
+        <div className={cn(
+           "group relative flex flex-col sm:flex-row overflow-hidden rounded-xl border border-border/50 bg-card/50 transition-all hover:shadow-md hover:border-primary/30",
+           !isActive && "opacity-60 grayscale-[0.5]"
+        )}>
+           {/* Left Side: Icon & Value */}
+           <div className="relative flex flex-col items-center justify-center p-4 min-w-[100px] bg-gradient-to-br from-muted/50 to-muted/10 border-r border-dashed border-border/50">
+              {/* Decorative Circles for ticket look */}
+              <div className="absolute -top-3 -right-3 h-6 w-6 rounded-full bg-background border border-border/50 z-10" />
+              <div className="absolute -bottom-3 -right-3 h-6 w-6 rounded-full bg-background border border-border/50 z-10" />
+
+              <div className={cn(
+                 "h-12 w-12 rounded-xl flex items-center justify-center shadow-sm mb-2",
+                 isGift ? "bg-gradient-to-br from-pink-500 to-rose-600 text-white" : "bg-gradient-to-br from-blue-500 to-indigo-600 text-white"
+              )}>
+                 {isGift ? <Gift className="w-6 h-6" /> : <Percent className="w-6 h-6" />}
+              </div>
+              <div className="text-center">
+                 <span className="font-black text-lg leading-none">
+                    {voucher.details?.discount 
+                       ? `${voucher.details.discount.percent_reduce}%` 
+                       : "QUÀ"}
+                 </span>
+              </div>
+           </div>
+
+           {/* Middle: Details */}
+           <div className="flex-1 p-4 flex flex-col justify-between gap-2">
+              <div>
+                 <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-bold text-base leading-tight group-hover:text-primary transition-colors">
+                       {voucher.details?.promotional?.description || "Voucher khuyến mãi"}
+                    </h4>
+                    <Badge variant="outline" className={cn(
+                       "shrink-0 text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 border-none",
+                       voucher.state === "active" ? "bg-green-500/10 text-green-600" : 
+                       voucher.state === "used" ? "bg-blue-500/10 text-blue-600" : "bg-gray-500/10 text-gray-500"
+                    )}>
+                       {voucher.state === "active" ? "Khả dụng" : voucher.state === "used" ? "Đã dùng" : "Hết hạn"}
+                    </Badge>
+                 </div>
+                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                     <Tag className="w-3 h-3" />
+                     <code className="bg-muted px-1.5 py-0.5 rounded-[4px] font-mono text-foreground">{voucher.code}</code>
+                 </div>
+              </div>
+              
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/30">
+                 <div className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    HSD: {new Date(voucher.end_date).toLocaleDateString("vi-VN")}
+                 </div>
+                 {voucher.details?.discount && (
+                    <span className="font-medium text-primary/80">
+                       Tối đa {voucher.details.discount.max_price_can_reduce.toLocaleString()}đ
+                    </span>
+                 )}
+              </div>
+           </div>
+
+           {/* Right: Actions */}
+           {isActive && (
+              <div className="flex flex-row sm:flex-col items-center justify-center p-3 gap-2 border-t sm:border-t-0 sm:border-l border-border/50 bg-muted/10">
+                 <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-background hover:shadow-sm" onClick={() => handleCopyCode(voucher.code)} title="Sao chép mã">
+                    <Copy className="w-4 h-4" />
+                 </Button>
+                 <Button size="sm" className="h-9 px-3 text-xs font-bold shadow-sm" onClick={() => handleUseNow(voucher.code)}>
+                    Dùng
+                 </Button>
+              </div>
+           )}
         </div>
-      );
-    }
+     );
+  }
 
-    return (
-      <div className="grid gap-4 md:grid-cols-2">
-        {items.map((voucher) => (
-          <Card
-            key={voucher.code}
-            className={cn(
-              "overflow-hidden transition-all hover:shadow-md",
-              voucher.state !== "active" && "opacity-75"
-            )}
-          >
-            <div className="absolute top-0 right-0 p-0">
-              <div
-                className={cn(
-                  "px-3 py-1 text-xs font-medium rounded-bl-lg flex items-center gap-1",
-                  getStatusColor(voucher.state)
-                )}
-              >
-                {getStatusIcon(voucher.state)}
-                {getStatusLabel(voucher.state)}
-              </div>
-            </div>
-
-            <CardHeader className="pb-2 pt-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-lg font-bold text-primary">
-                    {voucher.code}
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {voucher.details?.promotional?.description ||
-                      "Voucher ưu đãi"}
-                  </p>
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent className="pb-2">
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="w-4 h-4" />
-                  <span>
-                    HSD:{" "}
-                    {new Date(voucher.end_date).toLocaleDateString("vi-VN")}
-                  </span>
-                </div>
-                {voucher.details?.discount && (
-                  <div className="text-green-600 font-medium">
-                    Giảm {voucher.details.discount.percent_reduce}% (Tối đa{" "}
-                    {voucher.details.discount.max_price_can_reduce.toLocaleString()}
-                    đ)
-                  </div>
-                )}
-                {voucher.details?.gift && (
-                  <div className="text-purple-600 font-medium">
-                    Tặng: {voucher.details.gift.name}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-
-            <CardFooter className="pt-2 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1 gap-2"
-                onClick={() => handleCopyCode(voucher.code)}
-              >
-                <Copy className="w-4 h-4" />
-                Sao chép
-              </Button>
-
-              {voucher.state === "active" && (
-                <Button
-                  size="sm"
-                  className="flex-1 gap-2 bg-primary hover:bg-primary/90"
-                  onClick={() => handleUseNow(voucher.code)}
-                >
-                  Dùng ngay
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        ))}
+  const EmptyState = ({ message }: { message: string }) => (
+      <div className="flex flex-col items-center justify-center py-10 text-center border-2 border-dashed border-border/50 rounded-xl bg-muted/20">
+         <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center mb-3">
+            <Ticket className="w-6 h-6 text-muted-foreground/50" />
+         </div>
+         <p className="text-sm font-medium text-muted-foreground">{message}</p>
       </div>
-    );
-  };
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Ví Voucher</h2>
-        <Badge variant="outline" className="px-3 py-1">
-          {activeVouchers.length} khả dụng
-        </Badge>
+    <div className="h-full flex flex-col">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <Wallet className="h-5 w-5" />
+           </div>
+           <div>
+              <h2 className="text-lg font-bold">Ví Voucher</h2>
+              <p className="text-sm text-muted-foreground">Quản lý ưu đãi của bạn</p>
+           </div>
+        </div>
+        <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
+           {activeVouchers.length}
+        </div>
       </div>
 
-      <Tabs defaultValue="active" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="active">
-            Khả dụng ({activeVouchers.length})
-          </TabsTrigger>
-          <TabsTrigger value="used">
-            Đã dùng ({usedVouchers.length})
-          </TabsTrigger>
-          <TabsTrigger value="expired">
-            Hết hạn ({expiredVouchers.length})
-          </TabsTrigger>
+      <Tabs defaultValue="active" className="flex-1 flex flex-col">
+        <TabsList className="grid w-full grid-cols-3 mb-4 p-1 bg-muted/40 rounded-xl">
+          <TabsTrigger value="active" className="rounded-lg text-xs font-bold data-[state=active]:bg-background data-[state=active]:shadow-sm">Khả dụng</TabsTrigger>
+          <TabsTrigger value="used" className="rounded-lg text-xs font-bold data-[state=active]:bg-background data-[state=active]:shadow-sm">Đã dùng</TabsTrigger>
+          <TabsTrigger value="expired" className="rounded-lg text-xs font-bold data-[state=active]:bg-background data-[state=active]:shadow-sm">Hết hạn</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="active" className="mt-0">
-          <VoucherList items={activeVouchers} />
-        </TabsContent>
+        <ScrollArea className="flex-1 pr-3 -mr-3 h-[400px]">
+            <TabsContent value="active" className="mt-0 space-y-3">
+               {activeVouchers.length > 0 ? (
+                  activeVouchers.map(v => <VoucherItem key={v.code} voucher={v} />)
+               ) : (
+                  <EmptyState message="Bạn chưa có voucher nào khả dụng." />
+               )}
+            </TabsContent>
 
-        <TabsContent value="used" className="mt-0">
-          <VoucherList items={usedVouchers} />
-        </TabsContent>
+            <TabsContent value="used" className="mt-0 space-y-3">
+               {usedVouchers.length > 0 ? (
+                  usedVouchers.map(v => <VoucherItem key={v.code} voucher={v} />)
+               ) : (
+                  <EmptyState message="Bạn chưa sử dụng voucher nào." />
+               )}
+            </TabsContent>
 
-        <TabsContent value="expired" className="mt-0">
-          <VoucherList items={expiredVouchers} />
-        </TabsContent>
+            <TabsContent value="expired" className="mt-0 space-y-3">
+               {expiredVouchers.length > 0 ? (
+                  expiredVouchers.map(v => <VoucherItem key={v.code} voucher={v} />)
+               ) : (
+                  <EmptyState message="Không có voucher hết hạn." />
+               )}
+            </TabsContent>
+        </ScrollArea>
       </Tabs>
     </div>
   );

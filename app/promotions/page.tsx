@@ -247,64 +247,62 @@ export default function PromotionsPage() {
 
     return (
       <Card
-        className={`group relative overflow-hidden border border-border/50 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/30 rounded-2xl`}
+        className={`relative overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm rounded-xl transition-all duration-300 hover:shadow-lg hover:border-primary/40 group`}
       >
-        {/* Glow Effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-5 blur-xl transition-opacity duration-500" />
+        {/* Decorative elements - Top Left Corner */}
+        <div className="absolute -top-3 -left-3 h-6 w-6 rounded-full bg-background border border-border group-hover:border-primary/40 transition-all duration-300" />
+        {/* Decorative elements - Bottom Right Corner */}
+        <div className="absolute -bottom-3 -right-3 h-6 w-6 rounded-full bg-background border border-border group-hover:border-primary/40 transition-all duration-300" />
 
-        <div className="relative p-6 flex items-start justify-between gap-6">
-          <div className="flex-1 space-y-5">
-            {/* Type Badge & Discount Value */}
-            <div className="flex items-center gap-5">
+
+        <div className="relative p-4 flex gap-4 items-center justify-between">
+          {/* Main Voucher Info */}
+          <div className="flex-1 space-y-3">
+            {/* Discount Value / Gift Type */}
+            <div className="flex items-center gap-3">
               <div
-                className={`flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:scale-110 duration-500 ${
+                className={`flex h-10 w-10 items-center justify-center rounded-lg shadow-md ${
                   isGift
                     ? "bg-gradient-to-br from-pink-500 to-rose-600 text-white"
                     : "bg-gradient-to-br from-green-500 to-green-600 text-white"
                 }`}
               >
                 {isGift ? (
-                  <Gift className="w-8 h-8" />
+                  <Gift className="w-5 h-5" />
                 ) : (
-                  <Percent className="w-8 h-8" />
+                  <Percent className="w-5 h-5" />
                 )}
               </div>
               <div>
-                <span className="font-black text-4xl text-foreground tracking-tight leading-none">
+                <span className="font-extrabold text-2xl text-foreground leading-none">
                   {formatDiscount(voucher)}
                 </span>
-                <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide mt-1">
-                  {isGift ? "Quà Tặng Độc Quyền" : "Ưu Đãi Giảm Giá"}
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide mt-0.5">
+                  {isGift ? "Quà Tặng" : "Giảm Giá"}
                 </p>
               </div>
             </div>
 
             {/* Event & Promo Name */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">
                 <Sparkles className="w-3 h-3" />
                 {voucher.promotional?.event_id}
               </div>
-              <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors leading-tight">
+              <h3 className="font-bold text-base text-foreground leading-tight group-hover:text-primary transition-colors">
                 {voucher.promotional?.description}
               </h3>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground pt-1">
-                <Tag className="w-4 h-4" />
-                <code className="rounded-lg bg-muted px-2 py-1 font-mono font-bold text-foreground border border-border">
-                  {voucher.code}
-                </code>
-              </div>
             </div>
 
             {/* Badges */}
-            <div className="flex flex-wrap gap-2 pt-2">
+            <div className="flex flex-wrap gap-1.5 pt-1">
               {voucher.promotional &&
                 getMemberLevelBadge(voucher.promotional.level)}
 
               {isGift && voucher.gift && (
                 <Badge
                   variant="secondary"
-                  className="bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-none font-medium"
+                  className="bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-none font-medium text-xs"
                 >
                   🎁 {voucher.gift.name}
                 </Badge>
@@ -313,7 +311,7 @@ export default function PromotionsPage() {
               {!isGift && voucher.discount && (
                 <Badge
                   variant="secondary"
-                  className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-none font-medium"
+                  className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-none font-medium text-xs"
                 >
                   💰 Tối đa ₫
                   {voucher.discount.max_price_can_reduce.toLocaleString(
@@ -329,7 +327,7 @@ export default function PromotionsPage() {
                     isExpiringSoon
                       ? "text-destructive border-destructive/30 bg-destructive/5"
                       : "border-border/50"
-                  } font-medium`}
+                  } font-medium text-xs`}
                 >
                   <Calendar className="w-3 h-3 mr-1" />
                   Còn {daysLeft} ngày
@@ -337,10 +335,16 @@ export default function PromotionsPage() {
               )}
             </div>
 
-            {/* Details */}
-            <div className="text-xs text-muted-foreground pt-5 border-t border-border/50 flex flex-col gap-1">
-              <p>
-                Hạn sử dụng:{" "}
+            {/* Voucher Code and Expiry */}
+            <div className="pt-2 border-t border-dashed border-border/70 mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Tag className="w-3.5 h-3.5" />
+                <code className="rounded-md bg-muted px-2 py-1 font-mono font-bold text-foreground text-sm border border-border/70">
+                  {voucher.code}
+                </code>
+              </div>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                HSD:{" "}
                 <span className="font-medium text-foreground">
                   {new Date(voucher.end_date).toLocaleDateString("vi-VN")}
                 </span>
@@ -349,20 +353,20 @@ export default function PromotionsPage() {
           </div>
 
           {/* Action Button */}
-          <div className="flex flex-col justify-center h-full pt-2">
+          <div className="flex flex-col items-center justify-center h-full border-l border-dashed border-border/70 pl-4">
             <Link href={`/book-ticket/st_001?voucher=${voucher.code}`}>
               <Button
-                size="lg"
-                className="h-14 px-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold rounded-xl"
+                size="sm"
+                className="h-10 px-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold rounded-lg text-sm"
               >
                 {isGift ? (
                   <>
-                    <Gift className="w-5 h-5 mr-2" />
+                    <Gift className="w-4 h-4 mr-1.5" />
                     Nhận Ngay
                   </>
                 ) : (
                   <>
-                    <Percent className="w-5 h-5 mr-2" />
+                    <Percent className="w-4 h-4 mr-1.5" />
                     Dùng Ngay
                   </>
                 )}
