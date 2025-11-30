@@ -66,6 +66,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.8.32",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8.5",
