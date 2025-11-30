@@ -62,6 +62,9 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => {
     // Extract data from response
+    if (response.data?.success && response.data?.data) {
+      return response.data.data; // Unwrap
+    }
     return response.data;
   },
   (error) => {
