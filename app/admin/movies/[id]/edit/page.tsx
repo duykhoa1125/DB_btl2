@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { updateMovie } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import { movieService } from "@/services";
 import type { Movie } from "@/services/types";
 import { Button } from "@/components/ui/button";
@@ -42,11 +42,11 @@ export default function EditMoviePage() {
 
   useEffect(() => {
     const movie_id = params.id as string;
-    
+
     const fetchMovie = async () => {
       try {
         const movie = await movieService.getWithDetails(movie_id);
-        
+
         if (!movie) {
           toast({
             title: "Error",
@@ -96,7 +96,8 @@ export default function EditMoviePage() {
     if (!formData.duration || duration <= 0)
       newErrors.duration = "Duration must be greater than 0";
 
-    if (!formData.release_date) newErrors.release_date = "Release date is required";
+    if (!formData.release_date)
+      newErrors.release_date = "Release date is required";
     if (!formData.end_date) newErrors.end_date = "End date is required";
 
     if (formData.release_date && formData.end_date) {
@@ -142,7 +143,7 @@ export default function EditMoviePage() {
         trailer: formData.trailer || null,
       };
 
-      updateMovie(movie_id, updates);
+      await adminService.updateMovie(movie_id, updates);
 
       toast({
         title: "Success",
@@ -326,7 +327,9 @@ export default function EditMoviePage() {
                   }
                 />
                 {errors.release_date && (
-                  <p className="text-sm text-destructive">{errors.release_date}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.release_date}
+                  </p>
                 )}
               </div>
 
@@ -364,7 +367,9 @@ export default function EditMoviePage() {
                   max="18"
                 />
                 {errors.age_rating && (
-                  <p className="text-sm text-destructive">{errors.age_rating}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.age_rating}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   0 = All ages, 13+ = Teen, 16+ = Mature, 18+ = Adult
@@ -373,7 +378,9 @@ export default function EditMoviePage() {
 
               {/* Trailer URL */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Trailer URL (YouTube)</label>
+                <label className="text-sm font-medium">
+                  Trailer URL (YouTube)
+                </label>
                 <Input
                   value={formData.trailer}
                   onChange={(e) =>

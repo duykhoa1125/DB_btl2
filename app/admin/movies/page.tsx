@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { deleteMovie } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import { movieService } from "@/services";
 import type { MovieDetail } from "@/services/types";
 import { Button } from "@/components/ui/button";
@@ -95,16 +95,17 @@ export default function MoviesPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (movieToDelete) {
-      const success = deleteMovie(movieToDelete.movie_id);
-      if (success) {
-        movieService.getAllWithDetails().then(setMovies);
+      try {
+        await adminService.deleteMovie(movieToDelete.movie_id);
+        const updatedMovies = await movieService.getAllWithDetails();
+        setMovies(Array.isArray(updatedMovies) ? updatedMovies : []);
         toast({
           title: "Đã xóa phim",
           description: `"${movieToDelete.name}" đã được xóa thành công.`,
         });
-      } else {
+      } catch (error) {
         toast({
           title: "Lỗi",
           description: "Không thể xóa phim.",

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createShowtime, getAllMovies } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
+import { movieService } from "@/services";
 import type { Showtime, Room } from "@/services/types";
 import { roomService } from "@/services";
 import { Button } from "@/components/ui/button";
@@ -33,17 +34,20 @@ export default function NewShowtimePage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const [movies, setMovies] = useState<any[]>([]);
+
   useEffect(() => {
-    roomService
-      .getAll()
-      .then((data) => setRooms(Array.isArray(data) ? data : []))
+    Promise.all([roomService.getAll(), movieService.getAll()])
+      .then(([roomsData, moviesData]) => {
+        setRooms(Array.isArray(roomsData) ? roomsData : []);
+        setMovies(Array.isArray(moviesData) ? moviesData : []);
+      })
       .catch((err) => {
         console.error(err);
         setRooms([]);
+        setMovies([]);
       });
   }, []);
-
-  const movies = getAllMovies();
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -99,7 +103,7 @@ export default function NewShowtimePage() {
         end_time: formData.end_time,
       };
 
-      createShowtime(showtimeData);
+      await adminService.createShowtime(showtimeData);
 
       toast({
         title: "Success",

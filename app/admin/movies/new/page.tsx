@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createMovie } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import type { Movie } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,7 +48,8 @@ export default function NewMoviePage() {
     if (!formData.duration || duration <= 0)
       newErrors.duration = "Duration must be greater than 0";
 
-    if (!formData.release_date) newErrors.release_date = "Release date is required";
+    if (!formData.release_date)
+      newErrors.release_date = "Release date is required";
     if (!formData.end_date) newErrors.end_date = "End date is required";
 
     // Validate end_date > release_date
@@ -94,7 +95,7 @@ export default function NewMoviePage() {
         trailer: formData.trailer || null,
       };
 
-      createMovie(movieData);
+      await adminService.createMovie(movieData);
 
       toast({
         title: "Success",
@@ -274,7 +275,9 @@ export default function NewMoviePage() {
                   }
                 />
                 {errors.release_date && (
-                  <p className="text-sm text-destructive">{errors.release_date}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.release_date}
+                  </p>
                 )}
               </div>
 
@@ -313,7 +316,9 @@ export default function NewMoviePage() {
                   max="18"
                 />
                 {errors.age_rating && (
-                  <p className="text-sm text-destructive">{errors.age_rating}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.age_rating}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   0 = All ages, 13+ = Teen, 16+ = Mature, 18+ = Adult
@@ -322,7 +327,9 @@ export default function NewMoviePage() {
 
               {/* Trailer URL */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Trailer URL (YouTube)</label>
+                <label className="text-sm font-medium">
+                  Trailer URL (YouTube)
+                </label>
                 <Input
                   value={formData.trailer}
                   onChange={(e) =>

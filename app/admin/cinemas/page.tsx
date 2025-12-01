@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAllCinemas, deleteCinema } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,11 +21,33 @@ import { AdminPageHeader } from "@/components/admin/page-header";
 import { AdminSearch } from "@/components/admin/search";
 
 export default function CinemasPage() {
-  const [cinemas, setCinemas] = useState<Cinema[]>(getAllCinemas());
+  const [cinemas, setCinemas] = useState<Cinema[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [cinemaToDelete, setCinemaToDelete] = useState<Cinema | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  // Fetch cinemas on mount
+  useEffect(() => {
+    const fetchCinemas = async () => {
+      try {
+        setIsLoading(true);
+        const data = await adminService.getAllCinemas();
+        setCinemas(data);
+      } catch (error) {
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách rạp.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCinemas();
+  }, [toast]);
 
   // Filter cinemas
   const filteredCinemas = cinemas.filter((cinema) => {
@@ -40,16 +62,18 @@ export default function CinemasPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (cinemaToDelete) {
-      const success = deleteCinema(cinemaToDelete.cinema_id);
-      if (success) {
-        setCinemas(getAllCinemas());
+      try {
+        await adminService.deleteCinema(cinemaToDelete.cinema_id);
+        // Refresh data
+        const data = await adminService.getAllCinemas();
+        setCinemas(data);
         toast({
           title: "Đã xóa rạp",
           description: `"${cinemaToDelete.name}" đã được xóa thành công.`,
         });
-      } else {
+      } catch (error) {
         toast({
           title: "Lỗi",
           description: "Không thể xóa rạp.",
@@ -95,11 +119,13 @@ export default function CinemasPage() {
             >
               {/* Decorative Header */}
               <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 group-hover:from-primary/20 transition-colors duration-500">
-                 <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center">
                   <Film className="w-12 h-12 text-primary/20 group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors">{cinema.name}</h3>
+                  <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors">
+                    {cinema.name}
+                  </h3>
                 </div>
               </div>
 
@@ -107,12 +133,19 @@ export default function CinemasPage() {
               <div className="space-y-4 p-4">
                 <div className="text-sm flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                  <p className="text-muted-foreground line-clamp-2">{cinema.address}</p>
+                  <p className="text-muted-foreground line-clamp-2">
+                    {cinema.address}
+                  </p>
                 </div>
 
                 {/* Actions */}
                 <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" asChild className="flex-1 hover:bg-primary/10 hover:text-primary border-border/50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="flex-1 hover:bg-primary/10 hover:text-primary border-border/50"
+                  >
                     <Link href={`/admin/cinemas/${cinema.cinema_id}/edit`}>
                       <Edit className="mr-2 h-4 w-4" />
                       Chỉnh sửa
@@ -144,8 +177,8 @@ export default function CinemasPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
             <AlertDialogDescription>
-              Hành động này sẽ xóa vĩnh viễn rạp &quot;{cinemaToDelete?.name}&quot;.
-              Hành động này không thể hoàn tác.
+              Hành động này sẽ xóa vĩnh viễn rạp &quot;{cinemaToDelete?.name}
+              &quot;. Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

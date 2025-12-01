@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MOCK_MOVIES } from '@/services/mock-data';
+import type { Movie } from '@/services/types';
 
 // GET /api/movies
 export async function GET(request: Request) {
@@ -25,3 +26,25 @@ export async function GET(request: Request) {
         );
     }
 }
+
+// POST /api/movies (Admin only)
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
+
+        const newMovie: Movie = {
+            ...body,
+            movie_id: `MOV${Date.now()}`,
+        };
+
+        MOCK_MOVIES.push(newMovie);
+
+        return NextResponse.json(newMovie, { status: 201 });
+    } catch (error) {
+        return NextResponse.json(
+            { error: 'Failed to create movie' },
+            { status: 500 }
+        );
+    }
+}
+

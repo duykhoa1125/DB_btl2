@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { getAllShowtimes, deleteShowtime } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import { movieService, cinemaService, roomService } from "@/services";
 import type { Showtime } from "@/services/types";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/table";
 
 export default function ShowtimesPage() {
-  const [showtimes, setShowtimes] = useState<Showtime[]>(getAllShowtimes());
+  const [showtimes, setShowtimes] = useState<Showtime[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [movieFilter, setMovieFilter] = useState<string>("all");
   const [cinemaFilter, setCinemaFilter] = useState<string>("all");
@@ -53,17 +53,20 @@ export default function ShowtimesPage() {
 
   useEffect(() => {
     Promise.all([
+      adminService.getAllShowtimes(),
       movieService.getAllWithDetails(),
       cinemaService.getAll(),
       roomService.getAll(),
     ])
-      .then(([moviesData, cinemasData, roomsData]) => {
+      .then(([showtimesData, moviesData, cinemasData, roomsData]) => {
+        setShowtimes(Array.isArray(showtimesData) ? showtimesData : []);
         setMovies(Array.isArray(moviesData) ? moviesData : []);
         setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
         setRooms(Array.isArray(roomsData) ? roomsData : []);
       })
       .catch((err) => {
         console.error(err);
+        setShowtimes([]);
         setMovies([]);
         setCinemas([]);
         setRooms([]);
@@ -95,16 +98,17 @@ export default function ShowtimesPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (showtimeToDelete) {
-      const success = deleteShowtime(showtimeToDelete.showtime_id);
-      if (success) {
-        setShowtimes(getAllShowtimes());
+      try {
+        await adminService.deleteShowtime(showtimeToDelete.showtime_id);
+        const updatedShowtimes = await adminService.getAllShowtimes();
+        setShowtimes(Array.isArray(updatedShowtimes) ? updatedShowtimes : []);
         toast({
           title: "Đã xóa suất chiếu",
           description: "Suất chiếu đã được xóa thành công.",
         });
-      } else {
+      } catch (error) {
         toast({
           title: "Lỗi",
           description: "Không thể xóa suất chiếu.",

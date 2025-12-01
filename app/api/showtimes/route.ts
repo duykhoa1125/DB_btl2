@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MOCK_SHOWTIMES, MOCK_ROOMS } from '@/services/mock-data';
+import type { Showtime } from '@/services/types';
 
 // GET /api/showtimes
 // Support query params: ?movie_id=xxx, ?cinema_id=xxx, ?room_id=xxx, ?date=xxx
@@ -44,3 +45,25 @@ export async function GET(request: Request) {
         );
     }
 }
+
+// POST /api/showtimes (Admin only)
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
+
+        const newShowtime: Showtime = {
+            ...body,
+            showtime_id: `SHO${Date.now()}`,
+        };
+
+        MOCK_SHOWTIMES.push(newShowtime);
+
+        return NextResponse.json(newShowtime, { status: 201 });
+    } catch (error) {
+        return NextResponse.json(
+            { error: 'Failed to create showtime' },
+            { status: 500 }
+        );
+    }
+}
+

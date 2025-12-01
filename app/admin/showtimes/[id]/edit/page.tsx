@@ -2,11 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import {
-  getShowtimeById,
-  updateShowtime,
-  getAllMovies,
-} from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
+import { movieService } from "@/services";
 import type { Showtime, Room } from "@/services/types";
 import { roomService } from "@/services";
 import { Button } from "@/components/ui/button";
@@ -39,37 +36,41 @@ export default function EditShowtimePage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const movies = getAllMovies();
+  const [movies, setMovies] = useState<any[]>([]);
 
   useEffect(() => {
-    roomService
-      .getAll()
-      .then((data) => setRooms(Array.isArray(data) ? data : []))
-      .catch((err) => {
-        console.error(err);
-        setRooms([]);
-      });
-    const showtime_id = params.id as string;
-    const showtime = getShowtimeById(showtime_id);
+    const fetchData = async () => {
+      try {
+        const [roomsData, moviesData] = await Promise.all([
+          roomService.getAll(),
+          movieService.getAll(),
+        ]);
+        setRooms(Array.isArray(roomsData) ? roomsData : []);
+        setMovies(Array.isArray(moviesData) ? moviesData : []);
 
-    if (!showtime) {
-      toast({
-        title: "Error",
-        description: "Showtime not found",
-        variant: "destructive",
-      });
-      router.push("/admin/showtimes");
-      return;
-    }
+        const showtime_id = params.id as string;
+        const showtime = await adminService.getShowtimeById(showtime_id);
 
-    setFormData({
-      movie_id: showtime.movie_id,
-      room_id: showtime.room_id,
-      start_date: showtime.start_date,
-      start_time: showtime.start_time,
-      end_time: showtime.end_time,
-    });
-    setIsLoading(false);
+        setFormData({
+          movie_id: showtime.movie_id,
+          room_id: showtime.room_id,
+          start_date: showtime.start_date,
+          start_time: showtime.start_time,
+          end_time: showtime.end_time,
+        });
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: "Showtime not found",
+          variant: "destructive",
+        });
+        router.push("/admin/showtimes");
+      }
+    };
+
+    fetchData();
   }, [params.id, router, toast]);
 
   const validate = () => {
@@ -115,7 +116,7 @@ export default function EditShowtimePage() {
         end_time: formData.end_time,
       };
 
-      updateShowtime(showtime_id, updates);
+      await adminService.updateShowtime(showtime_id, updates);
 
       toast({
         title: "Success",

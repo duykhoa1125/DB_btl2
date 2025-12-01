@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createCinema } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,8 +24,7 @@ export default function NewCinemaPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim())
-      newErrors.name = "Cinema name is required";
+    if (!formData.name.trim()) newErrors.name = "Cinema name is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
 
     setErrors(newErrors);
@@ -53,7 +52,7 @@ export default function NewCinemaPage() {
         state: "active", // Default state
       };
 
-      createCinema(cinemaData);
+      await adminService.createCinema(cinemaData);
 
       toast({
         title: "Success",

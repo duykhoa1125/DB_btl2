@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { getCinemaById, updateCinema } from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import type { Cinema } from "@/services/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,25 +32,28 @@ export default function EditCinemaPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const cinema_id = params.id as string;
-    const cinema = getCinemaById(cinema_id);
+    const fetchCinema = async () => {
+      try {
+        const cinema_id = params.id as string;
+        const cinema = await adminService.getCinemaById(cinema_id);
 
-    if (!cinema) {
-      toast({
-        title: "Error",
-        description: "Cinema not found",
-        variant: "destructive",
-      });
-      router.push("/admin/cinemas");
-      return;
-    }
+        setFormData({
+          name: cinema.name,
+          address: cinema.address,
+          state: cinema.state,
+        });
+        setIsLoading(false);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Cinema not found",
+          variant: "destructive",
+        });
+        router.push("/admin/cinemas");
+      }
+    };
 
-    setFormData({
-      name: cinema.name,
-      address: cinema.address,
-      state: cinema.state,
-    });
-    setIsLoading(false);
+    fetchCinema();
   }, [params.id, router, toast]);
 
   const validate = () => {
@@ -85,7 +88,7 @@ export default function EditCinemaPage() {
         state: formData.state,
       };
 
-      updateCinema(cinema_id, updates);
+      await adminService.updateCinema(cinema_id, updates);
 
       toast({
         title: "Success",

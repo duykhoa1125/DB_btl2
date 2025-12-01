@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { movieService, cinemaService, billService } from "@/services";
-import {
-  calculateMonthlyRevenue,
-  getTotalBookingsThisMonth,
-  getTopMoviesByRevenue,
-} from "@/lib/admin-helpers";
+import adminService from "@/services/adminService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Film, MapPin, Ticket, DollarSign, TrendingUp } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/page-header";
@@ -29,10 +25,10 @@ export default function AdminDashboard() {
         setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
         setBills(Array.isArray(billsData) ? billsData : []);
 
-        // Calculate top movies
-        const topMoviesData = getTopMoviesByRevenue(5);
+        // Get stats from admin service
+        const stats = await adminService.getDashboardStats();
         const enhancedTopMovies = await Promise.all(
-          topMoviesData.map(async (item) => {
+          (stats.topMovies || []).map(async (item: any) => {
             try {
               const detail = await movieService.getWithDetails(
                 item.movie.movie_id
@@ -58,13 +54,15 @@ export default function AdminDashboard() {
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
-  const stats = {
+  const dashboardStats = {
     totalMovies: movies.length,
-    nowShowing: movies.filter((m) => m.status === "showing").length,
-    comingSoon: movies.filter((m) => m.status === "upcoming").length,
+    nowShowing: movies.filter((m: any) => m.status === "showing").length,
+    comingSoon: movies.filter((m: any) => m.status === "upcoming").length,
     totalCinemas: cinemas.length,
-    totalBookingsThisMonth: getTotalBookingsThisMonth(),
-    monthlyRevenue: calculateMonthlyRevenue(currentYear, currentMonth),
+    totalBookingsThisMonth:
+      topMovies.length > 0 ? (topMovies as any)[0]?.totalBookings || 0 : 0,
+    monthlyRevenue:
+      topMovies.length > 0 ? (topMovies as any)[0]?.monthlyRevenue || 0 : 0,
   };
 
   return (
@@ -85,9 +83,12 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.totalMovies}</div>
+            <div className="text-3xl font-bold">
+              {dashboardStats.totalMovies}
+            </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {stats.nowShowing} đang chiếu, {stats.comingSoon} sắp chiếu
+              {dashboardStats.nowShowing} đang chiếu,{" "}
+              {dashboardStats.comingSoon} sắp chiếu
             </p>
           </CardContent>
         </Card>
@@ -101,7 +102,9 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.totalCinemas}</div>
+            <div className="text-3xl font-bold">
+              {dashboardStats.totalCinemas}
+            </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Chi nhánh đang hoạt động
             </p>
@@ -120,7 +123,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {stats.totalBookingsThisMonth}
+              {dashboardStats.totalBookingsThisMonth}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Tháng {currentMonth}/{currentYear}
@@ -140,7 +143,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {stats.monthlyRevenue.toLocaleString("vi-VN")} đ
+              {dashboardStats.monthlyRevenue.toLocaleString("vi-VN")} đ
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               Tháng {currentMonth}/{currentYear}
