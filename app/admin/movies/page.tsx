@@ -43,7 +43,7 @@ export default function MoviesPage() {
 
   useEffect(() => {
     movieService
-      .getAllWithDetails()
+      .getAll()
       .then((data) => {
         setMovies(Array.isArray(data) ? data : []);
         setLoading(false);
@@ -99,7 +99,7 @@ export default function MoviesPage() {
     if (movieToDelete) {
       try {
         await adminService.deleteMovie(movieToDelete.movie_id);
-        const updatedMovies = await movieService.getAllWithDetails();
+        const updatedMovies = await movieService.getAll();
         setMovies(Array.isArray(updatedMovies) ? updatedMovies : []);
         toast({
           title: "Đã xóa phim",

@@ -36,7 +36,7 @@ export default function CinemaDetailPage() {
             cinemaService.getById(id),
             showtimeService.getByCinema(id),
             roomService.getByCinema(id),
-            movieService.getAllWithDetails(),
+            movieService.getAll(),
           ]);
 
         setCinema(cinemaData);

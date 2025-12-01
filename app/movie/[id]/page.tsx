@@ -3,13 +3,7 @@ import { ShowtimeSelector } from "@/components/showtime-selector";
 import { RatingSummary } from "@/components/rating-summary";
 import { Breadcrumb } from "@/components/breadcrumb";
 
-import {
-  movieService,
-  showtimeService,
-  reviewService,
-  cinemaService,
-  roomService,
-} from "@/services";
+import { movieService, showtimeService } from "@/services";
 import { User, Clock, Calendar, Factory, Play } from "lucide-react";
 
 import { Reviews } from "@/components/reviews";
@@ -45,14 +39,13 @@ export default async function MovieDetailPage({
   const { id } = await params;
 
   // Fetch data in parallel for better performance
-  const [movie, showtimes, reviews, cinemas, rooms] = await Promise.all([
-    movieService.getWithDetails(id),
+  const [movie, showtimes] = await Promise.all([
+    movieService.getById(id),
     showtimeService.getByMovie(id),
-    reviewService.getByMovie(id),
-    cinemaService.getAll(),
-    roomService.getAll(),
   ]);
 
+  // Reviews đã được bao gồm trong movie.reviews từ API getById
+  const reviews = movie?.reviews || [];
   const reviewCount = reviews.length;
 
   if (!movie) {
@@ -256,12 +249,7 @@ export default async function MovieDetailPage({
       <section className="border-t border-border bg-gradient-to-b from-card/50 to-background py-12">
         <div className="mx-auto max-w-7xl px-6">
           {showtimes.length > 0 ? (
-            <ShowtimeSelector
-              showtimes={showtimes}
-              movie_id={movie.movie_id}
-              cinemas={cinemas}
-              rooms={rooms}
-            />
+            <ShowtimeSelector showtimes={showtimes} movie_id={movie.movie_id} />
           ) : (
             <div className="rounded-xl border-2 border-dashed border-border bg-muted/20 py-16 text-center">
               <p className="text-lg font-medium text-muted-foreground mb-2">

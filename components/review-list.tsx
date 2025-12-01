@@ -7,7 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { ThumbsUp, MessageCircle, Send, Filter, SortAsc } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ReviewListProps {
   reviews: MovieReview[];
@@ -15,9 +21,7 @@ interface ReviewListProps {
 }
 
 export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
-  const [sortBy, setSortBy] = useState<"newest" | "highest">(
-    "newest"
-  );
+  const [sortBy, setSortBy] = useState<"newest" | "highest">("newest");
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -67,7 +71,9 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
             onClick={() => setFilterRating(null)}
             className={cn(
               "rounded-full transition-all",
-              filterRating === null ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" : "border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+              filterRating === null
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                : "border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
             )}
           >
             Tất cả
@@ -80,7 +86,9 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
               onClick={() => setFilterRating(rating)}
               className={cn(
                 "rounded-full transition-all",
-                filterRating === rating ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" : "border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+                filterRating === rating
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                  : "border-border/50 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
               )}
             >
               {rating}+ sao
@@ -90,7 +98,10 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
 
         <div className="flex items-center gap-2 min-w-[180px]">
           <SortAsc className="w-4 h-4 text-muted-foreground" />
-          <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+          <Select
+            value={sortBy}
+            onValueChange={(value: any) => setSortBy(value)}
+          >
             <SelectTrigger className="h-9 border-border/50 bg-background/50 focus:ring-primary/20">
               <SelectValue placeholder="Sắp xếp" />
             </SelectTrigger>
@@ -121,7 +132,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                         key={i}
                         className={cn(
                           "text-lg transition-all",
-                          i < review.star_rating / 2
+                          i < review.star_rating
                             ? "text-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.4)]"
                             : "text-muted stroke-muted-foreground/30"
                         )}
@@ -132,36 +143,35 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                   </div>
                   <div className="flex flex-col items-end">
                     <span className="text-xs font-medium text-muted-foreground bg-muted/30 px-2 py-1 rounded-md mb-1">
-                      {new Date(review.date_written).toLocaleDateString("vi-VN", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
+                      {new Date(review.date_written).toLocaleDateString(
+                        "vi-VN",
+                        {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        }
+                      )}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {review.phone_number.replace(/(\d{3})\d{4}(\d{3})/, '$1****$2')}
+                      {review.phone_number.replace(
+                        /(\d{3})\d{4}(\d{3})/,
+                        "$1****$2"
+                      )}
                     </span>
                   </div>
                 </div>
-
 
                 <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
                   {review.review_content}
                 </p>
 
-
-
                 {/* Action Buttons */}
                 <div className="flex items-center gap-4 border-t border-border/50 pt-4">
-
-
                   <button
-                    onClick={() =>
-                      setReplyingTo(isReplying ? null : reviewKey)
-                    }
+                    onClick={() => setReplyingTo(isReplying ? null : reviewKey)}
                     className={cn(
                       "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300",
-                      isReplying 
+                      isReplying
                         ? "bg-muted text-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
@@ -236,7 +246,11 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
             <p className="text-lg font-medium text-muted-foreground">
               Chưa có đánh giá nào phù hợp
             </p>
-            <Button variant="link" onClick={() => setFilterRating(null)} className="mt-2 text-primary">
+            <Button
+              variant="link"
+              onClick={() => setFilterRating(null)}
+              className="mt-2 text-primary"
+            >
               Xóa bộ lọc
             </Button>
           </div>
@@ -245,7 +259,11 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
 
       {/* Add Review Button */}
       {onAddReview && (
-        <Button onClick={onAddReview} className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20" size="lg">
+        <Button
+          onClick={onAddReview}
+          className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20"
+          size="lg"
+        >
           Viết đánh giá của bạn
         </Button>
       )}

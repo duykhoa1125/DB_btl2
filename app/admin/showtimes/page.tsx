@@ -54,7 +54,7 @@ export default function ShowtimesPage() {
   useEffect(() => {
     Promise.all([
       adminService.getAllShowtimes(),
-      movieService.getAllWithDetails(),
+      movieService.getAll(),
       cinemaService.getAll(),
       roomService.getAll(),
     ])

@@ -4,26 +4,29 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { type Showtime, type Cinema, type Room } from "@/services/types";
-import { Calendar, Clock, MapPin, Ticket, ChevronRight, Check } from "lucide-react";
+import { type Showtime } from "@/services/types";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Ticket,
+  ChevronRight,
+  Check,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ShowtimeSelectorProps {
   showtimes: Showtime[];
   movie_id: string;
-  cinemas: Cinema[];
-  rooms: Room[];
 }
 
 /**
  * Client Component chỉ quản lý UI state (selected date, selected showtime)
- * Data (cinemas, rooms) được fetch ở server và pass xuống qua props
+ * Showtime data đã bao gồm cinema_name và room_name từ API
  */
 export function ShowtimeSelector({
   showtimes,
   movie_id,
-  cinemas,
-  rooms,
 }: ShowtimeSelectorProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedShowtime, setSelectedShowtime] = useState<string | null>(null);
@@ -160,29 +163,29 @@ export function ShowtimeSelector({
           {/* Group by Cinema */}
           {(() => {
             const showtimesForDate = groupedShowtimes[selectedDate];
-            // Group by room (which contains cinema info via room_id)
-            const showtimesByRoom = showtimesForDate.reduce((acc, showtime) => {
-              const room = rooms.find((r) => r.room_id === showtime.room_id);
-              const cinema_id = room?.cinema_id || "unknown";
+            // Group by cinema_name (available directly from showtime data)
+            const showtimesByCinema = showtimesForDate.reduce(
+              (acc, showtime) => {
+                const cinemaName = showtime.cinema_name || "Rạp không xác định";
 
-              if (!acc[cinema_id]) {
-                acc[cinema_id] = [];
-              }
-              acc[cinema_id].push(showtime);
-              return acc;
-            }, {} as Record<string, Showtime[]>);
+                if (!acc[cinemaName]) {
+                  acc[cinemaName] = [];
+                }
+                acc[cinemaName].push(showtime);
+                return acc;
+              },
+              {} as Record<string, Showtime[]>
+            );
 
-            return Object.entries(showtimesByRoom).map(
-              ([cinema_id, cinemaShowtimes]) => {
-                const cinema = cinemas.find((c) => c.cinema_id === cinema_id);
-
+            return Object.entries(showtimesByCinema).map(
+              ([cinemaName, cinemaShowtimes]) => {
                 return (
-                  <div key={cinema_id} className="space-y-4">
+                  <div key={cinemaName} className="space-y-4">
                     {/* Cinema Header */}
                     <div className="flex items-center gap-2 border-l-4 border-primary pl-4 py-1 bg-muted/30 rounded-r-lg">
                       <MapPin className="h-5 w-5 text-primary" />
                       <h4 className="text-lg font-bold text-foreground">
-                        {cinema?.name || "Unknown Cinema"}
+                        {cinemaName}
                       </h4>
                     </div>
 
@@ -229,18 +232,11 @@ export function ShowtimeSelector({
                                 </span>
                               </div>
 
-                              {/* Room Info (Cinema name removed as it's in header) */}
+                              {/* Room Info */}
                               <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-                                {(() => {
-                                  const room = rooms.find(
-                                    (r) => r.room_id === showtime.room_id
-                                  );
-                                  return (
-                                    <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
-                                      {room?.name || showtime.room_id}
-                                    </span>
-                                  );
-                                })()}
+                                <span className="font-medium px-2 py-1 bg-muted rounded text-xs uppercase tracking-wider">
+                                  {showtime.room_name || showtime.room_id}
+                                </span>
                               </div>
 
                               {/* Price */}

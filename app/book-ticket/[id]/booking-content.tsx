@@ -6,9 +6,9 @@ import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
 import { Separator } from "@/components/ui/separator";
-import type { Seat, Food, Room } from "@/services/types";
+import type { Seat, Food } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
-import { roomService, ticketService, type FoodMenuItem } from "@/services";
+import { type FoodMenuItem } from "@/services";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -64,36 +64,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [bookedSeatIds, setBookedSeatIds] = useState<string[]>([]);
   const [prefilledVoucherCode, setPrefilledVoucherCode] = useState<string>("");
-
-  useEffect(() => {
-    roomService
-      .getAll()
-      .then((data) => setRooms(Array.isArray(data) ? data : []))
-      .catch((err) => {
-        console.error(err);
-        setRooms([]);
-      });
-
-    // Fetch booked tickets for this showtime
-    if (showtime.showtime_id) {
-      ticketService
-        .getByShowtime(showtime.showtime_id)
-        .then((tickets) => {
-          const ticketsArray = Array.isArray(tickets) ? tickets : [];
-          const booked = ticketsArray.map(
-            (t) => `${t.seat_row}${t.seat_column}`
-          );
-          setBookedSeatIds(booked);
-        })
-        .catch((err) => {
-          console.error(err);
-          setBookedSeatIds([]);
-        });
-    }
-  }, [showtime.showtime_id]);
 
   useEffect(() => {
     const voucherCodeUrl = searchParams.get("voucher");
@@ -126,9 +97,8 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
 
   const { date, time } = formatDateTime();
 
-  // Get room info
-  const room = rooms.find((r) => r.room_id === showtime.room_id);
-  const roomName = room?.name || showtime.room_id;
+  // Get room name from showtime (đã có sẵn từ API)
+  const roomName = showtime.room_name || showtime.room_id;
 
   // Calculate ticket price based on seat types (from lib/pricing.ts)
   const ticketTotal = calculateSeatsTotal(selectedSeats);
@@ -171,7 +141,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
     <main className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
-      
+
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -287,8 +257,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-32">
                 <SeatSelection
                   onSeatsChange={setSelectedSeats}
-                  roomId={showtime.room_id}
-                  bookedSeatIds={bookedSeatIds}
+                  showtimeId={showtime.showtime_id}
                 />
                 <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/80 p-4 backdrop-blur-lg">
                   <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">

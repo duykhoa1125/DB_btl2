@@ -9,7 +9,7 @@ import { Armchair, Sofa } from "lucide-react";
 
 interface SeatSelectionProps {
   onSeatsChange: (seats: Seat[]) => void;
-  roomId?: string;
+  showtimeId: string;
   bookedSeatIds?: string[];
 }
 
@@ -35,7 +35,11 @@ const VIPSeatIcon = ({ className }: { className?: string }) => (
   >
     <path d="M3 18v3h3v-3h12v3h3v-6a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v6z" />
     <path d="M5 2h14v12H5z" opacity="0.9" />
-    <path d="M12 4l1.5 3h3l-2.5 2 1 3-3-2-3 2 1-3-2.5-2h3z" fill="white" opacity="0.5" />
+    <path
+      d="M12 4l1.5 3h3l-2.5 2 1 3-3-2-3 2 1-3-2.5-2h3z"
+      fill="white"
+      opacity="0.5"
+    />
   </svg>
 );
 
@@ -52,22 +56,28 @@ const CoupleSeatIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatIds = [] }: SeatSelectionProps) {
+export function SeatSelection({
+  onSeatsChange,
+  showtimeId,
+  bookedSeatIds = [],
+}: SeatSelectionProps) {
   const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set());
   const [demoSeats, setDemoSeats] = useState<Seat[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Use seats from a specific room for demo
-    // In a real app, roomId would be passed from parent based on showtime
-    seatService.getByRoom(roomId).then((seats) => {
-      setDemoSeats(seats);
-      setLoading(false);
-    }).catch((error) => {
-      console.error('Failed to load seats:', error);
-      setLoading(false);
-    });
-  }, [roomId]);
+    // Fetch seats for the showtime
+    seatService
+      .getByShowtime(showtimeId)
+      .then((seats) => {
+        setDemoSeats(seats);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load seats:", error);
+        setLoading(false);
+      });
+  }, [showtimeId]);
 
   // Group seats by row
   const seatsByRow = demoSeats.reduce((acc, seat) => {
@@ -100,7 +110,7 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
 
   const getSeatColor = (seat: Seat) => {
     const seatId = getSeatId(seat);
-    
+
     // Check if booked
     if (bookedSeatIds.includes(seatId)) {
       return "text-red-500/50 cursor-not-allowed"; // Booked: Reddish/Disabled
@@ -117,10 +127,10 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
     const seatId = getSeatId(seat);
     const isSelected = selectedSeats.has(seatId);
     const isBooked = bookedSeatIds.includes(seatId);
-    
+
     let Icon = StandardSeatIcon;
     let width = "w-8";
-    
+
     if (seat.seat_type === "vip") {
       Icon = VIPSeatIcon;
       width = "w-9";
@@ -140,15 +150,20 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
           "h-8",
           getSeatColor(seat)
         )}
-        title={`${seat.seat_row}${seat.seat_column} - ${seat.seat_type}${isBooked ? ' (Đã đặt)' : ''}`}
+        title={`${seat.seat_row}${seat.seat_column} - ${seat.seat_type}${
+          isBooked ? " (Đã đặt)" : ""
+        }`}
       >
         <Icon className="h-full w-full" />
-        <span className={cn(
-          "absolute -bottom-6 text-[10px] font-bold opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 z-10 bg-background/80 px-1 rounded",
-          isSelected ? "text-primary" : "text-foreground",
-          isBooked && "text-muted-foreground"
-        )}>
-          {seat.seat_row}{seat.seat_column}
+        <span
+          className={cn(
+            "absolute -bottom-6 text-[10px] font-bold opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:-translate-y-1 z-10 bg-background/80 px-1 rounded",
+            isSelected ? "text-primary" : "text-foreground",
+            isBooked && "text-muted-foreground"
+          )}
+        >
+          {seat.seat_row}
+          {seat.seat_column}
         </span>
       </button>
     );
@@ -166,12 +181,12 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
         {/* Screen */}
         <div className="relative mb-20 w-full max-w-4xl perspective-[1000px]">
           <div className="relative flex flex-col items-center justify-center transform-style-3d rotate-x-12">
-             {/* Screen Glow */}
+            {/* Screen Glow */}
             <div className="absolute -top-10 w-3/4 h-24 bg-primary/20 blur-[80px] rounded-full animate-pulse" />
-            
+
             {/* Screen Body */}
             <div className="w-full h-20 border-t-[6px] border-primary/40 rounded-[50%] shadow-[0_-10px_60px_-10px_rgba(var(--primary),0.3)] bg-gradient-to-b from-primary/5 to-transparent backdrop-blur-sm" />
-            
+
             <p className="mt-6 text-xs font-bold uppercase tracking-[0.5em] text-primary/60">
               Màn hình
             </p>
@@ -183,31 +198,43 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
           <div className="flex flex-col gap-4 min-w-[800px] items-center">
             {rows.map((row) => {
               const rowSeats = seatsByRow[row];
-              
+
               // For Couple row (J), we just render them centered
               // Assuming 'J' is couple row based on mock data logic (rows - 2)
               // But let's check seat type instead
-              const isCoupleRow = rowSeats.some(s => s.seat_type === 'couple');
+              const isCoupleRow = rowSeats.some(
+                (s) => s.seat_type === "couple"
+              );
 
               if (isCoupleRow) {
-                 return (
-                  <div key={row} className="flex items-center justify-center gap-6 mt-4">
-                    <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">{row}</span>
-                    <div className="flex gap-4">
-                      {rowSeats.map(renderSeat)}
-                    </div>
-                    <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">{row}</span>
+                return (
+                  <div
+                    key={row}
+                    className="flex items-center justify-center gap-6 mt-4"
+                  >
+                    <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">
+                      {row}
+                    </span>
+                    <div className="flex gap-4">{rowSeats.map(renderSeat)}</div>
+                    <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">
+                      {row}
+                    </span>
                   </div>
-                 )
+                );
               }
 
               // For other rows, split into 3 sections: 1-4, 5-8, 9-12 (assuming 12 cols)
-              const leftSeats = rowSeats.filter(s => s.seat_column <= 4);
-              const centerSeats = rowSeats.filter(s => s.seat_column >= 5 && s.seat_column <= 8);
-              const rightSeats = rowSeats.filter(s => s.seat_column >= 9);
+              const leftSeats = rowSeats.filter((s) => s.seat_column <= 4);
+              const centerSeats = rowSeats.filter(
+                (s) => s.seat_column >= 5 && s.seat_column <= 8
+              );
+              const rightSeats = rowSeats.filter((s) => s.seat_column >= 9);
 
               return (
-                <div key={row} className="flex items-center justify-center gap-6">
+                <div
+                  key={row}
+                  className="flex items-center justify-center gap-6"
+                >
                   {/* Row Label */}
                   <span className="w-6 text-center text-sm font-bold text-muted-foreground/50">
                     {row}
@@ -252,7 +279,12 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
             { label: "Ghế Couple", icon: CoupleSeatIcon, price: "110k" },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-3">
-              <item.icon className={cn("h-6 text-muted-foreground/70", item.label === "Ghế Couple" ? "w-10" : "w-6")} />
+              <item.icon
+                className={cn(
+                  "h-6 text-muted-foreground/70",
+                  item.label === "Ghế Couple" ? "w-10" : "w-6"
+                )}
+              />
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-foreground">
                   {item.label}
@@ -263,26 +295,24 @@ export function SeatSelection({ onSeatsChange, roomId = 'CNM001_R1', bookedSeatI
               </div>
             </div>
           ))}
-          
+
           {/* Status Legend */}
           <div className="w-px h-10 bg-border/50 mx-2" />
-          
+
           <div className="flex items-center gap-3">
-             <div className="w-6 h-6 rounded bg-primary/20 border border-primary/50" />
-             <span className="text-sm font-medium">Đang chọn</span>
+            <div className="w-6 h-6 rounded bg-primary/20 border border-primary/50" />
+            <span className="text-sm font-medium">Đang chọn</span>
           </div>
           <div className="flex items-center gap-3">
-             <div className="w-6 h-6 rounded bg-red-500/20 border border-red-500/50" />
-             <span className="text-sm font-medium">Đã đặt</span>
+            <div className="w-6 h-6 rounded bg-red-500/20 border border-red-500/50" />
+            <span className="text-sm font-medium">Đã đặt</span>
           </div>
           <div className="flex items-center gap-3">
-             <div className="w-6 h-6 rounded bg-muted-foreground/20 border border-muted-foreground/30" />
-             <span className="text-sm font-medium">Trống</span>
+            <div className="w-6 h-6 rounded bg-muted-foreground/20 border border-muted-foreground/30" />
+            <span className="text-sm font-medium">Trống</span>
           </div>
         </div>
       </div>
-
-
     </div>
   );
 }

@@ -28,4 +28,4 @@ export { default as membershipService } from './membershipService';
 export * from './types';
 
 // Re-export mock data for backward compatibility (will be removed when UI is migrated)
-export * from './mock-data';
+// export * from './mock-data';
