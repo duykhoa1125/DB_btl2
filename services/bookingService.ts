@@ -23,8 +23,9 @@ const bookingService = {
     /**
      * Get user's booking history
      */
-    getMyBookings: (phoneNumber: string): Promise<BookingResponse[]> => {
-        return axiosClient.get(`/booking/user/${phoneNumber}`);
+
+    getMyBookings: (): Promise<BookingResponse[]> => {
+        return axiosClient.get('/booking/history');
     },
 
     /**

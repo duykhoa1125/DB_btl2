@@ -27,7 +27,7 @@ const movieService = {
      * Get movie with full details (directors, actors, reviews)
      */
     getWithDetails: (id: string): Promise<MovieDetail> => {
-        return axiosClient.get(`/movies/${id}/details`);
+        return axiosClient.get(`/movies/${id}`);
     },
 
     /**
@@ -48,35 +48,35 @@ const movieService = {
      * Get now showing movies
      */
     getNowShowing: (): Promise<Movie[]> => {
-        return axiosClient.get('/movies/now-showing');
+        return axiosClient.get('/movies', { params: { status: 'showing' } });
     },
 
     /**
      * Get upcoming movies
      */
     getUpcoming: (): Promise<Movie[]> => {
-        return axiosClient.get('/movies/upcoming');
+        return axiosClient.get('/movies', { params: { status: 'upcoming' } });
     },
 
     /**
      * Create new movie (admin)
      */
     create: (data: Omit<Movie, 'movie_id'>): Promise<Movie> => {
-        return axiosClient.post('/movies', data);
+        return axiosClient.post('/admin/movies', data);
     },
 
     /**
      * Update movie (admin)
      */
     update: (id: string, data: Partial<Omit<Movie, 'movie_id'>>): Promise<Movie> => {
-        return axiosClient.put(`/movies/${id}`, data);
+        return axiosClient.put(`/admin/movies/${id}`, data);
     },
 
     /**
      * Delete movie (admin)
      */
     delete: (id: string): Promise<void> => {
-        return axiosClient.delete(`/movies/${id}`);
+        return axiosClient.delete(`/admin/movies/${id}`);
     },
 };
 

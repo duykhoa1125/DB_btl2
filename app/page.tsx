@@ -56,12 +56,12 @@ export default async function Home() {
 
   const nowShowingMovies = allMovies.filter((m) => m.status === "showing");
   const comingSoonMovies = allMovies.filter((m) => m.status === "upcoming");
-  
+
   // Filter active events and take top 3
   const activeEvents = events
     .filter((e) => new Date(e.end_date) >= new Date())
     .slice(0, 3);
-    
+
   // Take top 3 cinemas
   const featuredCinemas = cinemas.slice(0, 3);
 
@@ -72,7 +72,7 @@ export default async function Home() {
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
       </div>
-      
+
       {/* Grid Pattern Background */}
       <div className="fixed inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -142,17 +142,20 @@ export default async function Home() {
                   <Calendar className="w-4 h-4" />
                   <span>Tin tức & Sự kiện</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold">Sự kiện nổi bật</h2>
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  Sự kiện nổi bật
+                </h2>
               </div>
               <Link href="/events">
                 <span className="group flex items-center gap-2 text-primary font-medium hover:underline">
-                  Xem tất cả <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  Xem tất cả{" "}
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {activeEvents.map(event => (
+              {activeEvents.map((event) => (
                 <EventCard key={event.event_id} event={event} />
               ))}
             </div>
@@ -173,13 +176,14 @@ export default async function Home() {
             </div>
             <Link href="/cinemas">
               <span className="group flex items-center gap-2 text-primary font-medium hover:underline">
-                Tìm rạp gần bạn <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                Tìm rạp gần bạn{" "}
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </span>
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredCinemas.map(cinema => (
+            {featuredCinemas.map((cinema) => (
               <div key={cinema.cinema_id} className="h-full">
                 <CinemaCard cinema={cinema} />
               </div>
