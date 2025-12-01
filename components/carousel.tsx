@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { MovieDetail } from "@/services/types";
+import type { Movie } from "@/services/types";
 
 interface CarouselProps {
-  items: MovieDetail[];
+  items: Movie[];
 }
 
 export function Carousel({ items }: CarouselProps) {
@@ -23,8 +23,6 @@ export function Carousel({ items }: CarouselProps) {
   const next = () => setCurrent((prev) => (prev + 1) % items.length);
 
   if (items.length === 0) return null;
-
-  const currentItem = items[current];
 
   return (
     <div className="relative h-[500px] w-full overflow-hidden rounded-3xl bg-background shadow-2xl border border-border/50 group">
@@ -44,40 +42,21 @@ export function Carousel({ items }: CarouselProps) {
           {/* Enhanced Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-          
+
           <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
             <div className="max-w-3xl space-y-4 animate-in slide-in-from-bottom-10 fade-in duration-700">
-
-              
               <h2 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
                 {item.name}
               </h2>
-              
+
               <p className="max-w-2xl line-clamp-2 text-lg text-gray-200/90 font-light">
-                {item.synopsis || ''}
+                {item.synopsis || ""}
               </p>
-              
+
               <div className="flex items-center gap-6 text-sm text-gray-300 pt-2">
-                {item.directors && item.directors.length > 0 && (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-primary">Đạo diễn:</span>
-                      <span>{item.directors.join(', ')}</span>
-                    </div>
-                    <div className="h-4 w-px bg-white/20" />
-                  </>
-                )}
                 <div className="flex items-center gap-2">
                   <span>⏱️ {item.duration} phút</span>
                 </div>
-                {item.avg_rating !== undefined && item.avg_rating > 0 && (
-                  <>
-                    <div className="h-4 w-px bg-white/20" />
-                    <div className="flex items-center gap-2">
-                      <span>⭐ {item.avg_rating.toFixed(1)}/5</span>
-                    </div>
-                  </>
-                )}
               </div>
             </div>
           </div>
@@ -107,7 +86,9 @@ export function Carousel({ items }: CarouselProps) {
             key={index}
             onClick={() => setCurrent(index)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
-              index === current ? "w-8 bg-primary" : "w-4 bg-white/30 hover:bg-white/50"
+              index === current
+                ? "w-8 bg-primary"
+                : "w-4 bg-white/30 hover:bg-white/50"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

@@ -6,28 +6,28 @@ const eventService = {
      * Get all events
      */
     getAll: (): Promise<Event[]> => {
-        return axiosClient.get('/events');
+        return axiosClient.get('/promotions/events');
     },
 
     /**
      * Get only active events (within date range)
      */
     getActive: (): Promise<Event[]> => {
-        return axiosClient.get('/events/active');
+        return axiosClient.get('/promotions/events');
     },
 
     /**
      * Get event by ID
      */
     getById: (id: string): Promise<Event> => {
-        return axiosClient.get(`/events/${id}`);
+        return axiosClient.get(`/promotions/events/${id}/promotions`);
     },
 
     /**
      * Get upcoming events
      */
     getUpcoming: (): Promise<Event[]> => {
-        return axiosClient.get('/events/upcoming');
+        return axiosClient.get('/promotions/events');
     },
 
     /**

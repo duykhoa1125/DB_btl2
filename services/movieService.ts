@@ -20,34 +20,6 @@ const movieService = {
      * Get movies by status
      */
     getByStatus: (status: 'showing' | 'upcoming' | 'ended'): Promise<Movie[]> => {
-        return axiosClient.get('/movies', { params: { status } });
-    },
-
-    /**
-     * Get movie with full details (directors, actors, reviews)
-     */
-    getWithDetails: (id: string): Promise<MovieDetail> => {
-        return axiosClient.get(`/movies/${id}`);
-    },
-
-    /**
-     * Get all movies with details
-     */
-    getAllWithDetails: (): Promise<MovieDetail[]> => {
-        return axiosClient.get('/movies/details');
-    },
-
-    /**
-     * Search movies by keyword (name or synopsis)
-     */
-    search: (keyword: string): Promise<Movie[]> => {
-        return axiosClient.get('/movies/search', { params: { q: keyword } });
-    },
-
-    /**
-     * Get now showing movies
-     */
-    getNowShowing: (): Promise<Movie[]> => {
         return axiosClient.get('/movies', { params: { status: 'showing' } });
     },
 

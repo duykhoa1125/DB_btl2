@@ -5,7 +5,7 @@ import { CinemaCard } from "@/components/cinema-card";
 import { EventCard } from "@/components/event-card";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Film, MapPin, Calendar } from "lucide-react";
-import type { MovieDetail, Cinema, Event } from "@/services/types";
+import type { Movie, MovieDetail, Cinema, Event } from "@/services/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,17 +30,20 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   // Fetch data in parallel
-  let allMovies: MovieDetail[] = [];
+  let allMovies: Movie[] = [];
   let cinemas: Cinema[] = [];
   let events: Event[] = [];
   let error: string | null = null;
 
   try {
     const [moviesData, cinemasData, eventsData] = await Promise.all([
-      movieService.getAllWithDetails(),
+      movieService.getAll(),
       cinemaService.getAll(),
       eventService.getAll(),
     ]);
+    // const moviesData = await movieService.getAll();
+    // const cinemasData = await cinemaService.getAll();
+    // const eventsData = await eventService.getAll();
 
     allMovies = Array.isArray(moviesData) ? moviesData : [];
     cinemas = Array.isArray(cinemasData) ? cinemasData : [];
@@ -59,7 +62,7 @@ export default async function Home() {
 
   // Filter active events and take top 3
   const activeEvents = events
-    .filter((e) => new Date(e.end_date) >= new Date())
+    // .filter((e) => new Date(e.end_date) >= new Date())
     .slice(0, 3);
 
   // Take top 3 cinemas

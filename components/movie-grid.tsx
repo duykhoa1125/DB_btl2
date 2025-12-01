@@ -1,9 +1,9 @@
 import { MovieCard } from "@/components/movie-card";
-import type { MovieDetail } from "@/services/types";
+import type { Movie } from "@/services/types";
 import { Sparkles, Clock } from "lucide-react";
 
 interface MovieGridProps {
-  movies: MovieDetail[];
+  movies: Movie[];
   emptyMessage: string;
   emptyIcon?: "sparkles" | "clock";
 }

@@ -4,11 +4,11 @@ import { MovieGrid } from "@/components/movie-grid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { Sparkles, Clock } from "lucide-react";
-import type { MovieDetail } from "@/services/types";
+import type { Movie } from "@/services/types";
 
 interface MovieTabsProps {
-  nowShowingMovies: MovieDetail[];
-  comingSoonMovies: MovieDetail[];
+  nowShowingMovies: Movie[];
+  comingSoonMovies: Movie[];
 }
 
 /**
