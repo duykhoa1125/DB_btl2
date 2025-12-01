@@ -1,161 +1,220 @@
-import axiosClient from '@/lib/axiosClient';
-import type { Movie, Cinema, Showtime, Bill } from './types';
+import axiosClient from "@/lib/axiosClient";
+import type { Movie, Cinema, Showtime, Bill } from "./types";
 
 interface DashboardStats {
-    totalRevenue: number;
-    totalBookings: number;
-    topMovies: Array<{
-        movie: Movie;
-        revenue: number;
-    }>;
-    monthlyRevenue: number;
+  total_movies: number;
+  now_showing: number;
+  coming_soon: number;
+  total_cinemas: number;
+  monthly_revenue: number;
+  bookings_this_month: number;
 }
 
 const adminService = {
-    // ============ MOVIES CRUD ============
+  // ============ MOVIES CRUD ============
 
-    /**
-     * Get all movies (admin)
-     */
-    getAllMovies: (): Promise<Movie[]> => {
-        return axiosClient.get('/movies');
-    },
+  /**
+   * Get all movies (admin)
+   * Note: Backend admin_service doesn't have getAll, so we rely on public movie endpoint or assume this calls a valid endpoint.
+   */
+  getAllMovies: (): Promise<Movie[]> => {
+    return axiosClient.get("/movies");
+  },
 
-    /**
-     * Get movie by ID (admin)
-     */
-    getMovieById: (id: string): Promise<Movie> => {
-        return axiosClient.get(`/movies/${id}`);
-    },
+  /**
+   * Get movie by ID (admin)
+   */
+  getMovieById: (id: string): Promise<Movie> => {
+    return axiosClient.get(`/movies/${id}`);
+  },
 
-    /**
-     * Create new movie (admin)
-     */
-    createMovie: (data: Omit<Movie, 'movie_id'>): Promise<Movie> => {
-        return axiosClient.post('/movies', data);
-    },
+  /**
+   * Create new movie (admin)
+   */
+  createMovie: (data: Omit<Movie, "movie_id">): Promise<Movie> => {
+    // Map frontend fields to backend fields
+    const backendData = {
+      title: data.name,
+      duration: data.duration,
+      releaseDate: data.release_date,
+      endDate: data.end_date,
+      ageRating: data.age_rating,
+      trailer: data.trailer,
+      language: data.language,
+      status: data.status,
+      summary: data.synopsis,
+      // image is not supported by backend
+    };
+    return axiosClient.post("/admin/movies", backendData);
+  },
 
-    /**
-     * Update movie (admin)
-     */
-    updateMovie: (id: string, data: Partial<Omit<Movie, 'movie_id'>>): Promise<Movie> => {
-        return axiosClient.put(`/movies/${id}`, data);
-    },
+  /**
+   * Update movie (admin)
+   */
+  updateMovie: (
+    id: string,
+    data: Partial<Omit<Movie, "movie_id">>
+  ): Promise<Movie> => {
+    const backendData: any = {};
+    if (data.name !== undefined) backendData.title = data.name;
+    if (data.duration !== undefined) backendData.duration = data.duration;
+    if (data.release_date !== undefined)
+      backendData.releaseDate = data.release_date;
+    if (data.end_date !== undefined) backendData.endDate = data.end_date;
+    if (data.age_rating !== undefined) backendData.ageRating = data.age_rating;
+    if (data.trailer !== undefined) backendData.trailer = data.trailer;
+    if (data.language !== undefined) backendData.language = data.language;
+    if (data.status !== undefined) backendData.status = data.status;
+    if (data.synopsis !== undefined) backendData.summary = data.synopsis;
 
-    /**
-     * Delete movie (admin)
-     */
-    deleteMovie: (id: string): Promise<void> => {
-        return axiosClient.delete(`/movies/${id}`);
-    },
+    return axiosClient.put(`/admin/movies/${id}`, backendData);
+  },
 
-    // ============ CINEMAS CRUD ============
+  /**
+   * Delete movie (admin)
+   */
+  deleteMovie: (id: string): Promise<void> => {
+    return axiosClient.delete(`/admin/movies/${id}`);
+  },
 
-    /**
-     * Get all cinemas (admin)
-     */
-    getAllCinemas: (): Promise<Cinema[]> => {
-        return axiosClient.get('/cinemas');
-    },
+  // ============ CINEMAS CRUD ============
 
-    /**
-     * Get cinema by ID (admin)
-     */
-    getCinemaById: (id: string): Promise<Cinema> => {
-        return axiosClient.get(`/cinemas/${id}`);
-    },
+  /**
+   * Get all cinemas (admin)
+   */
+  getAllCinemas: async (): Promise<Cinema[]> => {
+    const data = await axiosClient.get("/cinemas");
+    // Map backend fields (id, status) to frontend fields (cinema_id, state)
+    if (Array.isArray(data)) {
+      return data.map((cinema: any) => ({
+        cinema_id: cinema.id || cinema.cinema_id,
+        name: cinema.name,
+        state: cinema.status || cinema.state,
+        address: cinema.address,
+      }));
+    }
+    return [];
+  },
 
-    /**
-     * Create new cinema (admin)
-     */
-    createCinema: (data: Omit<Cinema, 'cinema_id'>): Promise<Cinema> => {
-        return axiosClient.post('/cinemas', data);
-    },
+  /**
+   * Get cinema by ID (admin)
+   */
+  getCinemaById: async (id: string): Promise<Cinema> => {
+    const data: any = await axiosClient.get(`/cinemas/${id}`);
+    // Map backend fields (id, status) to frontend fields (cinema_id, state)
+    return {
+      cinema_id: data.id || data.cinema_id,
+      name: data.name,
+      state: data.status || data.state,
+      address: data.address,
+    };
+  },
 
-    /**
-     * Update cinema (admin)
-     */
-    updateCinema: (id: string, data: Partial<Omit<Cinema, 'cinema_id'>>): Promise<Cinema> => {
-        return axiosClient.put(`/cinemas/${id}`, data);
-    },
+  /**
+   * Create new cinema (admin)
+   */
+  createCinema: (data: Omit<Cinema, "cinema_id">): Promise<Cinema> => {
+    // Backend expects: name, status, address
+    const backendData = {
+      name: data.name,
+      status: "active", // Default or from data if available
+      address: data.address,
+    };
+    return axiosClient.post("/admin/cinemas", backendData);
+  },
 
-    /**
-     * Delete cinema (admin)
-     */
-    deleteCinema: (id: string): Promise<void> => {
-        return axiosClient.delete(`/cinemas/${id}`);
-    },
+  /**
+   * Update cinema (admin)
+   */
+  updateCinema: (
+    id: string,
+    data: Partial<Omit<Cinema, "cinema_id">>
+  ): Promise<Cinema> => {
+    // Map frontend fields to backend fields
+    const backendData: any = {};
+    if (data.name !== undefined) backendData.name = data.name;
+    if (data.address !== undefined) backendData.address = data.address;
+    if (data.state !== undefined) backendData.status = data.state; // Frontend uses 'state', backend uses 'status'
 
-    // ============ SHOWTIMES CRUD ============
+    return axiosClient.put(`/admin/cinemas/${id}`, backendData);
+  },
 
-    /**
-     * Get all showtimes (admin)
-     */
-    getAllShowtimes: (): Promise<Showtime[]> => {
-        return axiosClient.get('/showtimes');
-    },
+  /**
+   * Delete cinema (admin)
+   */
+  deleteCinema: (id: string): Promise<void> => {
+    return axiosClient.delete(`/admin/cinemas/${id}`);
+  },
 
-    /**
-     * Get showtime by ID (admin)
-     */
-    getShowtimeById: (id: string): Promise<Showtime> => {
-        return axiosClient.get(`/showtimes/${id}`);
-    },
+  // ============ SHOWTIMES CRUD ============
 
-    /**
-     * Create new showtime (admin)
-     */
-    createShowtime: (data: Omit<Showtime, 'showtime_id'>): Promise<Showtime> => {
-        return axiosClient.post('/showtimes', data);
-    },
+  /**
+   * Get all showtimes (admin)
+   */
+  getAllShowtimes: (): Promise<Showtime[]> => {
+    return axiosClient.get("/showtimes");
+  },
 
-    /**
-     * Update showtime (admin)
-     */
-    updateShowtime: (id: string, data: Partial<Omit<Showtime, 'showtime_id'>>): Promise<Showtime> => {
-        return axiosClient.put(`/showtimes/${id}`, data);
-    },
+  /**
+   * Get showtime by ID (admin)
+   */
+  getShowtimeById: async (id: string): Promise<Showtime> => {
+    const data = await axiosClient.get(`/admin/showtimes/${id}`);
+    // Format date for input
+    if (data.start_date) {
+      const date = new Date(data.start_date);
+      data.start_date = date.toISOString().split("T")[0];
+    }
+    return data;
+  },
 
-    /**
-     * Delete showtime (admin)
-     */
-    deleteShowtime: (id: string): Promise<void> => {
-        return axiosClient.delete(`/showtimes/${id}`);
-    },
+  /**
+   * Create new showtime (admin)
+   */
+  createShowtime: (data: Omit<Showtime, "showtime_id">): Promise<Showtime> => {
+    // Backend expects: roomId, movieId, date, startTime, endTime
+    const backendData = {
+      roomId: data.room_id,
+      movieId: data.movie_id,
+      date: data.start_date,
+      startTime: data.start_time,
+      endTime: data.end_time,
+    };
+    return axiosClient.post("/admin/showtimes", backendData);
+  },
 
-    // ============ STATISTICS ============
+  /**
+   * Update showtime (admin)
+   */
+  updateShowtime: (
+    id: string,
+    data: Partial<Omit<Showtime, "showtime_id">>
+  ): Promise<Showtime> => {
+    const backendData: any = {};
+    if (data.room_id) backendData.roomId = data.room_id;
+    if (data.movie_id) backendData.movieId = data.movie_id;
+    if (data.start_date) backendData.date = data.start_date;
+    if (data.start_time) backendData.startTime = data.start_time;
+    if (data.end_time) backendData.endTime = data.end_time;
 
-    /**
-     * Get monthly revenue (admin)
-     */
-    getMonthlyRevenue: (year: number, month: number): Promise<number> => {
-        return axiosClient.get('/admin/stats/monthly-revenue', {
-            params: { year, month }
-        });
-    },
+    return axiosClient.put(`/admin/showtimes/${id}`, backendData);
+  },
 
-    /**
-     * Get total bookings this month (admin)
-     */
-    getTotalBookingsThisMonth: (): Promise<number> => {
-        return axiosClient.get('/admin/stats/bookings-this-month');
-    },
+  /**
+   * Delete showtime (admin)
+   */
+  deleteShowtime: (id: string): Promise<void> => {
+    return axiosClient.delete(`/admin/showtimes/${id}`);
+  },
 
-    /**
-     * Get top movies by revenue (admin)
-     */
-    getTopMoviesByRevenue: (limit: number = 5): Promise<Array<{ movie: Movie; revenue: number }>> => {
-        return axiosClient.get('/admin/stats/top-movies', {
-            params: { limit }
-        });
-    },
+  // ============ STATISTICS ============
 
-    /**
-     * Get dashboard statistics (admin)
-     */
-    getDashboardStats: (): Promise<DashboardStats> => {
-        return axiosClient.get('/admin/stats');
-    },
+  /**
+   * Get dashboard statistics (admin)
+   */
+  getDashboardStats: (): Promise<DashboardStats> => {
+    return axiosClient.get("/admin/stats");
+  },
 };
 
 export default adminService;

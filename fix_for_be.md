@@ -123,3 +123,115 @@ Khi SQL insert thất bại → backend throw error → response undefined → f
 
 - Không thay đổi schema SQL
 - Backend port 5000, Frontend port 3000
+
+
+# Admin Login Implementation
+
+## Changes in `server/src/services/login_service.js`
+
+Added a hardcoded check at the beginning of the `login` function to support admin access:
+
+- **Credentials**:
+  - Username: `admin`
+  - Password: `123456789`
+- **Behavior**:
+  - Bypasses database lookup.
+  - Returns a mock user object with `role: 'admin'`.
+  - Generates a valid JWT token for the admin session.
+
+# Changelog sửa `admin_service` (server)
+
+Ngày: 2025-12-02
+
+Tóm tắt các sửa đổi chính:
+
+- Sửa lỗi tạo Movie (insert ID):
+
+  - Thay vì INSERT `VALUES (NULL, ...)` (nhầm với auto-increment), service giờ tạo ID thủ công.
+  - Điều chỉnh SQL lấy `last` theo MySQL: `SELECT ma_phim FROM Phim ORDER BY ma_phim DESC LIMIT 1`.
+  - Tạo ID mới theo định dạng hiện tại `PHMxxxxx` (PHM + 5 chữ số, ví dụ PHM00006). Sửa logic substring/parse để lấy phần số đúng (substring(3)).
+  - INSERT kèm danh sách cột: `INSERT INTO Phim (ma_phim, ten_phim, thoi_luong, ngay_khoi_chieu, ngay_ket_thuc, do_tuoi, trailer, ngon_ngu, trang_thai, tom_tat) VALUES ...`.
+
+- Sửa lỗi tạo Cinema (insert ID):
+
+  - Thay `VALUES (NULL, ...)` bằng tạo `RAPxxxxx` (RAP + 5 chữ số) theo cùng logic: `SELECT ma_rap FROM RapChieu ORDER BY ma_rap DESC LIMIT 1`.
+  - INSERT kèm danh sách cột: `INSERT INTO RapChieu (ma_rap, ten_rap, trang_thai, dia_chi) VALUES ...`.
+
+- Sửa lỗi SQL dialect:
+  - Thay `SELECT TOP 1 ...` (SQL Server) bằng `LIMIT 1` (MySQL).
+
+Kiểm tra & Test tạm thời:
+
+- Đã test tạo Movie bằng POST tới `http://localhost:5000/admin/movies` (PowerShell Invoke-RestMethod).
+
+  - Tạo thành công và ID sinh đúng dạng `PHM00006` sau khi sửa.
+  - Trường hợp NaN (PH000NaN) đã được xóa bằng API khi phát hiện.
+
+- Đã test tạo/update/delete Cinema bằng endpoint tương ứng (`/admin/cinemas`); ID được sinh dạng `RAP00007`, update/delete trả success.
+
+Ghi chú/Next step (chưa sửa tại server):
+
+- `SuatChieu` (showtimes) hiện vẫn dùng `VALUES (NULL, ...)` — database dùng `VARCHAR` cho key nên cần thêm logic sinh ID tương tự (ví dụ `SCxxxxx`).
+- Có thể cần thêm kiểm tra/ràng buộc/format cho date khi insert vào DB (DB hiện được cấp ISO timestamps từ server, nhưng frontend yêu cầu `YYYY-MM-DD`).
+- Đề xuất: Viết helper trung tâm để tạo ID cho các bảng có PK `VARCHAR` (xử lý prefix + padding) để tránh nhân bản code và lỗi parsing.
+
+Ngắn gọn: Đã chuyển insert các bảng `Phim` và `RapChieu` từ cơ chế giả định auto-increment sang sinh ID thủ công phù hợp với schema (VARCHAR PK), sửa lỗi cú pháp SQL cho MySQL, và đã test CRUD cơ bản cho movie và cinema.
+
+# Backend - Các chỉnh sửa ngắn gọn cho admin (Movie / Cinema / Showtime)
+
+> Mục tiêu: Giữ thay đổi backend tối thiểu, sửa lỗi gây ra các trường hợp frontend không hoạt động, và cung cấp các endpoint cần thiết cho giao diện admin.
+
+### Các thay đổi chính (server/src)
+
+- `admin_service.js`
+
+  - Sửa câu truy vấn lấy bản ghi cuối cho MySQL (dùng `LIMIT 1`) thay vì SQL Server `TOP`.
+  - Thêm logic tạo mã tự động cho PK dạng VARCHAR (PHM... cho phim, RAP... cho rạp, SCH... cho suất chiếu) thay vì chèn NULL.
+  - `createShowtime(...)`:
+    - Kiểm tra trạng thái phòng (`ma_phong`) trước khi tạo suất chiếu (phòng phải active).
+    - Sinh `ma_suat_chieu` (ví dụ `SCH00001`) và lưu vào DB.
+    - Trả về `newId` (một số controller hiện tại không gửi lại id — có thể mở rộng)
+  - `getShowtimeById(id)` trả về các trường đã map phù hợp với frontend: `showtime_id`, `room_id`, `movie_id`, `start_date`, `start_time`, `end_time`.
+
+- `admin_controller.js`
+
+  - Thêm các handler cho CRUD showtime (GET `/admin/showtimes/:id`, POST, PUT, DELETE) gọi tới `AdminService`.
+  - Trả về JSON `{ success: true/false, data?: ... }`
+
+- `admin_route.js`
+
+  - Đăng ký các route admin cho showtimes: `GET /showtimes/:id`, `POST /showtimes`, `PUT /showtimes/:id`, `DELETE /showtimes/:id`.
+
+- `other_service.js`, `other_controller.js`, `other_route.js`
+  - Tạo endpoint `GET /other/rooms` để frontend admin lấy danh sách `PhongChieu` (map về `room_id`, `cinema_id`, `name`, `state`).
+
+### Lý do và lợi ích
+
+- Khắc phục lỗi gây ra bởi việc chèn `NULL` vào cột khóa chính kiểu `VARCHAR` (trước đó gây insert lỗi nếu không auto increment).
+- Đồng bộ hóa tên trường trả về (mapping sang camelCase) để frontend không cần chuyển đổi thủ công.
+- Tạo mã ID thống nhất giúp quản lý dễ và tránh xung đột khi insert.
+
+### Kiểm tra / Test nhanh (PowerShell)
+
+- Kiểm tra lấy chi tiết suất chiếu:
+
+```
+Invoke-RestMethod -Uri "http://localhost:5000/admin/showtimes/SCH00001" -Method GET | ConvertTo-Json -Depth 3
+```
+
+- Kiểm tra tạo suất chiếu (body):
+
+```
+Invoke-RestMethod -Uri "http://localhost:5000/admin/showtimes" -Method POST -Body (@{roomId='PHG00001'; movieId='PHM00001'; date='2025-12-02'; startTime='20:00:00'; endTime='22:00:00'} | ConvertTo-Json) -ContentType 'application/json'
+```
+
+### Ghi chú & Next steps (khuyến nghị, hạn chế sửa backend)
+
+- Đã giữ thay đổi backend tối thiểu: chỉ sửa syntax, ID-generation, và thêm endpoint thiếu.
+- Frontend nên ưu tiên map trường (example: `ma_phim` → `movie_id`, `ma_phong` → `room_id`, `tronng_thai` → `state`) để tránh sửa rộng backend.
+- Tùy chọn: Controller `createShowtime` có thể gửi về `createdId` trong response để frontend biết id mới ngay lập tức.
+- Đảm bảo timezone & date format ở frontend (input `YYYY-MM-DD`) khớp khi gửi `ngay_chieu` đến DB.
+
+---
+
+Ngắn gọn: sửa SQL Server → MySQL syntax, thêm generation ID cho PK VARCHAR, thêm endpoint `GET /admin/showtimes/:id`, thêm `/other/rooms` endpoint, và map trường trả về cho frontend.

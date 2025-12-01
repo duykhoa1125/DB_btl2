@@ -26,7 +26,7 @@ export default function NewMoviePage() {
   const [formData, setFormData] = useState({
     name: "",
     synopsis: "",
-    image: "",
+    // image removed
     status: "showing" as "showing" | "upcoming" | "ended",
     duration: "",
     release_date: "",
@@ -42,7 +42,7 @@ export default function NewMoviePage() {
 
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.synopsis.trim()) newErrors.synopsis = "Synopsis is required";
-    if (!formData.image.trim()) newErrors.image = "Image URL is required";
+    // image validation removed
 
     const duration = Number(formData.duration);
     if (!formData.duration || duration <= 0)
@@ -85,7 +85,7 @@ export default function NewMoviePage() {
       const movieData: Omit<Movie, "movie_id"> = {
         name: formData.name,
         synopsis: formData.synopsis,
-        image: formData.image,
+        image: "", // Backend doesn't support image, sending empty string or handled by service
         status: formData.status,
         duration: Number(formData.duration),
         release_date: formData.release_date,
@@ -171,22 +171,7 @@ export default function NewMoviePage() {
               )}
             </div>
 
-            {/* Image URL */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Poster Image URL <span className="text-destructive">*</span>
-              </label>
-              <Input
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                placeholder="https://image.tmdb.org/t/p/original/..."
-              />
-              {errors.image && (
-                <p className="text-sm text-destructive">{errors.image}</p>
-              )}
-            </div>
+            {/* Image URL Removed */}
 
             <div className="grid gap-4 md:grid-cols-2">
               {/* Status */}

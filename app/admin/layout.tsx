@@ -36,11 +36,6 @@ const navItems = [
     href: "/admin/showtimes",
     icon: Clock,
   },
-  {
-    label: "Staff",
-    href: "/admin/staff",
-    icon: Users,
-  },
 ];
 
 export default function AdminLayout({
@@ -81,7 +76,7 @@ export default function AdminLayout({
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
-      
+
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -114,7 +109,10 @@ export default function AdminLayout({
       >
         {/* Logo Section */}
         <div className="p-8 pb-6">
-          <Link href="/admin/dashboard" className="flex items-center gap-3 group">
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center gap-3 group"
+          >
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
               <Film className="h-6 w-6 text-primary-foreground" />
             </div>
@@ -122,7 +120,9 @@ export default function AdminLayout({
               <h1 className="bg-gradient-to-r from-primary via-foreground to-foreground/70 bg-clip-text text-xl font-bold text-transparent">
                 CinemaHub
               </h1>
-              <p className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Admin Panel</p>
+              <p className="text-xs font-medium text-muted-foreground tracking-wider uppercase">
+                Admin Panel
+              </p>
             </div>
           </Link>
         </div>
@@ -148,15 +148,17 @@ export default function AdminLayout({
                 {isActive && (
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-100" />
                 )}
-                
+
                 <Icon
                   className={cn(
                     "h-5 w-5 transition-all duration-300 group-hover:scale-110",
-                    isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground group-hover:text-primary"
                   )}
                 />
                 <span className="relative z-10">{item.label}</span>
-                
+
                 {isActive && (
                   <div className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
                 )}

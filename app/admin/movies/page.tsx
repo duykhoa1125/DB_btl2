@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2, Eye, Film } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { AdminSearch } from "@/components/admin/search";
 import {
@@ -45,7 +45,9 @@ export default function MoviesPage() {
     movieService
       .getAll()
       .then((data) => {
-        setMovies(Array.isArray(data) ? data : []);
+        setMovies(
+          Array.isArray(data) ? (data as unknown as MovieDetail[]) : []
+        );
         setLoading(false);
       })
       .catch((error) => {
@@ -100,7 +102,11 @@ export default function MoviesPage() {
       try {
         await adminService.deleteMovie(movieToDelete.movie_id);
         const updatedMovies = await movieService.getAll();
-        setMovies(Array.isArray(updatedMovies) ? updatedMovies : []);
+        setMovies(
+          Array.isArray(updatedMovies)
+            ? (updatedMovies as unknown as MovieDetail[])
+            : []
+        );
         toast({
           title: "Đã xóa phim",
           description: `"${movieToDelete.name}" đã được xóa thành công.`,
@@ -187,11 +193,17 @@ export default function MoviesPage() {
               filteredMovies.map((movie) => (
                 <TableRow key={movie.movie_id} className="hover:bg-muted/50">
                   <TableCell>
-                    <img
-                      src={movie.image}
-                      alt={movie.name}
-                      className="h-16 w-12 rounded object-cover shadow-sm"
-                    />
+                    {movie.image ? (
+                      <img
+                        src={movie.image}
+                        alt={movie.name}
+                        className="h-16 w-12 rounded object-cover shadow-sm"
+                      />
+                    ) : (
+                      <div className="flex h-16 w-12 items-center justify-center rounded bg-muted text-muted-foreground">
+                        <Film className="h-6 w-6" />
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{movie.name}</div>

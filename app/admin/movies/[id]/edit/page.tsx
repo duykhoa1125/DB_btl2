@@ -26,10 +26,11 @@ export default function EditMoviePage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalMovie, setOriginalMovie] = useState<string>(""); // Store original movie name for display
   const [formData, setFormData] = useState({
     name: "",
     synopsis: "",
-    image: "",
+    // image removed
     status: "showing" as "showing" | "upcoming" | "ended",
     duration: "",
     release_date: "",
@@ -40,12 +41,19 @@ export default function EditMoviePage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Helper function to convert ISO date to YYYY-MM-DD format
+  const formatDateForInput = (isoDate: string): string => {
+    if (!isoDate) return "";
+    const date = new Date(isoDate);
+    return date.toISOString().split("T")[0];
+  };
+
   useEffect(() => {
     const movie_id = params.id as string;
 
     const fetchMovie = async () => {
       try {
-        const movie = await movieService.getWithDetails(movie_id);
+        const movie = await movieService.getById(movie_id);
 
         if (!movie) {
           toast({
@@ -57,14 +65,15 @@ export default function EditMoviePage() {
           return;
         }
 
+        setOriginalMovie(movie.name);
         setFormData({
           name: movie.name,
           synopsis: movie.synopsis || "",
-          image: movie.image,
+          // image removed
           status: movie.status,
           duration: movie.duration.toString(),
-          release_date: movie.release_date,
-          end_date: movie.end_date,
+          release_date: formatDateForInput(movie.release_date),
+          end_date: formatDateForInput(movie.end_date),
           age_rating: movie.age_rating.toString(),
           language: movie.language as "en" | "vi" | "ko" | "ja",
           trailer: movie.trailer || "",
@@ -90,7 +99,7 @@ export default function EditMoviePage() {
 
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.synopsis.trim()) newErrors.synopsis = "Synopsis is required";
-    if (!formData.image.trim()) newErrors.image = "Image URL is required";
+    // image validation removed
 
     const duration = Number(formData.duration);
     if (!formData.duration || duration <= 0)
@@ -133,7 +142,7 @@ export default function EditMoviePage() {
       const updates: Partial<Omit<Movie, "movie_id">> = {
         name: formData.name,
         synopsis: formData.synopsis,
-        image: formData.image,
+        // image removed
         status: formData.status,
         duration: Number(formData.duration),
         release_date: formData.release_date,
@@ -181,7 +190,11 @@ export default function EditMoviePage() {
         </Button>
         <div>
           <h1 className="text-4xl font-bold">Edit Movie</h1>
-          <p className="text-muted-foreground">Update movie information</p>
+          <p className="text-muted-foreground">
+            {originalMovie
+              ? `Editing: ${originalMovie}`
+              : "Update movie information"}
+          </p>
         </div>
       </div>
 
@@ -225,21 +238,7 @@ export default function EditMoviePage() {
               )}
             </div>
 
-            {/* Image URL */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Poster Image URL <span className="text-destructive">*</span>
-              </label>
-              <Input
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-              />
-              {errors.image && (
-                <p className="text-sm text-destructive">{errors.image}</p>
-              )}
-            </div>
+            {/* Image URL Removed */}
 
             <div className="grid gap-4 md:grid-cols-2">
               {/* Status */}

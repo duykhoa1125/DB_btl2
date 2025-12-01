@@ -73,17 +73,19 @@ export default function ShowtimesPage() {
       });
   }, []);
 
-  const filteredShowtimes = showtimes.filter((showtime) => {
+  const filteredShowtimes = showtimes.filter((showtime: any) => {
     const movie = movies.find((m) => m.movie_id === showtime.movie_id);
-    const room = rooms.find((r) => r.room_id === showtime.room_id);
+    const room = rooms.find((r: any) => r.room_id === showtime.room_id);
     const cinema = room
-      ? cinemas.find((c) => c.cinema_id === room.cinema_id)
+      ? cinemas.find((c: any) => c.cinema_id === room.cinema_id)
       : null;
 
     const matchesSearch =
-      movie?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cinema?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room?.name.toLowerCase().includes(searchTerm.toLowerCase());
+      movie?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cinema?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      room?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      showtime.cinema_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      showtime.room_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesMovie =
       movieFilter === "all" || showtime.movie_id === movieFilter;
@@ -127,15 +129,24 @@ export default function ShowtimesPage() {
   };
 
   const getCinemaName = (room_id: string) => {
-    const room = rooms.find((r) => r.room_id === room_id);
+    const room = rooms.find((r: any) => r.room_id === room_id);
     const cinema = room
-      ? cinemas.find((c) => c.cinema_id === room.cinema_id)
+      ? cinemas.find((c: any) => c.cinema_id === room.cinema_id)
       : null;
     return cinema?.name || "Không xác định";
   };
 
   const getRoomName = (room_id: string) => {
-    return rooms.find((r) => r.room_id === room_id)?.name || room_id;
+    return rooms.find((r: any) => r.room_id === room_id)?.name || room_id;
+  };
+
+  // Helper to get cinema name directly from showtime (uses response data if available)
+  const getShowtimeCinemaName = (showtime: any) => {
+    return showtime.cinema_name || getCinemaName(showtime.room_id);
+  };
+
+  const getShowtimeRoomName = (showtime: any) => {
+    return showtime.room_name || getRoomName(showtime.room_id);
   };
 
   return (
@@ -209,7 +220,7 @@ export default function ShowtimesPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredShowtimes.map((showtime) => (
+              filteredShowtimes.map((showtime: any) => (
                 <TableRow
                   key={showtime.showtime_id}
                   className="hover:bg-muted/50"
@@ -218,7 +229,7 @@ export default function ShowtimesPage() {
                     {getMovieName(showtime.movie_id)}
                   </TableCell>
                   <TableCell className="text-sm">
-                    {getCinemaName(showtime.room_id)}
+                    {getShowtimeCinemaName(showtime)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -240,7 +251,7 @@ export default function ShowtimesPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    {getRoomName(showtime.room_id)}
+                    {getShowtimeRoomName(showtime)}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-xs">
