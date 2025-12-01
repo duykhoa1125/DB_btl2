@@ -1,53 +1,57 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { CheckCircle2, Download, QrCode, Share2 } from "lucide-react"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
-import { Breadcrumb } from "@/components/breadcrumb"
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Download, QrCode, Share2 } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 export function ConfirmationContent() {
-  const searchParams = useSearchParams()
-  const seats = searchParams.get("seats") || "0"
-  const total = searchParams.get("total") || "0"
-  const discount = searchParams.get("discount") || "0"
+  const searchParams = useSearchParams();
+  const seats = searchParams.get("seats") || "0";
+  const total = searchParams.get("total") || "0";
+  const discount = searchParams.get("discount") || "0";
 
-  // Generate booking reference
-  const bookingRef = `CH${Date.now().toString(36).toUpperCase().slice(-8)}`
+  const billId = searchParams.get("bill_id");
+
+  // Generate booking reference or use bill_id
+  const bookingRef = billId
+    ? `#${billId}`
+    : `CH${Date.now().toString(36).toUpperCase().slice(-8)}`;
   const bookingTime = new Date().toLocaleString("vi-VN", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
-  })
+    minute: "2-digit",
+  });
 
   // Calculate show time (example: 30 minutes from now)
-  const showTime = new Date(Date.now() + 30 * 60 * 1000).toLocaleString("vi-VN", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  })
+  const showTime = new Date(Date.now() + 30 * 60 * 1000).toLocaleString(
+    "vi-VN",
+    {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
       {/* Ambient Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
-      
+
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       {/* Breadcrumb */}
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-md sticky top-0 z-40">
         <div className="mx-auto max-w-4xl px-6 py-4">
-          <Breadcrumb 
-            items={[
-              { label: "Đặt vé", href: "/" },
-              { label: "Xác nhận" }
-            ]} 
+          <Breadcrumb
+            items={[{ label: "Đặt vé", href: "/" }, { label: "Xác nhận" }]}
           />
         </div>
       </div>
@@ -64,7 +68,8 @@ export function ConfirmationContent() {
             Đặt Vé Thành Công!
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl mx-auto">
-            Cảm ơn bạn đã chọn CinemaHub. Vé điện tử đã được gửi đến email của bạn.
+            Cảm ơn bạn đã chọn CinemaHub. Vé điện tử đã được gửi đến email của
+            bạn.
           </p>
         </div>
 
@@ -94,12 +99,16 @@ export function ConfirmationContent() {
                   <div className="grid gap-4 rounded-2xl bg-background/50 border border-border/50 p-5">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Phim</span>
-                      <span className="font-bold text-lg text-right">Avengers: Endgame</span>
+                      <span className="font-bold text-lg text-right">
+                        Avengers: Endgame
+                      </span>
                     </div>
                     <div className="h-px w-full bg-border/50 border-dashed" />
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Rạp</span>
-                      <span className="font-medium text-right">CinemaHub - Tân Bình</span>
+                      <span className="font-medium text-right">
+                        CinemaHub - Tân Bình
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Phòng</span>
@@ -107,7 +116,9 @@ export function ConfirmationContent() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Suất chiếu</span>
-                      <span className="font-medium text-right text-primary">{showTime}</span>
+                      <span className="font-medium text-right text-primary">
+                        {showTime}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -121,11 +132,18 @@ export function ConfirmationContent() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between rounded-xl bg-muted/30 p-4">
                       <span className="text-muted-foreground">Số vé</span>
-                      <span className="font-bold">{seats} vé <span className="font-normal text-muted-foreground text-sm">(C5, C6)</span></span>
+                      <span className="font-bold">
+                        {seats} vé{" "}
+                        <span className="font-normal text-muted-foreground text-sm">
+                          (C5, C6)
+                        </span>
+                      </span>
                     </div>
                     {Number(discount) > 0 && (
                       <div className="flex items-center justify-between rounded-xl bg-green-500/10 p-4 border border-green-500/20">
-                        <span className="text-green-700 font-medium">Khuyến mãi</span>
+                        <span className="text-green-700 font-medium">
+                          Khuyến mãi
+                        </span>
                         <span className="font-bold text-green-700">
                           −{Number(discount).toLocaleString("vi-VN")}₫
                         </span>
@@ -143,7 +161,9 @@ export function ConfirmationContent() {
                 {/* Metadata */}
                 <div className="rounded-xl bg-muted/30 p-4 text-sm space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Thời gian đặt:</span>
+                    <span className="text-muted-foreground">
+                      Thời gian đặt:
+                    </span>
                     <span className="font-medium">{bookingTime}</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -175,7 +195,8 @@ export function ConfirmationContent() {
                     1
                   </div>
                   <span className="text-sm leading-relaxed text-blue-900/80 font-medium">
-                    Email xác nhận đã được gửi đến địa chỉ email của bạn. Vui lòng kiểm tra cả hộp thư spam.
+                    Email xác nhận đã được gửi đến địa chỉ email của bạn. Vui
+                    lòng kiểm tra cả hộp thư spam.
                   </span>
                 </li>
                 <li className="flex gap-4 items-start">
@@ -183,7 +204,8 @@ export function ConfirmationContent() {
                     2
                   </div>
                   <span className="text-sm leading-relaxed text-blue-900/80 font-medium">
-                    Vui lòng đến rạp trước 15 phút để làm thủ tục in vé (nếu cần) hoặc mua bắp nước.
+                    Vui lòng đến rạp trước 15 phút để làm thủ tục in vé (nếu
+                    cần) hoặc mua bắp nước.
                   </span>
                 </li>
                 <li className="flex gap-4 items-start">
@@ -191,7 +213,8 @@ export function ConfirmationContent() {
                     3
                   </div>
                   <span className="text-sm leading-relaxed text-blue-900/80 font-medium">
-                    Xuất trình mã QR hoặc mã đặt vé tại quầy soát vé để vào phòng chiếu.
+                    Xuất trình mã QR hoặc mã đặt vé tại quầy soát vé để vào
+                    phòng chiếu.
                   </span>
                 </li>
               </ul>
@@ -203,7 +226,9 @@ export function ConfirmationContent() {
             {/* QR Code */}
             <div className="overflow-hidden rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg">
               <div className="border-b border-border/50 bg-muted/30 px-6 py-4">
-                <p className="text-center font-bold text-foreground">Vé Điện Tử (QR)</p>
+                <p className="text-center font-bold text-foreground">
+                  Vé Điện Tử (QR)
+                </p>
               </div>
               <div className="p-8 flex flex-col items-center gap-4">
                 <div className="bg-white p-4 rounded-2xl shadow-sm border border-border/20">
@@ -238,16 +263,21 @@ export function ConfirmationContent() {
             <div className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-6">
               <h4 className="mb-3 font-bold">Cần hỗ trợ?</h4>
               <p className="mb-4 text-sm text-muted-foreground leading-relaxed">
-                Liên hệ với chúng tôi nếu bạn cần trợ giúp hoặc muốn thay đổi lịch đặt.
+                Liên hệ với chúng tôi nếu bạn cần trợ giúp hoặc muốn thay đổi
+                lịch đặt.
               </p>
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
                   <span className="text-muted-foreground">Hotline:</span>
-                  <span className="font-bold text-primary ml-auto">1900-1234</span>
+                  <span className="font-bold text-primary ml-auto">
+                    1900-1234
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
                   <span className="text-muted-foreground">Email:</span>
-                  <span className="font-bold text-primary ml-auto truncate max-w-[120px]">support@cinemahub.vn</span>
+                  <span className="font-bold text-primary ml-auto truncate max-w-[120px]">
+                    support@cinemahub.vn
+                  </span>
                 </div>
               </div>
             </div>
@@ -255,5 +285,5 @@ export function ConfirmationContent() {
         </div>
       </div>
     </main>
-  )
+  );
 }

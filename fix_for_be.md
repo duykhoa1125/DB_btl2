@@ -85,3 +85,21 @@ Backend query thiếu các columns cần thiết cho reviews. Frontend expects o
 - ✅ Reviews trả về đầy đủ: `phone_number`, `star_rating`, `date_written`, `review_content`
 - ✅ `/movie/PHM00001` và các movie khác load thành công
 - ✅ Review component hiển thị đúng thông tin người dùng và đánh giá
+
+# Backend Fixes Log - Booking Flow (01/12/2025)
+
+## 1. BookingController (`server/src/controllers/booking_controller.js`)
+
+- **Fix Critical**: Đổi `req.user.phone` thành `req.user.phone_number` để khớp với payload JWT.
+- **Validation**: Thêm check `if (!userPhone)` để đảm bảo user đã đăng nhập hợp lệ.
+- **Typo**: Sửa `bookingService` thành `BookingService` (viết hoa) trong hàm `getHistory`.
+
+## 2. BookingService (`server/src/services/booking_service.js`)
+
+- **Import**: Thêm `const Bill = require("../models/bill_model");` (trước đó bị thiếu).
+- **Circular Dependency**: Xóa import `booking_route` gây lỗi undefined service.
+- **Query**: Thêm trường `ma_phim` vào câu lệnh SELECT trong `createBooking` để có dữ liệu tạo vé.
+
+## 3. BookingRoute (`server/src/routes/booking_route.js`)
+
+- **Middleware**: Thêm `authenticateToken` vào các route `/` (POST) và `/history` (GET) để xác thực user.

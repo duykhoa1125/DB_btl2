@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Seat, Food } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
 import { type FoodMenuItem } from "@/services";
+import bookingService from "@/services/bookingService";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -55,16 +56,46 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const [selectedFoods, setSelectedFoods] = useState<
     (FoodMenuItem & { quantity: number })[]
   >([]);
-  const [bookingStep, setBookingStep] = useState<"seats" | "food" | "payment">(
-    "seats"
-  );
+  const [bookingStep, setBookingStep] = useState<"seats" | "food">("seats");
   const [appliedVoucher, setAppliedVoucher] = useState<VoucherDetail | null>(
     null
   );
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>("");
+
   const [prefilledVoucherCode, setPrefilledVoucherCode] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleCompleteBooking = async () => {
+    try {
+      setIsProcessing(true);
+
+      const bookingPayload = {
+        showtime_id: showtime.showtime_id,
+        seats: selectedSeats.map((s) => ({
+          row: s.seat_row,
+          col: s.seat_column,
+          price: calculateSeatsTotal([s]), // Calculate individual seat price
+        })),
+        foods: selectedFoods.map((f) => ({
+          name: f.name,
+          price: f.price,
+          quantity: f.quantity,
+        })),
+        voucher_code: appliedVoucher?.code || undefined,
+        phone_number: "", // Will be handled by backend via token
+      };
+
+      const response = await bookingService.createBooking(bookingPayload);
+
+      // Redirect to confirmation with bill_id
+      window.location.href = `/confirmation?bill_id=${response.bill.bill_id}&seats=${selectedSeats.length}&total=${finalTotal}&discount=${discountAmount}`;
+    } catch (error: any) {
+      console.error("Booking failed:", error);
+      alert(`Đặt vé thất bại: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   useEffect(() => {
     const voucherCodeUrl = searchParams.get("voucher");
@@ -133,8 +164,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
 
   const steps = [
     { id: "seats", label: "Chọn ghế" },
-    { id: "food", label: "Bắp nước" },
-    { id: "payment", label: "Thanh toán" },
+    { id: "food", label: "Bắp nước & Thanh toán" },
   ];
 
   return (
@@ -203,20 +233,13 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
             <div
               className="absolute top-1/2 left-0 h-1 bg-primary -translate-y-1/2 rounded-full transition-all duration-500 ease-out"
               style={{
-                width:
-                  bookingStep === "seats"
-                    ? "0%"
-                    : bookingStep === "food"
-                    ? "50%"
-                    : "100%",
+                width: bookingStep === "seats" ? "0%" : "100%",
               }}
             />
 
             {steps.map((step, index) => {
               const isActive = bookingStep === step.id;
-              const isCompleted =
-                (bookingStep === "food" && index === 0) ||
-                (bookingStep === "payment" && index <= 1);
+              const isCompleted = bookingStep === "food" && index === 0;
 
               return (
                 <div
@@ -292,28 +315,9 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
             )}
 
             {bookingStep === "food" && (
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
                 <FoodSelection onFoodChange={setSelectedFoods} />
-                <div className="mt-8 flex justify-end gap-4">
-                  <Button
-                    onClick={() => setBookingStep("seats")}
-                    variant="outline"
-                    className="h-12 px-8 rounded-xl border-border/50 hover:bg-muted/50"
-                  >
-                    Quay lại
-                  </Button>
-                  <Button
-                    onClick={() => setBookingStep("payment")}
-                    className="min-w-[200px] h-12 text-base rounded-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all"
-                  >
-                    Tiếp tục
-                  </Button>
-                </div>
-              </div>
-            )}
 
-            {bookingStep === "payment" && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm">
                   <h3 className="mb-4 text-lg font-bold flex items-center gap-2">
                     <span className="w-1 h-6 bg-primary rounded-full" />
@@ -327,100 +331,20 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                   />
                 </div>
 
-                <div className="rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm">
-                  <h3 className="mb-6 text-xl font-bold flex items-center gap-2">
-                    <span className="w-1 h-6 bg-primary rounded-full" />
-                    Phương thức thanh toán
-                  </h3>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {[
-                      {
-                        id: "card",
-                        label: "Thẻ quốc tế",
-                        icon: <CreditCard className="w-6 h-6" />,
-                        desc: "Visa, Mastercard, JCB",
-                      },
-                      {
-                        id: "wallet",
-                        label: "Ví điện tử",
-                        icon: <Wallet className="w-6 h-6" />,
-                        desc: "Momo, ZaloPay, ShopeePay",
-                      },
-                      {
-                        id: "banking",
-                        label: "Chuyển khoản",
-                        icon: <Building2 className="w-6 h-6" />,
-                        desc: "QR Code 24/7",
-                      },
-                      {
-                        id: "cash",
-                        label: "Tiền mặt",
-                        icon: <Banknote className="w-6 h-6" />,
-                        desc: "Thanh toán tại quầy",
-                      },
-                    ].map((method) => (
-                      <button
-                        key={method.id}
-                        onClick={() => setSelectedPaymentMethod(method.id)}
-                        className={`group relative flex flex-col items-start gap-4 rounded-xl border p-5 text-left transition-all hover:shadow-lg hover:shadow-primary/10 ${
-                          selectedPaymentMethod === method.id
-                            ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
-                            : "border-border/50 bg-background/50 hover:border-primary hover:bg-primary/5"
-                        }`}
-                      >
-                        <div className="flex items-center gap-4 w-full">
-                          <div
-                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                              selectedPaymentMethod === method.id
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted group-hover:bg-primary/10 group-hover:text-primary"
-                            }`}
-                          >
-                            {method.icon}
-                          </div>
-                          <div>
-                            <p
-                              className={`font-bold transition-colors ${
-                                selectedPaymentMethod === method.id
-                                  ? "text-primary"
-                                  : "text-foreground group-hover:text-primary"
-                              }`}
-                            >
-                              {method.label}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {method.desc}
-                            </p>
-                          </div>
-                          {selectedPaymentMethod === method.id && (
-                            <div className="absolute top-4 right-4 text-primary">
-                              <CheckCircle2 className="w-5 h-5 fill-primary text-primary-foreground" />
-                            </div>
-                          )}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator className="bg-border/50" />
-
                 <div className="flex justify-end gap-4">
                   <Button
-                    onClick={() => setBookingStep("food")}
+                    onClick={() => setBookingStep("seats")}
                     variant="outline"
                     className="h-12 px-8 rounded-xl border-border/50 hover:bg-muted/50"
                   >
                     Quay lại
                   </Button>
                   <Button
-                    onClick={() => {
-                      window.location.href = `/confirmation?seats=${selectedSeats.length}&total=${finalTotal}&discount=${discountAmount}`;
-                    }}
+                    onClick={handleCompleteBooking}
                     className="min-w-[240px] h-12 text-base rounded-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground shadow-xl hover:shadow-primary/25 transition-all font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={!selectedPaymentMethod}
+                    disabled={isProcessing}
                   >
-                    Hoàn thành đặt vé
+                    {isProcessing ? "Đang xử lý..." : "Hoàn thành đặt vé"}
                   </Button>
                 </div>
               </div>

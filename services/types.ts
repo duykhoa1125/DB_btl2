@@ -281,7 +281,7 @@ export interface SeatLayoutItem extends Seat {
 export interface BookingRequest {
   showtime_id: string;
   seats: { row: string; col: number; price: number }[];
-  foods: { id: string; quantity: number }[]; // Nếu có menu food cố định
+  foods: { name: string; price: number; quantity: number }[]; // Updated to match backend expectation
   voucher_code?: string;
   phone_number: string; // Người đặt
 }
