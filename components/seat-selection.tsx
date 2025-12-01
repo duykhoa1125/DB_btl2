@@ -13,6 +13,32 @@ interface SeatSelectionProps {
   bookedSeatIds?: string[];
 }
 
+// Tạo layout 100 ghế cố định (10 hàng A-J, 10 cột 1-10)
+const ROWS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+const COLS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+function generateFixedSeats(): Seat[] {
+  const seats: Seat[] = [];
+  ROWS.forEach((row) => {
+    COLS.forEach((col) => {
+      // Hàng I, J là VIP
+      // Hàng J là couple (mỗi cặp ghế)
+      let seatType: "normal" | "vip" | "couple" = "normal";
+      if (row === "I") seatType = "vip";
+      if (row === "J") seatType = "couple";
+
+      seats.push({
+        room_id: "",
+        seat_row: row,
+        seat_column: col,
+        seat_type: seatType,
+        state: "occupied", // Mặc định là đã đặt
+      });
+    });
+  });
+  return seats;
+}
+
 // Icons for different seat types
 const StandardSeatIcon = ({ className }: { className?: string }) => (
   <svg
@@ -62,15 +88,46 @@ export function SeatSelection({
   bookedSeatIds = [],
 }: SeatSelectionProps) {
   const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set());
-  const [demoSeats, setDemoSeats] = useState<Seat[]>([]);
+  const [allSeats, setAllSeats] = useState<Seat[]>(generateFixedSeats()); // 100 ghế cố định
+  const [availableSeatIds, setAvailableSeatIds] = useState<Set<string>>(
+    new Set()
+  ); // Ghế trống từ server
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch seats for the showtime
+    // Fetch ghế còn trống từ server
     seatService
       .getByShowtime(showtimeId)
-      .then((seats) => {
-        setDemoSeats(seats);
+      .then((seatsFromServer) => {
+        // Tạo set các ghế còn trống (từ server)
+        const availableIds = new Set(
+          seatsFromServer.map((s) => `${s.seat_row}${s.seat_column}`)
+        );
+        setAvailableSeatIds(availableIds);
+
+        // Cập nhật trạng thái cho 100 ghế cố định
+        const updatedSeats = generateFixedSeats().map((seat) => {
+          const seatId = `${seat.seat_row}${seat.seat_column}`;
+          // Tìm thông tin ghế từ server (nếu có)
+          const serverSeat = seatsFromServer.find(
+            (s) =>
+              s.seat_row === seat.seat_row && s.seat_column === seat.seat_column
+          );
+
+          if (serverSeat) {
+            // Ghế có trong response = còn trống
+            return {
+              ...seat,
+              room_id: serverSeat.room_id,
+              seat_type: serverSeat.seat_type || seat.seat_type,
+              state: "available" as const,
+            };
+          }
+          // Ghế không có trong response = đã đặt
+          return { ...seat, state: "occupied" as const };
+        });
+
+        setAllSeats(updatedSeats);
         setLoading(false);
       })
       .catch((error) => {
@@ -80,7 +137,7 @@ export function SeatSelection({
   }, [showtimeId]);
 
   // Group seats by row
-  const seatsByRow = demoSeats.reduce((acc, seat) => {
+  const seatsByRow = allSeats.reduce((acc, seat) => {
     if (!acc[seat.seat_row]) {
       acc[seat.seat_row] = [];
     }
@@ -92,8 +149,8 @@ export function SeatSelection({
 
   const handleSeatClick = (seat: Seat) => {
     const seatId = getSeatId(seat);
-    // Prevent selecting booked seats
-    if (bookedSeatIds.includes(seatId)) return;
+    // Chỉ cho phép chọn ghế còn trống (có trong availableSeatIds)
+    if (!availableSeatIds.has(seatId)) return;
 
     const newSelected = new Set(selectedSeats);
     if (newSelected.has(seatId)) {
@@ -102,7 +159,7 @@ export function SeatSelection({
       newSelected.add(seatId);
     }
     setSelectedSeats(newSelected);
-    const selectedSeatObjects = demoSeats.filter((s) =>
+    const selectedSeatObjects = allSeats.filter((s) =>
       newSelected.has(getSeatId(s))
     );
     onSeatsChange(selectedSeatObjects);
@@ -111,22 +168,24 @@ export function SeatSelection({
   const getSeatColor = (seat: Seat) => {
     const seatId = getSeatId(seat);
 
-    // Check if booked
-    if (bookedSeatIds.includes(seatId)) {
-      return "text-red-500/50 cursor-not-allowed"; // Booked: Reddish/Disabled
+    // Ghế đã đặt (không có trong availableSeatIds)
+    if (!availableSeatIds.has(seatId)) {
+      return "text-red-500/50 cursor-not-allowed"; // Đã đặt: màu đỏ nhạt
     }
 
+    // Ghế đang được chọn
     if (selectedSeats.has(seatId)) {
       return "text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)] scale-105"; // Selected: Primary Color
     }
-    // Default unselected state
+
+    // Ghế còn trống
     return "text-muted-foreground/30 hover:text-primary/80 hover:scale-105 transition-all duration-200"; // Available: Muted
   };
 
   const renderSeat = (seat: Seat) => {
     const seatId = getSeatId(seat);
     const isSelected = selectedSeats.has(seatId);
-    const isBooked = bookedSeatIds.includes(seatId);
+    const isBooked = !availableSeatIds.has(seatId); // Đã đặt = không có trong danh sách trống
 
     let Icon = StandardSeatIcon;
     let width = "w-8";
