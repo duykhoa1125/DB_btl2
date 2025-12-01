@@ -1,18 +1,40 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Download, QrCode, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 
+interface ConfirmationData {
+  movie_name: string;
+  movie_image: string;
+  cinema_name: string;
+  room_name: string;
+  start_date: string;
+  start_time: string;
+  seats: string[];
+  foods: { name: string; quantity: number; price: number }[];
+  total: number;
+  discount: number;
+}
+
 export function ConfirmationContent() {
   const searchParams = useSearchParams();
   const seats = searchParams.get("seats") || "0";
   const total = searchParams.get("total") || "0";
   const discount = searchParams.get("discount") || "0";
-
   const billId = searchParams.get("bill_id");
+
+  const [data, setData] = useState<ConfirmationData | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("confirmationData");
+    if (stored) {
+      setData(JSON.parse(stored));
+    }
+  }, []);
 
   // Generate booking reference or use bill_id
   const bookingRef = billId
@@ -27,17 +49,17 @@ export function ConfirmationContent() {
     minute: "2-digit",
   });
 
-  // Calculate show time (example: 30 minutes from now)
-  const showTime = new Date(Date.now() + 30 * 60 * 1000).toLocaleString(
-    "vi-VN",
-    {
+  // Format showtime from data
+  const formatShowTime = () => {
+    if (!data) return "";
+    const dateObj = new Date(data.start_date);
+    const [hours, minutes] = data.start_time.split(":");
+    return `${dateObj.toLocaleDateString("vi-VN", {
       weekday: "long",
-      month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }
-  );
+      month: "long",
+    })} - ${hours}:${minutes}`;
+  };
 
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
@@ -100,24 +122,26 @@ export function ConfirmationContent() {
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Phim</span>
                       <span className="font-bold text-lg text-right">
-                        Avengers: Endgame
+                        {data?.movie_name || "Đang tải..."}
                       </span>
                     </div>
                     <div className="h-px w-full bg-border/50 border-dashed" />
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Rạp</span>
                       <span className="font-medium text-right">
-                        CinemaHub - Tân Bình
+                        {data?.cinema_name || "Đang tải..."}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Phòng</span>
-                      <span className="font-medium text-right">Room 1</span>
+                      <span className="font-medium text-right">
+                        {data?.room_name || "Đang tải..."}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Suất chiếu</span>
                       <span className="font-medium text-right text-primary">
-                        {showTime}
+                        {formatShowTime() || "Đang tải..."}
                       </span>
                     </div>
                   </div>
@@ -135,10 +159,27 @@ export function ConfirmationContent() {
                       <span className="font-bold">
                         {seats} vé{" "}
                         <span className="font-normal text-muted-foreground text-sm">
-                          (C5, C6)
+                          ({data?.seats?.join(", ") || "..."})
                         </span>
                       </span>
                     </div>
+                    {data?.foods && data.foods.length > 0 && (
+                      <div className="rounded-xl bg-muted/30 p-4 space-y-2">
+                        <span className="text-muted-foreground text-sm">
+                          Đồ ăn & Nước
+                        </span>
+                        {data.foods.map((f, i) => (
+                          <div key={i} className="flex justify-between text-sm">
+                            <span>
+                              {f.name} x{f.quantity}
+                            </span>
+                            <span>
+                              {(f.price * f.quantity).toLocaleString("vi-VN")}₫
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {Number(discount) > 0 && (
                       <div className="flex items-center justify-between rounded-xl bg-green-500/10 p-4 border border-green-500/20">
                         <span className="text-green-700 font-medium">

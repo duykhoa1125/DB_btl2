@@ -87,6 +87,28 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
 
       const response = await bookingService.createBooking(bookingPayload);
 
+      // Lưu thông tin đặt vé vào localStorage để trang confirmation hiển thị
+      const confirmationData = {
+        movie_name: movie.name,
+        movie_image: movie.image,
+        cinema_name: showtime.cinema_name || "",
+        room_name: showtime.room_name || showtime.room_id,
+        start_date: showtime.start_date,
+        start_time: showtime.start_time,
+        seats: selectedSeats.map((s) => `${s.seat_row}${s.seat_column}`),
+        foods: selectedFoods.map((f) => ({
+          name: f.name,
+          quantity: f.quantity,
+          price: f.price,
+        })),
+        total: finalTotal,
+        discount: discountAmount,
+      };
+      localStorage.setItem(
+        "confirmationData",
+        JSON.stringify(confirmationData)
+      );
+
       // Redirect to confirmation with bill_id
       window.location.href = `/confirmation?bill_id=${response.bill.bill_id}&seats=${selectedSeats.length}&total=${finalTotal}&discount=${discountAmount}`;
     } catch (error: any) {
