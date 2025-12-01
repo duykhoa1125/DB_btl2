@@ -17,42 +17,42 @@ const bookingService = {
      * Create complete booking (bill + tickets + foods)
      */
     createBooking: (data: CreateBookingPayload): Promise<BookingResponse> => {
-        return axiosClient.post('/bookings', data);
+        return axiosClient.post('/booking', data);
     },
 
     /**
      * Get user's booking history
      */
     getMyBookings: (phoneNumber: string): Promise<BookingResponse[]> => {
-        return axiosClient.get(`/bookings/user/${phoneNumber}`);
+        return axiosClient.get(`/booking/user/${phoneNumber}`);
     },
 
     /**
      * Get booking details by bill ID
      */
     getBookingById: (billId: string): Promise<BookingResponse> => {
-        return axiosClient.get(`/bookings/${billId}`);
+        return axiosClient.get(`/booking/${billId}`);
     },
 
     /**
      * Cancel a booking
      */
     cancelBooking: (billId: string): Promise<void> => {
-        return axiosClient.delete(`/bookings/${billId}`);
+        return axiosClient.delete(`/booking/${billId}`);
     },
 
     /**
      * Get all bookings (admin)
      */
     getAllBookings: (): Promise<BookingResponse[]> => {
-        return axiosClient.get('/bookings');
+        return axiosClient.get('/booking');
     },
 
     /**
      * Get bookings by date range (admin)
      */
     getBookingsByDateRange: (startDate: string, endDate: string): Promise<BookingResponse[]> => {
-        return axiosClient.get('/bookings', { params: { start_date: startDate, end_date: endDate } });
+        return axiosClient.get('/booking', { params: { start_date: startDate, end_date: endDate } });
     },
 };
 
