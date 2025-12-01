@@ -10,62 +10,10 @@ export interface FoodMenuItem {
   available?: boolean;
 }
 
-// Menu mặc định khi không có dữ liệu từ server
-// const defaultFoodMenu: FoodMenuItem[] = [
-//   {
-//     food_id: "FOOD001",
-//     name: "Combo A",
-//     description: "1 bỏng + 1 nước",
-//     price: 60000,
-//     available: true,
-//   },
-//   {
-//     food_id: "FOOD002",
-//     name: "Combo B",
-//     description: "2 bỏng + 2 nước",
-//     price: 110000,
-//     available: true,
-//   },
-//   {
-//     food_id: "FOOD003",
-//     name: "Combo C",
-//     description: "1 bỏng + 1 nước + 1 snack",
-//     price: 75000,
-//     available: true,
-//   },
-//   {
-//     food_id: "FOOD004",
-//     name: "Bỏng caramel",
-//     description: "Bỏng ngọt vị caramel",
-//     price: 45000,
-//     available: true,
-//   },
-//   {
-//     food_id: "FOOD005",
-//     name: "Bỏng phô mai",
-//     description: "Bỏng vị phô mai đậm đà",
-//     price: 50000,
-//     available: true,
-//   },
-//   {
-//     food_id: "FOOD006",
-//     name: "Nước ngọt",
-//     description: "Coca cola size L",
-//     price: 25000,
-//     available: true,
-//   },
-//   {
-//     food_id: "FOOD007",
-//     name: "Nước trái cây",
-//     description: "Nước ép cam tươi",
-//     price: 35000,
-//     available: true,
-//   },
-// ];
 
 // Map từ cấu trúc database DoAn sang FoodMenuItem
 const mapToFoodMenuItem = (item: any): FoodMenuItem => ({
-  food_id: item.ma_do_an || `FOOD_${Math.random().toString(36).substr(2, 9)}`,
+  food_id: item.ma_do_an ,
   name: item.ten_do_an,
   description: item.mo_ta,
   price: item.gia_ban,
