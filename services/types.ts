@@ -137,6 +137,7 @@ export interface StaffWithRole extends Omit<Staff, 'manage_id' | 'cinema_id'> {
 // Union type cho authenticated user
 export type AuthenticatedUser = AccountWithRole | StaffWithRole;
 
+
 // Auth response from login/register
 export interface AuthResponse {
     token: string;
@@ -151,6 +152,7 @@ export interface LoginRequest {
 
 // Register request payload
 export interface RegisterRequest {
+    phone_number: string;
     email: string;
     password: string;
     fullname: string;

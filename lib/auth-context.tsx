@@ -11,7 +11,8 @@ interface AuthContextType {
   currentUser: AuthenticatedUser | null;
   isLoading: boolean;
   login: (identifier: string, password: string) => Promise<boolean>;
-  signup: (
+  register: (
+    phoneNumber: string,
     email: string,
     password: string,
     fullname: string,
@@ -89,7 +90,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signup = async (
+  const register = async (
+    phoneNumber: string,
     email: string,
     password: string,
     fullname: string,
@@ -97,7 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     gender: "male" | "female" | "unknown"
   ): Promise<boolean> => {
     try {
-      const response = await authService.register({
+      await authService.register({
+        phone_number: phoneNumber,
         email,
         password,
         fullname,
@@ -105,25 +108,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         gender,
       });
 
-      const { token, user } = response;
-
-      // Save token and user
-      localStorage.setItem("token", token);
-      localStorage.setItem("currentUser", JSON.stringify(user));
-
-      // Set axios default authorization header
-      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      setCurrentUser(user);
-
-      // Auto redirect to home (users only)
-      setTimeout(() => {
-        router.push("/");
-      }, 100);
-
+      // No auto-login, just return true
       return true;
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("Registration failed:", error);
       return false;
     }
   };
@@ -171,7 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         currentUser,
         isLoading,
         login,
-        signup,
+        register,
         logout,
         updateProfile,
         isAdmin,

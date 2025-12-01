@@ -28,6 +28,7 @@ import { User, Mail, Lock, Loader2, Calendar, Users } from "lucide-react";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -36,7 +37,7 @@ export function RegisterForm() {
     "unknown"
   );
   const [isLoading, setIsLoading] = useState(false);
-  const { signup } = useAuth();
+  const { register } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -55,7 +56,8 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      const success = await signup(
+      const success = await register(
+        phoneNumber,
         email,
         password,
         fullName,
@@ -65,13 +67,13 @@ export function RegisterForm() {
       if (success) {
         toast({
           title: "Đăng ký thành công",
-          description: "Tài khoản của bạn đã được tạo. Đang chuyển hướng...",
+          description: "Tài khoản của bạn đã được tạo. Vui lòng đăng nhập.",
         });
-        router.push("/");
+        router.push("/account/login");
       } else {
         toast({
           title: "Đăng ký thất bại",
-          description: "Email này đã được sử dụng.",
+          description: "Số điện thoại hoặc Email này đã được sử dụng.",
           variant: "destructive",
         });
       }
@@ -105,6 +107,23 @@ export function RegisterForm() {
                 placeholder="Nguyễn Văn A"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                required
+                disabled={isLoading}
+                className="transition-all focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phoneNumber" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Số điện thoại
+              </Label>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                placeholder="0912345678"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 required
                 disabled={isLoading}
                 className="transition-all focus:ring-2 focus:ring-primary/20"

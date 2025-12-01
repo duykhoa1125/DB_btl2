@@ -11,8 +11,9 @@ const authService = {
 
     /**
      * User registration (users only, not admins)
+     * Backend returns { success: true } on success, no token.
      */
-    register: (data: RegisterRequest): Promise<AuthResponse> => {
+    register: (data: RegisterRequest): Promise<void> => {
         return axiosClient.post('/auth/register', data);
     },
 
@@ -36,15 +37,19 @@ const authService = {
 
     /**
      * Update user profile (users only)
+     * @warning Not fully implemented in backend yet
      */
     updateProfile: (data: Partial<Omit<Account, 'phone_number'>>): Promise<Account> => {
+        // TODO: Implement backend endpoint
         return axiosClient.put('/auth/profile', data);
     },
 
     /**
      * Change password (both user and admin)
+     * @warning Not fully implemented in backend yet
      */
     changePassword: (oldPassword: string, newPassword: string): Promise<void> => {
+        // TODO: Implement backend endpoint
         return axiosClient.put('/auth/password', { old_password: oldPassword, new_password: newPassword });
     },
 };
