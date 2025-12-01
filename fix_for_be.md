@@ -103,3 +103,23 @@ Backend query thiếu các columns cần thiết cho reviews. Frontend expects o
 ## 3. BookingRoute (`server/src/routes/booking_route.js`)
 
 - **Middleware**: Thêm `authenticateToken` vào các route `/` (POST) và `/history` (GET) để xác thực user.
+
+# Sửa lỗi Backend - Tóm tắt
+
+## File sửa: `server/src/services/booking_service.js`
+
+| Lỗi                                                            | Sửa                                                            |
+| -------------------------------------------------------------- | -------------------------------------------------------------- |
+| Insert vé dùng `ma_phim`                                       | Đổi sang `ten_phim` (bảng `Ve` yêu cầu VARCHAR(50))            |
+| `ngay_chieu` là Date object, ghép với time bị sai              | Chuyển về string `YYYY-MM-DD` trước khi ghép                   |
+| Insert `DoAn` thiếu `ngay_san_xuat`, `ngay_het_han` (NOT NULL) | Thêm 2 helper: `getCurrentDateStr()`, `getFutureDateStr(days)` |
+| Tổng tiền đồ ăn chỉ cộng `f.price`                             | Sửa thành `f.price * f.quantity`                               |
+
+## Nguyên nhân lỗi frontend
+
+Khi SQL insert thất bại → backend throw error → response undefined → frontend truy cập `response.phone` gây lỗi `Cannot read properties of undefined`.
+
+## Ghi chú
+
+- Không thay đổi schema SQL
+- Backend port 5000, Frontend port 3000
