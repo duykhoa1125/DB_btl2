@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import adminService from "@/services/adminService";
+import adminService, { type TopRevenueMovie } from "@/services/adminService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Film,
@@ -10,6 +10,7 @@ import {
   DollarSign,
   PlayCircle,
   CalendarClock,
+  TrendingUp,
 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/page-header";
 
@@ -22,15 +23,22 @@ export default function AdminDashboard() {
     monthly_revenue: 0,
     bookings_this_month: 0,
   });
+  const [topRevenueMovies, setTopRevenueMovies] = useState<TopRevenueMovie[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await adminService.getDashboardStats();
-        setStats(data);
+        const [statsData, topRevenueData] = await Promise.all([
+          adminService.getDashboardStats(),
+          adminService.getTopRevenue(),
+        ]);
+        setStats(statsData);
+        setTopRevenueMovies(topRevenueData);
       } catch (error) {
-        console.error("Failed to load dashboard stats:", error);
+        console.error("Failed to load dashboard data:", error);
       } finally {
         setLoading(false);
       }
@@ -160,6 +168,61 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Top Revenue Movies Section */}
+      <Card className="overflow-hidden border-border/50 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg bg-orange-500/20 p-2">
+              <TrendingUp className="h-5 w-5 text-orange-600" />
+            </div>
+            <div>
+              <CardTitle>Phim có doanh thu cao nhất</CardTitle>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {topRevenueMovies.length} phim đạt doanh thu cao nhất
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {topRevenueMovies.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">
+              Chưa có dữ liệu doanh thu
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {topRevenueMovies.map((movie, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-orange-500/5 to-transparent border border-border/30 hover:border-orange-500/30 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-orange-500/20 font-bold text-orange-600">
+                      #{index + 1}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">
+                        {movie.ten_phim}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Top Revenue Movie
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {movie.tong_doanh_thu.toLocaleString("vi-VN")} đ
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Tổng doanh thu
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

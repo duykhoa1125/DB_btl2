@@ -82,15 +82,6 @@ export function Header() {
             <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
 
-          {/* <Link
-            href="/promotions"
-            className="group relative flex items-center gap-2 rounded-lg px-2 lg:px-4 py-2 text-sm font-medium text-foreground/80 transition-all hover:text-primary whitespace-nowrap after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:left-0 group-hover:after:w-full"
-          >
-            <Gift className="h-4 w-4 transition-colors group-hover:text-primary" />
-            <span className="relative z-10 transition-colors group-hover:text-primary hidden lg:inline">Khuyến mãi</span>
-            <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
-          </Link> */}
-
           <Link
             href="/about"
             className="group relative flex items-center gap-2 rounded-lg px-2 lg:px-4 py-2 text-sm font-medium text-foreground/80 transition-all hover:text-primary whitespace-nowrap after:absolute after:bottom-0 after:left-1/2 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 group-hover:after:left-0 group-hover:after:w-full"

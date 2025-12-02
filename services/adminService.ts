@@ -10,6 +10,11 @@ interface DashboardStats {
   bookings_this_month: number;
 }
 
+export interface TopRevenueMovie {
+  ten_phim: string;
+  tong_doanh_thu: number;
+}
+
 const adminService = {
   // ============ MOVIES CRUD ============
 
@@ -207,6 +212,10 @@ const adminService = {
    */
   getDashboardStats: (): Promise<DashboardStats> => {
     return axiosClient.get("/admin/stats");
+  },
+
+  getTopRevenue: (): Promise<TopRevenueMovie[]> => {
+    return axiosClient.get("/movies/top-revenue");
   },
 };
 

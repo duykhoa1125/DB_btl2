@@ -9,7 +9,5 @@ export { default as foodService, type FoodMenuItem } from './foodService';
 export { default as voucherService } from './voucherService';
 export { default as eventService } from './eventService';
 export { default as promotionalService } from './promotionalService';
-export { default as reviewService } from './reviewService';
-export { default as membershipService } from './membershipService';
 
 export * from './types';
