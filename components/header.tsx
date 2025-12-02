@@ -123,8 +123,8 @@ export function Header() {
                       <AvatarImage
                         src={
                           currentUser.role === "user"
-                            ? currentUser.avatar || "/placeholder.svg"
-                            : "/placeholder.svg"
+                            ? currentUser.avatar || "/user.png"
+                            : "/user.png"
                         }
                         alt={
                           currentUser.role === "user"

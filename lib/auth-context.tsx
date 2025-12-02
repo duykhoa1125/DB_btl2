@@ -20,7 +20,6 @@ interface AuthContextType {
     gender: "male" | "female" | "unknown"
   ) => Promise<boolean>;
   logout: () => void;
-  updateProfile: (updates: Partial<Account>) => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -135,28 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/account/login");
   };
 
-  const updateProfile = async (updates: Partial<Account>) => {
-    if (!currentUser || currentUser.role !== "user") {
-      console.error("Can only update user profiles");
-      return;
-    }
-
-    try {
-      const updatedUser = await authService.updateProfile(updates);
-
-      // Update local state
-      const newUser: AuthenticatedUser = {
-        ...updatedUser,
-        role: "user",
-      };
-
-      setCurrentUser(newUser);
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
-    } catch (error) {
-      console.error("Failed to update profile:", error);
-      throw error;
-    }
-  };
+  
 
   const isAdmin = currentUser?.role === "admin";
 
@@ -168,7 +146,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         logout,
-        updateProfile,
         isAdmin,
       }}
     >

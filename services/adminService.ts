@@ -22,13 +22,6 @@ const adminService = {
   },
 
   /**
-   * Get movie by ID (admin)
-   */
-  getMovieById: (id: string): Promise<Movie> => {
-    return axiosClient.get(`/movies/${id}`);
-  },
-
-  /**
    * Create new movie (admin)
    */
   createMovie: (data: Omit<Movie, "movie_id">): Promise<Movie> => {

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
-import { Separator } from "@/components/ui/separator";
 import type { Seat, Food } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
 import { type FoodMenuItem } from "@/services";

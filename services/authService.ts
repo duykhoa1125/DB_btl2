@@ -34,24 +34,6 @@ const authService = {
     getCurrentUser: (): Promise<AuthenticatedUser> => {
         return axiosClient.get('/auth/me');
     },
-
-    /**
-     * Update user profile (users only)
-     * @warning Not fully implemented in backend yet
-     */
-    updateProfile: (data: Partial<Omit<Account, 'phone_number'>>): Promise<Account> => {
-        // TODO: Implement backend endpoint
-        return axiosClient.put('/auth/profile', data);
-    },
-
-    /**
-     * Change password (both user and admin)
-     * @warning Not fully implemented in backend yet
-     */
-    changePassword: (oldPassword: string, newPassword: string): Promise<void> => {
-        // TODO: Implement backend endpoint
-        return axiosClient.put('/auth/password', { old_password: oldPassword, new_password: newPassword });
-    },
 };
 
 export default authService;

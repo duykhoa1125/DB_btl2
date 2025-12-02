@@ -20,13 +20,6 @@ const membershipService = {
     }> => {
         return axiosClient.get('/memberships/progress', { params: { points } });
     },
-
-    /**
-     * Get membership level by points
-     */
-    getLevelByPoints: (points: number): Promise<Member> => {
-        return axiosClient.get('/memberships/level', { params: { points } });
-    },
 };
 
 export default membershipService;
