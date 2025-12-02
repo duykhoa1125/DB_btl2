@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { Film, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import {
+  Film,
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Instagram,
+  Twitter,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -18,10 +26,13 @@ export function Footer() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
                 <Film className="h-6 w-6 text-primary-foreground" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">CinemaHub</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                CinemaHub
+              </span>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Nền tảng đặt vé phim trực tuyến hàng đầu Việt Nam. Trải nghiệm điện ảnh tuyệt vời mọi lúc, mọi nơi.
+              Nền tảng đặt vé phim trực tuyến hàng đầu Việt Nam. Trải nghiệm
+              điện ảnh tuyệt vời mọi lúc, mọi nơi.
             </p>
             <div className="flex gap-3">
               {[Facebook, Instagram, Twitter].map((Icon, i) => (
@@ -42,7 +53,7 @@ export function Footer() {
             <ul className="space-y-4 text-sm">
               {[
                 { label: "Trang chủ", href: "/" },
-                { label: "Vé của tôi", href: "/account/order-history" },
+                { label: "Lịch sử đơn", href: "/account/order-history" },
                 { label: "Khuyến mãi", href: "/promotions" },
                 { label: "Về chúng tôi", href: "/about" },
               ].map((link) => (
@@ -78,7 +89,9 @@ export function Footer() {
                 </div>
                 <div className="space-y-0.5">
                   <p className="font-medium text-foreground">Email</p>
-                  <span className="text-muted-foreground">support@cinemahub.vn</span>
+                  <span className="text-muted-foreground">
+                    support@cinemahub.vn
+                  </span>
                 </div>
               </li>
               <li className="flex items-start gap-3 group">
@@ -87,7 +100,9 @@ export function Footer() {
                 </div>
                 <div className="space-y-0.5">
                   <p className="font-medium text-foreground">Địa chỉ</p>
-                  <span className="text-muted-foreground">123 Nguyễn Huệ, Q.1, TP.HCM</span>
+                  <span className="text-muted-foreground">
+                    123 Nguyễn Huệ, Q.1, TP.HCM
+                  </span>
                 </div>
               </li>
             </ul>
@@ -105,7 +120,10 @@ export function Footer() {
                 placeholder="Email của bạn"
                 className="h-10 bg-background/50 border-border/50 focus:border-primary/50"
               />
-              <Button size="sm" className="shrink-0 h-10 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+              <Button
+                size="sm"
+                className="shrink-0 h-10 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+              >
                 Đăng ký
               </Button>
             </div>
@@ -115,9 +133,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-16 border-t border-border/40 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground md:flex-row">
-            <p>
-              © {new Date().getFullYear()} CinemaHub. All rights reserved.
-            </p>
+            <p>© {new Date().getFullYear()} CinemaHub. All rights reserved.</p>
             <div className="flex gap-8">
               <Link href="#" className="transition-colors hover:text-primary">
                 Điều khoản

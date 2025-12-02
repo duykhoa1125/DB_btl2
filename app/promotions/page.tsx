@@ -254,7 +254,6 @@ export default function PromotionsPage() {
         {/* Decorative elements - Bottom Right Corner */}
         <div className="absolute -bottom-3 -right-3 h-6 w-6 rounded-full bg-background border border-border group-hover:border-primary/40 transition-all duration-300" />
 
-
         <div className="relative p-4 flex gap-4 items-center justify-between">
           {/* Main Voucher Info */}
           <div className="flex-1 space-y-3">

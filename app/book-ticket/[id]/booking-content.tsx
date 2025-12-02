@@ -170,17 +170,10 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
     if (voucher === null) {
       setDiscountAmount(0);
     } else {
-      // Calculate discount amount based on percentage
-      if (voucher.discount) {
-        const calculatedDiscount = (subtotal * discount) / 100;
-        // Apply max reduction cap if exists
-        const finalDiscount = voucher.discount.max_price_can_reduce
-          ? Math.min(calculatedDiscount, voucher.discount.max_price_can_reduce)
-          : calculatedDiscount;
-        setDiscountAmount(finalDiscount);
-      } else {
-        setDiscountAmount(0);
-      }
+      // Apply 10% discount to match backend logic (booking_service.js line 103: total *= 0.9)
+      // Backend applies the actual discount, this is just for preview
+      const calculatedDiscount = Math.round(subtotal * 0.1);
+      setDiscountAmount(calculatedDiscount);
     }
   };
 
@@ -435,7 +428,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                     </div>
                     {discountAmount > 0 && (
                       <div className="flex justify-between text-sm text-green-500">
-                        <span>Khuyến mãi</span>
+                        <span>Voucher (Giảm 10%)</span>
                         <span>-{discountAmount.toLocaleString("vi-VN")}₫</span>
                       </div>
                     )}

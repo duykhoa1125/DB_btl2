@@ -56,7 +56,7 @@ export function OrderHistoryList() {
         <div className="mb-12 text-center space-y-6">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Ticket className="w-4 h-4" />
-            <span>Vé Của Tôi</span>
+            <span>Lịch sử đơn</span>
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 tracking-tight">

@@ -47,62 +47,67 @@ export function VoucherInput({
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const applyCode = useCallback(async (voucherCode: string) => {
-    if (!voucherCode.trim()) {
-      setError("Vui lòng nhập mã khuyến mại");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const voucher = await voucherService.getDetailByCode(voucherCode.toUpperCase()) as VoucherDetail;
-
-      if (!voucher) {
-        setError("Mã khuyến mại không tồn tại");
-        toast({
-          title: "Lỗi",
-          description: "Mã khuyến mại không tồn tại hoặc đã hết hạn",
-          variant: "destructive",
-        });
+  const applyCode = useCallback(
+    async (voucherCode: string) => {
+      if (!voucherCode.trim()) {
+        setError("Vui lòng nhập mã khuyến mại");
         return;
       }
 
-      if (voucher.state !== "active") {
-        setError("Mã khuyến mại đã hết hạn hoặc đã được sử dụng");
+      setLoading(true);
+      try {
+        const voucher = (await voucherService.getDetailByCode(
+          voucherCode.toUpperCase()
+        )) as VoucherDetail;
+
+        if (!voucher) {
+          setError("Mã khuyến mại không tồn tại");
+          toast({
+            title: "Lỗi",
+            description: "Mã khuyến mại không tồn tại hoặc đã hết hạn",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (voucher.state !== "active") {
+          setError("Mã khuyến mại đã hết hạn hoặc đã được sử dụng");
+          toast({
+            title: "Lỗi",
+            description: "Mã khuyến mại đã hết hạn hoặc đã được sử dụng",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        setError("");
+        let discount = 0;
+        if (voucher.discount) {
+          discount = voucher.discount.percent_reduce;
+        }
+
+        onVoucherApply?.(voucher, discount);
+
+        toast({
+          title: "Thành công",
+          description: `Mã ${voucherCode.toUpperCase()} đã được áp dụng. Bạn sẽ nhận được ưu đãi khi hoàn tất đặt vé.`,
+        });
+
+        setCode("");
+      } catch (error) {
+        console.error("Failed to apply voucher:", error);
+        setError("Có lỗi xảy ra khi áp dụng mã khuyến mại");
         toast({
           title: "Lỗi",
-          description: "Mã khuyến mại đã hết hạn hoặc đã được sử dụng",
+          description: "Có lỗi xảy ra khi áp dụng mã khuyến mại",
           variant: "destructive",
         });
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      setError("");
-      let discount = 0;
-      if (voucher.discount) {
-        discount = voucher.discount.percent_reduce;
-      }
-
-      onVoucherApply?.(voucher, discount);
-
-      toast({
-        title: "Thành công",
-        description: `Đã áp dụng mã ${voucherCode.toUpperCase()}`,
-      });
-
-      setCode("");
-    } catch (error) {
-      console.error('Failed to apply voucher:', error);
-      setError("Có lỗi xảy ra khi áp dụng mã khuyến mại");
-      toast({
-        title: "Lỗi",
-        description: "Có lỗi xảy ra khi áp dụng mã khuyến mại",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [onVoucherApply, toast]);
+    },
+    [onVoucherApply, toast]
+  );
 
   const handleApply = () => {
     applyCode(code);
@@ -130,7 +135,7 @@ export function VoucherInput({
               </p>
               <p className="text-sm text-green-600/80 dark:text-green-400/80">
                 {appliedVoucher.discount
-                  ? `Giảm ${appliedVoucher.discount.percent_reduce}%`
+                  ? `Giảm ${appliedVoucher.discount.percent_reduce}% cho đơn hàng`
                   : `Quà tặng: ${
                       appliedVoucher.gift?.name || "Quà tặng đặc biệt"
                     }`}
