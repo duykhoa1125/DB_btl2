@@ -38,15 +38,13 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const success = await login(identifier, password);
-
-      if (!success) {
-        setError("Email/Số điện thoại hoặc mật khẩu không đúng");
-      }
+      await login(identifier, password);
       // If success, auth-context will handle redirect
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err);
-      setError("Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.");
+      setError(
+        err?.message || "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau."
+      );
     } finally {
       setIsLoading(false);
     }

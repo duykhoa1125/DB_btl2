@@ -1,15 +1,36 @@
 const { executeQuery } = require("../models/connect_sql");
 const jwt = require("jsonwebtoken");
 
+// Helper function to map frontend gender to database gender
+const mapGenderToDb = (frontendGender) => {
+  const mapping = {
+    male: "Nam",
+    female: "Nữ",
+    unknown: "Khác",
+  };
+  return mapping[frontendGender] || "Khác";
+};
+
+// Helper function to map database gender to frontend gender
+const mapGenderFromDb = (dbGender) => {
+  const mapping = {
+    Nam: "male",
+    Nữ: "female",
+    Khác: "unknown",
+  };
+  return mapping[dbGender] || "unknown";
+};
+
 class LoginService {
   async login(identifier, password) {
+    // Hardcoded admin login
     if (identifier === "admin" && password === "123456789") {
       const user = {
         phone_number: "0000000000",
         email: "admin@example.com",
         fullname: "Administrator",
         birth_date: new Date(),
-        gender: "Nam",
+        gender: "male",
         avatar: "",
         membership_points: 0,
         registration_date: new Date(),
@@ -22,31 +43,45 @@ class LoginService {
       const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: "24h" });
       return { token, user };
     }
-    // verify user
+
+    // Verify user exists
     let userResult = null;
     if (identifier.includes("@")) {
-      // nếu là email thì verify trong tài khoản khách hàng thôi
+      // Email login
       userResult = await executeQuery(
         `
-                SELECT so_dien_thoai, email, ho_ten, ngay_sinh, gioi_tinh, anh_dai_dien, diem_tich_luy, ngay_dang_ky
+                SELECT so_dien_thoai, email, mat_khau, ho_ten, ngay_sinh, gioi_tinh, anh_dai_dien, diem_tich_luy, ngay_dang_ky
                 FROM TaiKhoan WHERE email=? 
             `,
         [identifier]
       );
     } else {
-      // nếu là sđt thì tìm trong cả 2
+      // Phone login
       userResult = await executeQuery(
         `
-                SELECT so_dien_thoai, email, ho_ten, ngay_sinh, gioi_tinh, anh_dai_dien, diem_tich_luy, ngay_dang_ky
+                SELECT so_dien_thoai, email, mat_khau, ho_ten, ngay_sinh, gioi_tinh, anh_dai_dien, diem_tich_luy, ngay_dang_ky
                 FROM TaiKhoan WHERE so_dien_thoai=? 
             `,
         [identifier]
       );
     }
-    const phone = userResult[0].so_dien_thoai;
-    let role = "user";
-    // tìm loại tài khoản
 
+    // Check if user exists
+    if (!userResult || userResult.length === 0) {
+      throw new Error("Invalid credentials");
+    }
+
+    const dbUser = userResult[0];
+
+    // Verify password
+    if (password !== dbUser.mat_khau) {
+      throw new Error("Invalid credentials");
+    }
+
+    const phone = dbUser.so_dien_thoai;
+    let role = "user";
+
+    // Check if user is an employee (admin)
     const roleResult = await executeQuery(
       `
             SELECT ma_nhan_vien FROM NhanVien WHERE so_dien_thoai=?    
@@ -56,14 +91,14 @@ class LoginService {
     if (roleResult.length > 0) role = "admin";
 
     const user = {
-      phone_number: phone, // PK
-      email: userResult[0].email,
-      fullname: userResult[0].ho_ten,
-      birth_date: userResult[0].ngay_sinh,
-      gender: userResult[0].gioi_tinh,
-      avatar: userResult[0].anh_dai_dien,
-      membership_points: userResult[0].diem_tich_luy,
-      registration_date: userResult[0].ngay_dang_ky,
+      phone_number: phone,
+      email: dbUser.email,
+      fullname: dbUser.ho_ten,
+      birth_date: dbUser.ngay_sinh,
+      gender: mapGenderFromDb(dbUser.gioi_tinh),
+      avatar: dbUser.anh_dai_dien,
+      membership_points: dbUser.diem_tich_luy,
+      registration_date: dbUser.ngay_dang_ky,
       role: role,
     };
 
@@ -75,8 +110,9 @@ class LoginService {
 
     return { token, user };
   }
+
   async register(phone, email, password, fullname, birthdate, gender) {
-    // tìm xem tài khoản đã tồn tại chưa
+    // Check if account already exists
     const userResult = await executeQuery(
       `
             SELECT so_dien_thoai FROM TaiKhoan WHERE so_dien_thoai=? 
@@ -84,24 +120,57 @@ class LoginService {
       [phone]
     );
     if (userResult.length > 0)
-      throw new Error("An account with this phone number is already existed!");
+      throw new Error("An account with this phone number already exists!");
 
-    // nếu chưa thì tạo
+    // Map gender from frontend format to database format
+    const dbGender = mapGenderToDb(gender);
+
+    // Create new account
     await executeQuery(
       `
             INSERT INTO TaiKhoan (so_dien_thoai, email, mat_khau, ho_ten, ngay_sinh, gioi_tinh)
             VALUES (?, ?, ?, ?, ?, ?);    
         `,
-      [phone, email, password, fullname, birthdate, gender]
+      [phone, email, password, fullname, birthdate, dbGender]
     );
   }
+
   async getMyInfo(phone) {
     const result = await executeQuery(
       `
-            SELECT * FROM TaiKhoan WHERE so_dien_thoai=? 
+            SELECT so_dien_thoai, email, ho_ten, ngay_sinh, gioi_tinh, anh_dai_dien, diem_tich_luy, ngay_dang_ky
+            FROM TaiKhoan WHERE so_dien_thoai=? 
         `,
       [phone]
     );
+
+    if (!result || result.length === 0) {
+      throw new Error("User not found");
+    }
+
+    const dbUser = result[0];
+    let role = "user";
+
+    // Check if user is an employee (admin)
+    const roleResult = await executeQuery(
+      `
+            SELECT ma_nhan_vien FROM NhanVien WHERE so_dien_thoai=?    
+        `,
+      [phone]
+    );
+    if (roleResult.length > 0) role = "admin";
+
+    return {
+      phone_number: dbUser.so_dien_thoai,
+      email: dbUser.email,
+      fullname: dbUser.ho_ten,
+      birth_date: dbUser.ngay_sinh,
+      gender: mapGenderFromDb(dbUser.gioi_tinh),
+      avatar: dbUser.anh_dai_dien,
+      membership_points: dbUser.diem_tich_luy,
+      registration_date: dbUser.ngay_dang_ky,
+      role: role,
+    };
   }
 }
 

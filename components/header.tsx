@@ -24,7 +24,7 @@ import {
   Shield,
 } from "lucide-react";
 
-import { MovieSearch } from "@/components/movie-search";
+// import { MovieSearch } from "@/components/movie-search";
 
 export function Header() {
   const { currentUser, logout, isAdmin } = useAuth();
@@ -43,9 +43,9 @@ export function Header() {
         </Link>
 
         {/* Search Bar */}
-        <div className="hidden md:block flex-1 max-w-md mx-4">
+        {/* <div className="hidden md:block flex-1 max-w-md mx-4">
           <MovieSearch />
-        </div>
+        </div> */}
 
         {/* Navigation */}
         <nav className="flex items-center gap-1">
@@ -155,9 +155,7 @@ export function Header() {
                         : currentUser.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {currentUser.role === "user"
-                        ? currentUser.email
-                        : `Staff ID: ${currentUser.staff_id}`}
+                      {currentUser.role === "user" ? currentUser.email : ""}
                     </p>
                     {isAdmin && (
                       <p className="mt-1 text-xs font-medium text-primary">
@@ -166,25 +164,32 @@ export function Header() {
                     )}
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/account/profile"
-                      className="flex items-center gap-2"
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Hồ sơ</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/account/order-history"
-                      className="flex items-center gap-2"
-                    >
-                      <Ticket className="h-4 w-4" />
-                      <span>Lịch sử đơn</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
+                  {!isAdmin ? (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/account/profile"
+                          className="flex items-center gap-2"
+                        >
+                          <User className="h-4 w-4" />
+                          <span>Hồ sơ</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/account/order-history"
+                          className="flex items-center gap-2"
+                        >
+                          <Ticket className="h-4 w-4" />
+                          <span>Lịch sử đơn</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  ) : (
+                    ""
+                  )}
+
                   <DropdownMenuItem
                     onClick={logout}
                     className="cursor-pointer text-red-600 focus:text-red-600"

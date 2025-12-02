@@ -84,9 +84,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }, 100);
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed:", error);
-      return false;
+      // Propagate the error message from backend if available
+      const errorMessage =
+        error?.response?.data?.error ||
+        "Email/Số điện thoại hoặc mật khẩu không đúng";
+      throw new Error(errorMessage);
     }
   };
 
@@ -110,9 +114,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // No auto-login, just return true
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration failed:", error);
-      return false;
+      // Propagate the error message from backend if available
+      const errorMessage =
+        error?.response?.data?.error || "Đăng ký thất bại. Vui lòng thử lại.";
+      throw new Error(errorMessage);
     }
   };
 

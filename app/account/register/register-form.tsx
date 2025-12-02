@@ -24,7 +24,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Mail, Lock, Loader2, Calendar, Users } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  Loader2,
+  Calendar,
+  Users,
+  AlertCircle,
+} from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -37,46 +46,39 @@ export function RegisterForm() {
     "unknown"
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const { register } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (password !== confirmPassword) {
-      toast({
-        title: "Lỗi",
-        description: "Mật khẩu không khớp.",
-        variant: "destructive",
-      });
+      setError("Mật khẩu xác nhận không khớp. Vui lòng kiểm tra lại.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const success = await register(
-        phoneNumber,
-        email,
-        password,
-        fullName,
-        birthDate,
-        gender
-      );
-      if (success) {
-        toast({
-          title: "Đăng ký thành công",
-          description: "Tài khoản của bạn đã được tạo. Vui lòng đăng nhập.",
-        });
-        router.push("/account/login");
-      } else {
-        toast({
-          title: "Đăng ký thất bại",
-          description: "Số điện thoại hoặc Email này đã được sử dụng.",
-          variant: "destructive",
-        });
-      }
+      await register(phoneNumber, email, password, fullName, birthDate, gender);
+
+      // Success - show toast and redirect
+      toast({
+        title: "Đăng ký thành công",
+        description: "Tài khoản của bạn đã được tạo. Vui lòng đăng nhập.",
+      });
+      router.push("/account/login");
+    } catch (err: any) {
+      console.error("Registration error:", err);
+      setError(err?.message || "Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -96,6 +98,13 @@ export function RegisterForm() {
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="fullName" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
