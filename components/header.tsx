@@ -24,7 +24,6 @@ import {
   Shield,
 } from "lucide-react";
 
-// import { MovieSearch } from "@/components/movie-search";
 
 export function Header() {
   const { currentUser, logout, isAdmin } = useAuth();

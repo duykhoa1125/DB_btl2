@@ -22,8 +22,11 @@ class AdminController {
         language,
         status,
         summary,
+        image,
+        directors,
+        actors,
       } = req.body;
-      await AdminService.createMovie(
+      const movieId = await AdminService.createMovie(
         title,
         duration,
         releaseDate,
@@ -32,9 +35,12 @@ class AdminController {
         trailer,
         language,
         status,
-        summary
+        summary,
+        image,
+        directors,
+        actors
       );
-      res.json({ success: true });
+      res.json({ success: true, movie_id: movieId });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
     }
@@ -52,7 +58,10 @@ class AdminController {
         req.body.trailer,
         req.body.language,
         req.body.status,
-        req.body.summary
+        req.body.summary,
+        req.body.image,
+        req.body.directors,
+        req.body.actors
       );
       res.json({ success: true });
     } catch (error) {

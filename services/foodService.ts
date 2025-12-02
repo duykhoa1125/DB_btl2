@@ -30,9 +30,6 @@ const foodService = {
     try {
       const data = await axiosClient.get("/other/foods/menu");
       const items = Array.isArray(data) ? data : [];
-    //   if (items.length === 0) {
-    //     return defaultFoodMenu;
-    //   }
       // Dedupe by name to create a menu from sold items
       const uniqueItems = new Map<string, FoodMenuItem>();
       items.forEach((item: any) => {

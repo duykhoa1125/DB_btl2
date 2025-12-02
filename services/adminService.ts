@@ -29,7 +29,11 @@ const adminService = {
   /**
    * Create new movie (admin)
    */
-  createMovie: (data: Omit<Movie, "movie_id">): Promise<Movie> => {
+  createMovie: (
+    data: Omit<Movie, "movie_id">,
+    directors?: string[],
+    actors?: string[]
+  ): Promise<Movie> => {
     // Map frontend fields to backend fields
     const backendData = {
       title: data.name,
@@ -41,7 +45,9 @@ const adminService = {
       language: data.language,
       status: data.status,
       summary: data.synopsis,
-      // image is not supported by backend
+      image: data.image,
+      directors: directors || [],
+      actors: actors || [],
     };
     return axiosClient.post("/admin/movies", backendData);
   },
@@ -51,7 +57,9 @@ const adminService = {
    */
   updateMovie: (
     id: string,
-    data: Partial<Omit<Movie, "movie_id">>
+    data: Partial<Omit<Movie, "movie_id">>,
+    directors?: string[],
+    actors?: string[]
   ): Promise<Movie> => {
     const backendData: any = {};
     if (data.name !== undefined) backendData.title = data.name;
@@ -64,6 +72,9 @@ const adminService = {
     if (data.language !== undefined) backendData.language = data.language;
     if (data.status !== undefined) backendData.status = data.status;
     if (data.synopsis !== undefined) backendData.summary = data.synopsis;
+    if (data.image !== undefined) backendData.image = data.image;
+    if (directors !== undefined) backendData.directors = directors;
+    if (actors !== undefined) backendData.actors = actors;
 
     return axiosClient.put(`/admin/movies/${id}`, backendData);
   },
@@ -157,13 +168,13 @@ const adminService = {
    * Get showtime by ID (admin)
    */
   getShowtimeById: async (id: string): Promise<Showtime> => {
-    const data = await axiosClient.get(`/admin/showtimes/${id}`);
+    const response: any = await axiosClient.get(`/admin/showtimes/${id}`);
     // Format date for input
-    if (data.start_date) {
-      const date = new Date(data.start_date);
-      data.start_date = date.toISOString().split("T")[0];
+    if (response.start_date) {
+      const date = new Date(response.start_date);
+      response.start_date = date.toISOString().split("T")[0];
     }
-    return data;
+    return response as Showtime;
   },
 
   /**

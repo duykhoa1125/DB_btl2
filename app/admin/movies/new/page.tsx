@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 export default function NewMoviePage() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function NewMoviePage() {
   const [formData, setFormData] = useState({
     name: "",
     synopsis: "",
-    // image removed
+    image: "",
     status: "showing" as "showing" | "upcoming" | "ended",
     duration: "",
     release_date: "",
@@ -35,14 +36,40 @@ export default function NewMoviePage() {
     language: "en" as "en" | "vi" | "ko" | "ja",
     trailer: "",
   });
+  const [directors, setDirectors] = useState<string[]>([]);
+  const [actors, setActors] = useState<string[]>([]);
+  const [newDirector, setNewDirector] = useState("");
+  const [newActor, setNewActor] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleAddDirector = () => {
+    if (newDirector.trim() && !directors.includes(newDirector.trim())) {
+      setDirectors([...directors, newDirector.trim()]);
+      setNewDirector("");
+    }
+  };
+
+  const handleRemoveDirector = (index: number) => {
+    setDirectors(directors.filter((_, i) => i !== index));
+  };
+
+  const handleAddActor = () => {
+    if (newActor.trim() && !actors.includes(newActor.trim())) {
+      setActors([...actors, newActor.trim()]);
+      setNewActor("");
+    }
+  };
+
+  const handleRemoveActor = (index: number) => {
+    setActors(actors.filter((_, i) => i !== index));
+  };
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.synopsis.trim()) newErrors.synopsis = "Synopsis is required";
-    // image validation removed
+    if (!formData.image.trim()) newErrors.image = "Image URL is required";
 
     const duration = Number(formData.duration);
     if (!formData.duration || duration <= 0)
@@ -85,7 +112,7 @@ export default function NewMoviePage() {
       const movieData: Omit<Movie, "movie_id"> = {
         name: formData.name,
         synopsis: formData.synopsis,
-        image: "", // Backend doesn't support image, sending empty string or handled by service
+        image: formData.image,
         status: formData.status,
         duration: Number(formData.duration),
         release_date: formData.release_date,
@@ -95,7 +122,7 @@ export default function NewMoviePage() {
         trailer: formData.trailer || null,
       };
 
-      await adminService.createMovie(movieData);
+      await adminService.createMovie(movieData, directors, actors);
 
       toast({
         title: "Success",
@@ -171,7 +198,25 @@ export default function NewMoviePage() {
               )}
             </div>
 
-            {/* Image URL Removed */}
+            {/* Image URL */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Image URL <span className="text-destructive">*</span>
+              </label>
+              <Input
+                value={formData.image}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
+                placeholder="https://example.com/movie-poster.jpg"
+              />
+              {errors.image && (
+                <p className="text-sm text-destructive">{errors.image}</p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Enter a valid URL for the movie poster image
+              </p>
+            </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               {/* Status */}
@@ -323,6 +368,88 @@ export default function NewMoviePage() {
                   placeholder="https://www.youtube.com/watch?v=..."
                 />
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cast & Crew */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Cast & Crew</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Directors */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Directors</label>
+              <div className="flex gap-2">
+                <Input
+                  value={newDirector}
+                  onChange={(e) => setNewDirector(e.target.value)}
+                  placeholder="Enter director name"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddDirector();
+                    }
+                  }}
+                />
+                <Button type="button" onClick={handleAddDirector} size="icon">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              {directors.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {directors.map((director, index) => (
+                    <Badge key={index} variant="secondary" className="gap-1">
+                      {director}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveDirector(index)}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Actors */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Actors</label>
+              <div className="flex gap-2">
+                <Input
+                  value={newActor}
+                  onChange={(e) => setNewActor(e.target.value)}
+                  placeholder="Enter actor name"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddActor();
+                    }
+                  }}
+                />
+                <Button type="button" onClick={handleAddActor} size="icon">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              {actors.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {actors.map((actor, index) => (
+                    <Badge key={index} variant="secondary" className="gap-1">
+                      {actor}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveActor(index)}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

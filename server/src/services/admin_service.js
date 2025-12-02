@@ -46,7 +46,10 @@ class AdminService {
     trailer,
     language,
     status,
-    summary
+    summary,
+    image,
+    directors,
+    actors
   ) {
     // Generate new movie ID (PHM + 5 digits, total 8 chars like PHM00001)
     const lastMovie = await executeQuery(
@@ -62,8 +65,8 @@ class AdminService {
 
     await executeQuery(
       `
-            INSERT INTO Phim (ma_phim, ten_phim, thoi_luong, ngay_khoi_chieu, ngay_ket_thuc, do_tuoi, trailer, ngon_ngu, trang_thai, tom_tat)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Phim (ma_phim, ten_phim, thoi_luong, ngay_khoi_chieu, ngay_ket_thuc, do_tuoi, trailer, ngon_ngu, trang_thai, tom_tat, hinh_anh)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
       [
         newId,
@@ -76,8 +79,31 @@ class AdminService {
         language,
         status,
         summary,
+        image,
       ]
     );
+
+    // Insert directors
+    if (directors && Array.isArray(directors) && directors.length > 0) {
+      for (const director of directors) {
+        await executeQuery(
+          `INSERT INTO DaoDien (ma_phim, ten_dao_dien) VALUES (?, ?)`,
+          [newId, director]
+        );
+      }
+    }
+
+    // Insert actors
+    if (actors && Array.isArray(actors) && actors.length > 0) {
+      for (const actor of actors) {
+        await executeQuery(
+          `INSERT INTO DienVien (ma_phim, ten_dien_vien) VALUES (?, ?)`,
+          [newId, actor]
+        );
+      }
+    }
+
+    return newId;
   }
   async updateMovie(
     id,
@@ -89,13 +115,11 @@ class AdminService {
     trailer,
     language,
     status,
-    summary
+    summary,
+    image,
+    directors,
+    actors
   ) {
-    // const result = await executeQuery(`
-    //     UPDATE Phim
-    //     SET ...
-    //     WHERE ma_phim=?
-    // `, [id]);
     // Map tham số với tên cột trong database
     const fieldMap = {
       title: "ten_phim",
@@ -107,6 +131,7 @@ class AdminService {
       language: "ngon_ngu",
       status: "trang_thai",
       summary: "tom_tat",
+      image: "hinh_anh",
     };
 
     // Object chứa các giá trị cần update
@@ -120,6 +145,7 @@ class AdminService {
       language,
       status,
       summary,
+      image,
     };
 
     // Lọc các trường không null/undefined
@@ -133,24 +159,49 @@ class AdminService {
       }
     }
 
-    // Kiểm tra có trường nào để update không
-    if (fieldsToUpdate.length === 0) {
-      throw new Error("No fields to update!");
-    }
-
-    // Thêm id vào cuối mảng values
-    values.push(id);
-
-    // Tạo câu query
-    const query = `
+    // Update movie fields if any
+    if (fieldsToUpdate.length > 0) {
+      values.push(id);
+      const query = `
             UPDATE Phim
             SET ${fieldsToUpdate.join(", ")}
             WHERE ma_phim = ?
         `;
+      await executeQuery(query, values);
+    }
 
-    await executeQuery(query, values);
+    // Update directors if provided
+    if (directors !== undefined && Array.isArray(directors)) {
+      // Delete existing directors
+      await executeQuery(`DELETE FROM DaoDien WHERE ma_phim = ?`, [id]);
+      // Insert new directors
+      for (const director of directors) {
+        await executeQuery(
+          `INSERT INTO DaoDien (ma_phim, ten_dao_dien) VALUES (?, ?)`,
+          [id, director]
+        );
+      }
+    }
+
+    // Update actors if provided
+    if (actors !== undefined && Array.isArray(actors)) {
+      // Delete existing actors
+      await executeQuery(`DELETE FROM DienVien WHERE ma_phim = ?`, [id]);
+      // Insert new actors
+      for (const actor of actors) {
+        await executeQuery(
+          `INSERT INTO DienVien (ma_phim, ten_dien_vien) VALUES (?, ?)`,
+          [id, actor]
+        );
+      }
+    }
   }
   async deleteMovie(id) {
+    // Delete related directors first
+    await executeQuery(`DELETE FROM DaoDien WHERE ma_phim=?`, [id]);
+    // Delete related actors
+    await executeQuery(`DELETE FROM DienVien WHERE ma_phim=?`, [id]);
+    // Delete the movie
     await executeQuery(`DELETE FROM Phim WHERE ma_phim=?`, [id]);
   }
 
