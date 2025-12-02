@@ -135,3 +135,6 @@ Tóm tắt các sửa đổi chính:
 
 - `other_service.js`, `other_controller.js`, `other_route.js`
   - Tạo endpoint `GET /other/rooms` để frontend admin lấy danh sách `PhongChieu` (map về `room_id`, `cinema_id`, `name`, `state`).
+
+## fix crud admin movie
+add image, director and actors
