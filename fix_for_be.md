@@ -1,12 +1,3 @@
-# Backend Minimal Fixes - 01/12/2025
-
-## Lỗi gốc
-
-- ❌ 500 error khi load trang `/movie/PHM00001` và `/movie/PHM00002`
-- ❌ Frontend expects field names snake_case, backend trả về mixed camelCase
-- ❌ SQL error: "Unknown column 'sc.trang_thai' in 'field list'"
-
-## Files đã sửa (3 files)
 
 ### 1. ✅ `server/src/models/showtime_model.js`
 
@@ -33,23 +24,6 @@
 ## Root Cause
 
 Bảng `SuatChieu` trong database KHÔNG có column `trang_thai`. Code cũ giả định có column này → SQL error.
-
-## Kết quả
-
-- ✅ Backend trả về đúng format frontend expects
-- ✅ SQL query hoạt động với table aliases và columns đúng
-- ✅ API `/showtimes?movie_id=PHM00001` response: `{"success":true,"data":[...]}`
-- ✅ Sửa tối thiểu nhất: chỉ 3 files, không thêm dependencies
-
----
-
-# Backend Fix #2 - Movie Reviews - 01/12/2025
-
-## Lỗi gốc
-
-- ❌ Page `/movie/PHM00001` crash với error: `TypeError: Cannot read properties of undefined (reading 'replace')`
-- ❌ Frontend component `review-list.tsx` cần `phone_number`, `star_rating`, `date_written` nhưng backend chỉ trả về `review_content`
-- ❌ Backend query chỉ SELECT `noi_dung_danh_gia` → reviews thiếu thông tin
 
 ## Files đã sửa (1 file)
 
@@ -80,14 +54,6 @@ Bảng `SuatChieu` trong database KHÔNG có column `trang_thai`. Code cũ giả
 
 Backend query thiếu các columns cần thiết cho reviews. Frontend expects objects nhưng backend chỉ trả về plain strings.
 
-## Kết quả
-
-- ✅ Reviews trả về đầy đủ: `phone_number`, `star_rating`, `date_written`, `review_content`
-- ✅ `/movie/PHM00001` và các movie khác load thành công
-- ✅ Review component hiển thị đúng thông tin người dùng và đánh giá
-
-# Backend Fixes Log - Booking Flow (01/12/2025)
-
 ## 1. BookingController (`server/src/controllers/booking_controller.js`)
 
 - **Fix Critical**: Đổi `req.user.phone` thành `req.user.phone_number` để khớp với payload JWT.
@@ -104,8 +70,6 @@ Backend query thiếu các columns cần thiết cho reviews. Frontend expects o
 
 - **Middleware**: Thêm `authenticateToken` vào các route `/` (POST) và `/history` (GET) để xác thực user.
 
-# Sửa lỗi Backend - Tóm tắt
-
 ## File sửa: `server/src/services/booking_service.js`
 
 | Lỗi                                                            | Sửa                                                            |
@@ -114,16 +78,6 @@ Backend query thiếu các columns cần thiết cho reviews. Frontend expects o
 | `ngay_chieu` là Date object, ghép với time bị sai              | Chuyển về string `YYYY-MM-DD` trước khi ghép                   |
 | Insert `DoAn` thiếu `ngay_san_xuat`, `ngay_het_han` (NOT NULL) | Thêm 2 helper: `getCurrentDateStr()`, `getFutureDateStr(days)` |
 | Tổng tiền đồ ăn chỉ cộng `f.price`                             | Sửa thành `f.price * f.quantity`                               |
-
-## Nguyên nhân lỗi frontend
-
-Khi SQL insert thất bại → backend throw error → response undefined → frontend truy cập `response.phone` gây lỗi `Cannot read properties of undefined`.
-
-## Ghi chú
-
-- Không thay đổi schema SQL
-- Backend port 5000, Frontend port 3000
-
 
 # Admin Login Implementation
 
@@ -141,8 +95,6 @@ Added a hardcoded check at the beginning of the `login` function to support admi
 
 # Changelog sửa `admin_service` (server)
 
-Ngày: 2025-12-02
-
 Tóm tắt các sửa đổi chính:
 
 - Sửa lỗi tạo Movie (insert ID):
@@ -159,27 +111,6 @@ Tóm tắt các sửa đổi chính:
 
 - Sửa lỗi SQL dialect:
   - Thay `SELECT TOP 1 ...` (SQL Server) bằng `LIMIT 1` (MySQL).
-
-Kiểm tra & Test tạm thời:
-
-- Đã test tạo Movie bằng POST tới `http://localhost:5000/admin/movies` (PowerShell Invoke-RestMethod).
-
-  - Tạo thành công và ID sinh đúng dạng `PHM00006` sau khi sửa.
-  - Trường hợp NaN (PH000NaN) đã được xóa bằng API khi phát hiện.
-
-- Đã test tạo/update/delete Cinema bằng endpoint tương ứng (`/admin/cinemas`); ID được sinh dạng `RAP00007`, update/delete trả success.
-
-Ghi chú/Next step (chưa sửa tại server):
-
-- `SuatChieu` (showtimes) hiện vẫn dùng `VALUES (NULL, ...)` — database dùng `VARCHAR` cho key nên cần thêm logic sinh ID tương tự (ví dụ `SCxxxxx`).
-- Có thể cần thêm kiểm tra/ràng buộc/format cho date khi insert vào DB (DB hiện được cấp ISO timestamps từ server, nhưng frontend yêu cầu `YYYY-MM-DD`).
-- Đề xuất: Viết helper trung tâm để tạo ID cho các bảng có PK `VARCHAR` (xử lý prefix + padding) để tránh nhân bản code và lỗi parsing.
-
-Ngắn gọn: Đã chuyển insert các bảng `Phim` và `RapChieu` từ cơ chế giả định auto-increment sang sinh ID thủ công phù hợp với schema (VARCHAR PK), sửa lỗi cú pháp SQL cho MySQL, và đã test CRUD cơ bản cho movie và cinema.
-
-# Backend - Các chỉnh sửa ngắn gọn cho admin (Movie / Cinema / Showtime)
-
-> Mục tiêu: Giữ thay đổi backend tối thiểu, sửa lỗi gây ra các trường hợp frontend không hoạt động, và cung cấp các endpoint cần thiết cho giao diện admin.
 
 ### Các thay đổi chính (server/src)
 
@@ -204,34 +135,3 @@ Ngắn gọn: Đã chuyển insert các bảng `Phim` và `RapChieu` từ cơ ch
 
 - `other_service.js`, `other_controller.js`, `other_route.js`
   - Tạo endpoint `GET /other/rooms` để frontend admin lấy danh sách `PhongChieu` (map về `room_id`, `cinema_id`, `name`, `state`).
-
-### Lý do và lợi ích
-
-- Khắc phục lỗi gây ra bởi việc chèn `NULL` vào cột khóa chính kiểu `VARCHAR` (trước đó gây insert lỗi nếu không auto increment).
-- Đồng bộ hóa tên trường trả về (mapping sang camelCase) để frontend không cần chuyển đổi thủ công.
-- Tạo mã ID thống nhất giúp quản lý dễ và tránh xung đột khi insert.
-
-### Kiểm tra / Test nhanh (PowerShell)
-
-- Kiểm tra lấy chi tiết suất chiếu:
-
-```
-Invoke-RestMethod -Uri "http://localhost:5000/admin/showtimes/SCH00001" -Method GET | ConvertTo-Json -Depth 3
-```
-
-- Kiểm tra tạo suất chiếu (body):
-
-```
-Invoke-RestMethod -Uri "http://localhost:5000/admin/showtimes" -Method POST -Body (@{roomId='PHG00001'; movieId='PHM00001'; date='2025-12-02'; startTime='20:00:00'; endTime='22:00:00'} | ConvertTo-Json) -ContentType 'application/json'
-```
-
-### Ghi chú & Next steps (khuyến nghị, hạn chế sửa backend)
-
-- Đã giữ thay đổi backend tối thiểu: chỉ sửa syntax, ID-generation, và thêm endpoint thiếu.
-- Frontend nên ưu tiên map trường (example: `ma_phim` → `movie_id`, `ma_phong` → `room_id`, `tronng_thai` → `state`) để tránh sửa rộng backend.
-- Tùy chọn: Controller `createShowtime` có thể gửi về `createdId` trong response để frontend biết id mới ngay lập tức.
-- Đảm bảo timezone & date format ở frontend (input `YYYY-MM-DD`) khớp khi gửi `ngay_chieu` đến DB.
-
----
-
-Ngắn gọn: sửa SQL Server → MySQL syntax, thêm generation ID cho PK VARCHAR, thêm endpoint `GET /admin/showtimes/:id`, thêm `/other/rooms` endpoint, và map trường trả về cho frontend.
