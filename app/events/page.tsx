@@ -33,13 +33,7 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  const activeEvents = events; // Show all events including past ones
-  // const activeEvents = events.filter((e) => {
-  //   const today = new Date().toISOString().split("T")[0];
-  //   return e.end_date >= today;
-  // });
-
-  const filteredEvents = activeEvents.filter((event) => {
+  const filteredEvents = events.filter((event) => {
     return (
       event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (event.description || "").toLowerCase().includes(searchTerm.toLowerCase())
