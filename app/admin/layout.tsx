@@ -11,9 +11,11 @@ import {
   Users,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   {
@@ -45,8 +47,13 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, isLoading, isAdmin } = useAuth();
+  const { currentUser, isLoading, isAdmin, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/account/login");
+  };
 
   // Protect admin routes - redirect if not admin
   useEffect(() => {
@@ -166,6 +173,18 @@ export default function AdminLayout({
             );
           })}
         </nav>
+
+        {/* Logout Button */}
+        <div className="p-4 border-t border-border/40">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="w-full justify-start gap-3 rounded-2xl px-4 py-3.5 text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Đăng xuất</span>
+          </Button>
+        </div>
       </aside>
 
       {/* Main Content */}
