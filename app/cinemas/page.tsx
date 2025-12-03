@@ -75,18 +75,6 @@ export default function CinemasPage() {
                   <span>{cinema.address}</span>
                 </div>
               </CardContent>
-
-              <CardFooter className="p-6 pt-0 mt-auto">
-                <Button
-                  className="w-full h-12 text-base rounded-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 group/btn"
-                  asChild
-                >
-                  <Link href={`/cinemas/${cinema.cinema_id}`}>
-                    <span>Xem Lịch Chiếu</span>
-                    <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover/btn:translate-x-1" />
-                  </Link>
-                </Button>
-              </CardFooter>
             </Card>
           ))}
         </div>

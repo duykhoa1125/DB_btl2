@@ -29,18 +29,6 @@ export function CinemaCard({ cinema }: CinemaCardProps) {
           <span className="line-clamp-2">{cinema.address}</span>
         </div>
       </CardContent>
-
-      <CardFooter className="p-6 pt-0 mt-auto">
-        <Button
-          className="w-full group/btn bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300"
-          asChild
-        >
-          <Link href={`/cinemas/${cinema.cinema_id}`}>
-            <span>Xem Lịch Chiếu</span>
-            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
-          </Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

@@ -5,23 +5,14 @@ import { Button } from "@/components/ui/button";
 import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
-import type { Seat, Food } from "@/services/types";
+import type { Seat } from "@/services/types";
 import type { Showtime, MovieDetail } from "@/services/types";
 import { type FoodMenuItem } from "@/services";
 import bookingService from "@/services/bookingService";
 import { calculateSeatsTotal } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  CreditCard,
-  Wallet,
-  Banknote,
-  Building2,
-  CheckCircle2,
-} from "lucide-react";
+import { Calendar, Clock, MapPin, CheckCircle2, Ticket, X } from "lucide-react";
 
 // VoucherDetail type definition (from mock-data)
 interface VoucherDetail {
@@ -343,6 +334,115 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                     appliedDiscount={discountAmount}
                     initialCode={prefilledVoucherCode}
                   />
+
+                  {/* Available Vouchers */}
+                  <div className="mt-8 pt-6 border-t border-border/30">
+                    <div className="flex items-center justify-between mb-6">
+                      <h4 className="text-base font-semibold text-foreground flex items-center gap-2">
+                        <Ticket className="w-5 h-5 text-primary" />
+                        Voucher ưu đãi
+                      </h4>
+                      {appliedVoucher && (
+                        <button
+                          onClick={() => {
+                            setAppliedVoucher(null);
+                            setPrefilledVoucherCode("");
+                            setDiscountAmount(0);
+                          }}
+                          className="text-xs font-medium text-destructive hover:text-destructive/80 transition-colors flex items-center gap-1 bg-destructive/10 px-2 py-1 rounded-md"
+                        >
+                          <X className="w-3 h-3" />
+                          Gỡ voucher
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {["VOU00001", "VOU00002", "VOU00003", "VOU00004"].map(
+                        (voucherCode) => {
+                          const isApplied =
+                            appliedVoucher?.code === voucherCode;
+
+                          return (
+                            <button
+                              key={voucherCode}
+                              onClick={() =>
+                                setPrefilledVoucherCode(voucherCode)
+                              }
+                              disabled={isApplied}
+                              className={`group relative flex w-full overflow-hidden rounded-xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
+                                isApplied
+                                  ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                  : "border-border bg-card hover:border-primary/50"
+                              }`}
+                            >
+                              {/* Left Stub */}
+                              <div
+                                className={`flex w-16 flex-col items-center justify-center border-r border-dashed p-2 transition-colors ${
+                                  isApplied
+                                    ? "bg-primary/10 border-primary/30"
+                                    : "bg-muted/30 border-border group-hover:bg-primary/5"
+                                }`}
+                              >
+                                <Ticket
+                                  className={`h-6 w-6 transition-colors ${
+                                    isApplied
+                                      ? "text-primary"
+                                      : "text-muted-foreground group-hover:text-primary"
+                                  }`}
+                                />
+                                <div className="mt-2 h-full w-[1px] border-l border-dashed border-border/50" />
+                              </div>
+
+                              {/* Main Content */}
+                              <div className="flex flex-1 flex-col justify-center p-4 text-left">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span
+                                    className={`text-[10px] font-bold uppercase tracking-wider ${
+                                      isApplied
+                                        ? "text-primary"
+                                        : "text-muted-foreground"
+                                    }`}
+                                  >
+                                    Mã giảm giá
+                                  </span>
+                                  {isApplied && (
+                                    <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                                      <CheckCircle2 className="w-3 h-3" />
+                                      Đang dùng
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-lg font-bold font-mono tracking-wide text-foreground">
+                                  {voucherCode}
+                                </span>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Giảm 10% cho đơn hàng
+                                </p>
+                              </div>
+
+                              {/* Decorative Cutouts (Perforation) */}
+                              <div className="absolute top-0 bottom-0 left-[63px] w-[2px] -translate-x-1/2 flex flex-col justify-between py-1">
+                                {[...Array(6)].map((_, i) => (
+                                  <div
+                                    key={i}
+                                    className="w-[2px] h-[2px] rounded-full bg-border"
+                                  />
+                                ))}
+                              </div>
+                              <div className="absolute -top-1.5 left-[63px] h-3 w-3 -translate-x-1/2 rounded-full border border-b-transparent border-border bg-background" />
+                              <div className="absolute -bottom-1.5 left-[63px] h-3 w-3 -translate-x-1/2 rounded-full border border-t-transparent border-border bg-background" />
+
+                              {/* Active Glow */}
+                              {isApplied && (
+                                <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+                              )}
+                            </button>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-4">

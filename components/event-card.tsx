@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Sparkles, ArrowRight } from "lucide-react";
+import { Calendar, Sparkles } from "lucide-react";
 import { Event } from "@/services/types";
 
 interface EventCardProps {
@@ -10,43 +9,64 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
+  const startDate = new Date(event.start_date);
+  const endDate = new Date(event.end_date);
+  const now = new Date();
+
+  let statusText = "Sắp diễn ra";
+  let statusColor = "bg-blue-500/10 text-blue-500 border-blue-500/20";
+
+  if (now >= startDate && now <= endDate) {
+    statusText = "Đang diễn ra";
+    statusColor = "bg-green-500/10 text-green-500 border-green-500/20";
+  } else if (now > endDate) {
+    statusText = "Đã kết thúc";
+    statusColor = "bg-gray-500/10 text-gray-500 border-gray-500/20";
+  }
+
   return (
     <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 h-full flex flex-col">
-      <div className="relative aspect-video overflow-hidden">
-        {/* Placeholder gradient since Event doesn't have image field yet */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 group-hover:scale-105 transition-transform duration-500" />
+      {/* Image Section */}
+      <div className="relative aspect-video overflow-hidden shrink-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-accent/20 group-hover:scale-105 transition-transform duration-500" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <Sparkles className="w-16 h-16 text-primary/40" />
+          <Sparkles className="w-12 h-12 text-primary/40 group-hover:text-primary/60 transition-colors duration-300" />
         </div>
-        <div className="absolute top-4 right-4">
-          <Badge className="bg-background/80 backdrop-blur text-foreground border-none shadow-sm">
-            <Calendar className="w-3 h-3 mr-1" />
-            {new Date(event.start_date).toLocaleDateString("vi-VN")}
+
+        {/* Status Badge Overlay */}
+        <div className="absolute top-3 right-3">
+          <Badge className={`${statusColor} backdrop-blur-md border shadow-sm`}>
+            {statusText}
           </Badge>
         </div>
       </div>
 
-      <div className="p-6 space-y-4 flex-1 flex flex-col">
-        <div className="space-y-2 flex-1">
-          <h3 className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">
+      {/* Content Section */}
+      <div className="p-6 flex flex-col flex-1 space-y-4">
+        {/* Header */}
+        <div>
+          <h3 className="text-xl font-bold group-hover:text-primary transition-colors mb-2">
             {event.name}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-3">
-            {event.description}
-          </p>
+
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" />
+              <span>
+                {startDate.toLocaleDateString("vi-VN")} -{" "}
+                {endDate.toLocaleDateString("vi-VN")}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="pt-4 flex items-center justify-between border-t border-border/50 mt-auto">
-          <Button
-            variant="ghost"
-            className="group/btn p-0 hover:bg-transparent hover:text-primary pl-0"
-            asChild
-          >
-            <Link href={`/events/${event.event_id}`}>
-              Xem chi tiết{" "}
-              <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-            </Link>
-          </Button>
+        {/* Full Description */}
+        <div className="flex-1">
+          <div className="prose prose-sm dark:prose-invert text-muted-foreground max-w-none">
+            <p className="leading-relaxed whitespace-pre-line">
+              {event.description || "Chưa có mô tả chi tiết cho sự kiện này."}
+            </p>
+          </div>
         </div>
       </div>
     </Card>
