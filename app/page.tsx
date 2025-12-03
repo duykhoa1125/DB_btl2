@@ -5,7 +5,7 @@ import { CinemaCard } from "@/components/cinema-card";
 import { EventCard } from "@/components/event-card";
 import Link from "next/link";
 import { Sparkles, ArrowRight, Film, MapPin, Calendar } from "lucide-react";
-import type { Movie, MovieDetail, Cinema, Event } from "@/services/types";
+import type { Movie, Cinema, Event } from "@/services/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -158,8 +158,11 @@ export default async function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {activeEvents.map((event) => (
-                <EventCard key={event.event_id} event={event} />
+              {activeEvents.map((event, index) => (
+                <EventCard
+                  key={event.event_id || `event-${index}`}
+                  event={event}
+                />
               ))}
             </div>
           </div>
@@ -186,8 +189,11 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredCinemas.map((cinema) => (
-              <div key={cinema.cinema_id} className="h-full">
+            {featuredCinemas.map((cinema, index) => (
+              <div
+                key={cinema.cinema_id || `cinema-${index}`}
+                className="h-full"
+              >
                 <CinemaCard cinema={cinema} />
               </div>
             ))}

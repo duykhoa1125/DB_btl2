@@ -233,12 +233,27 @@ export default async function MovieDetailPage({
                 className="relative bg-black"
                 style={{ paddingBottom: "56.25%" }}
               >
-                <iframe
-                  src={getEmbedUrl(movie.trailer)}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full"
-                />
+                {getEmbedUrl(movie.trailer) ? (
+                  <iframe
+                    src={getEmbedUrl(movie.trailer)}
+                    title={`${movie.name} - Trailer`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center px-6">
+                      <Play className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium text-muted-foreground mb-2">
+                        Trailer chưa có sẵn
+                      </p>
+                      <p className="text-sm text-muted-foreground/70">
+                        Trailer cho phim này sẽ được cập nhật sớm
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
