@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import adminService from "@/services/adminService";
-import { movieService } from "@/services";
-import type { Showtime, Room } from "@/services/types";
+import { movieService, cinemaService } from "@/services";
+import type { Showtime, Room, Cinema } from "@/services/types";
 import { roomService } from "@/services";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ export default function EditShowtimePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [cinemas, setCinemas] = useState<Cinema[]>([]);
   const [formData, setFormData] = useState({
     movie_id: "",
     room_id: "",
@@ -41,12 +42,14 @@ export default function EditShowtimePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [roomsData, moviesData] = await Promise.all([
+        const [roomsData, moviesData, cinemasData] = await Promise.all([
           roomService.getAll(),
           movieService.getAll(),
+          cinemaService.getAll(),
         ]);
         setRooms(Array.isArray(roomsData) ? roomsData : []);
         setMovies(Array.isArray(moviesData) ? moviesData : []);
+        setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
 
         const showtime_id = params.id as string;
         const showtime = await adminService.getShowtimeById(showtime_id);
@@ -146,6 +149,13 @@ export default function EditShowtimePage() {
   const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
   const selectedRoom = rooms.find((r) => r.room_id === formData.room_id);
 
+  // Helper to get cinema name from cinema_id
+  const getCinemaName = (cinemaId: string) => {
+    // Backend returns cinema with 'id' field (from cinema_model.js), not 'cinema_id'
+    const cinema = cinemas.find((c: any) => c.cinema_id === cinemaId || c.id === cinemaId);
+    return cinema?.name || "";
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -213,9 +223,9 @@ export default function EditShowtimePage() {
                   <SelectValue placeholder="Select a room" />
                 </SelectTrigger>
                 <SelectContent>
-                  {rooms.map((room) => (
+                  {rooms.map((room: any) => (
                     <SelectItem key={room.room_id} value={room.room_id}>
-                      {room.name}
+                      {room.name} - {getCinemaName(room.cinema_id)}
                     </SelectItem>
                   ))}
                 </SelectContent>

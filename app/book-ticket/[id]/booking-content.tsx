@@ -152,19 +152,23 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   const subtotal = ticketTotal + foodTotal;
   const finalTotal = Math.max(0, subtotal - discountAmount);
 
+  // Recalculate discount whenever subtotal or appliedVoucher changes
+  useEffect(() => {
+    if (appliedVoucher) {
+      // Apply 10% discount to match backend logic (booking_service.js line 103: total *= 0.9)
+      const calculatedDiscount = Math.round(subtotal * 0.1);
+      setDiscountAmount(calculatedDiscount);
+    } else {
+      setDiscountAmount(0);
+    }
+  }, [subtotal, appliedVoucher]);
+
   const handleVoucherApply = (
     voucher: VoucherDetail | null,
     discount: number
   ) => {
     setAppliedVoucher(voucher);
-    if (voucher === null) {
-      setDiscountAmount(0);
-    } else {
-      // Apply 10% discount to match backend logic (booking_service.js line 103: total *= 0.9)
-      // Backend applies the actual discount, this is just for preview
-      const calculatedDiscount = Math.round(subtotal * 0.1);
-      setDiscountAmount(calculatedDiscount);
-    }
+    // Discount will be automatically recalculated by the useEffect above
   };
 
   const steps = [
@@ -366,9 +370,11 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
                           return (
                             <button
                               key={voucherCode}
-                              onClick={() =>
-                                setPrefilledVoucherCode(voucherCode)
-                              }
+                              onClick={() => {
+                                // Clear current voucher first to allow switching
+                                setAppliedVoucher(null);
+                                setPrefilledVoucherCode(voucherCode);
+                              }}
                               disabled={isApplied}
                               className={`group relative flex w-full overflow-hidden rounded-xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 ${
                                 isApplied

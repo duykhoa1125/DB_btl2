@@ -137,4 +137,15 @@ Tóm tắt các sửa đổi chính:
   - Tạo endpoint `GET /other/rooms` để frontend admin lấy danh sách `PhongChieu` (map về `room_id`, `cinema_id`, `name`, `state`).
 
 ## fix crud admin movie
+
 add image, director and actors
+
+## Trong booking_service.js
+
+Gọi procedure lay_ds_ghe_trong sai cú pháp - phải dùng CALL thay vì gọi như function
+Thiếu logic kiểm tra kết quả và tính tổng tiền
+
+## Trong movie_service.js
+
+Gọi procedure xem_danh_gia với CALL đúng, nhưng MySQL trả về kết quả procedure trong mảng lồng nhau nên cần xử lý đúng cách
+Thiếu tham số id khi gọi procedure

@@ -8,28 +8,24 @@ class BookingService {
     const PRICE = 75000;
     // Bước 0: kiểm tra tính hợp lệ của các thành phần
     let total = 0;
-    // for (const s of seats) {
-    //   const seatCheck = await executeQuery(
-    //     `
-    //             SELECT R.ma_phong, hang_ghe, so_ghe, loai_ghe, S.trang_thai 
-    //             FROM SuatChieu NATURAL JOIN PhongChieu R 
-    //             INNER JOIN GheNgoi S ON R.ma_phong=S.ma_phong 
-    //             WHERE ma_suat_chieu=? AND hang_ghe=? AND so_ghe=?
-    //         `,
-    //     [showtimeId, s.row, s.col]
-    //   );
-    //   if (seatCheck.length <= 0) {
-    //     throw new Error("Illegal seat!");
-    //   }
-    //   total += s.price;
-    // }
 
-    // Bước 0: kiểm tra 
-    for (const s of seats){
-      const seatCheck = await executeQuery(`
-      SELECT ma_suat_chieu FROM lay_ds_ghe_trong(?)
-      WHERE hang_ghe=? AND so_ghe=?  
-    `, [showtimeId, s.row, s.col]);
+    // Lấy danh sách ghế trống bằng procedure
+    const availableSeatsResult = await executeQuery(
+      `CALL lay_ds_ghe_trong(?)`,
+      [showtimeId]
+    );
+    // MySQL procedure trả về kết quả trong mảng lồng nhau
+    const availableSeats = availableSeatsResult[0] || [];
+
+    for (const s of seats) {
+      // Kiểm tra ghế có trong danh sách ghế trống không
+      const seatExists = availableSeats.find(
+        (seat) => seat.hang_ghe === s.row && seat.so_ghe === s.col
+      );
+      if (!seatExists) {
+        throw new Error("Illegal seat!");
+      }
+      total += s.price;
     }
 
     // Tổng hợp giá tiền
@@ -75,24 +71,25 @@ class BookingService {
     // add
     for (const s of seats) {
       try {
-        result = await executeQuery(`
+        result = await executeQuery(
+          `
                 INSERT INTO Ve
                 VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)    
             `,
-        [
-          movieName,
-          s.price,
-          creationDatetime,
-          expireDate + " " + expireTime,
-          billId,
-          roomId,
-          s.row,
-          s.col,
-          showtimeId,
-        ]
-      );
+          [
+            movieName,
+            s.price,
+            creationDatetime,
+            expireDate + " " + expireTime,
+            billId,
+            roomId,
+            s.row,
+            s.col,
+            showtimeId,
+          ]
+        );
       } catch (error) {
-        if (error.message.includes("chua du tuoi")) 
+        if (error.message.includes("chua du tuoi"))
           throw new Error("Khách hàng chưa đủ tuổi để xem phim này!");
       }
     }
