@@ -8,21 +8,30 @@ class BookingService {
     const PRICE = 75000;
     // Bước 0: kiểm tra tính hợp lệ của các thành phần
     let total = 0;
-    for (const s of seats) {
-      const seatCheck = await executeQuery(
-        `
-                SELECT R.ma_phong, hang_ghe, so_ghe, loai_ghe, S.trang_thai 
-                FROM SuatChieu NATURAL JOIN PhongChieu R 
-                INNER JOIN GheNgoi S ON R.ma_phong=S.ma_phong 
-                WHERE ma_suat_chieu=? AND hang_ghe=? AND so_ghe=?
-            `,
-        [showtimeId, s.row, s.col]
-      );
-      if (seatCheck.length <= 0) {
-        throw new Error("Illegal seat!");
-      }
-      total += s.price;
+    // for (const s of seats) {
+    //   const seatCheck = await executeQuery(
+    //     `
+    //             SELECT R.ma_phong, hang_ghe, so_ghe, loai_ghe, S.trang_thai 
+    //             FROM SuatChieu NATURAL JOIN PhongChieu R 
+    //             INNER JOIN GheNgoi S ON R.ma_phong=S.ma_phong 
+    //             WHERE ma_suat_chieu=? AND hang_ghe=? AND so_ghe=?
+    //         `,
+    //     [showtimeId, s.row, s.col]
+    //   );
+    //   if (seatCheck.length <= 0) {
+    //     throw new Error("Illegal seat!");
+    //   }
+    //   total += s.price;
+    // }
+
+    // Bước 0: kiểm tra 
+    for (const s of seats){
+      const seatCheck = await executeQuery(`
+      SELECT ma_suat_chieu FROM lay_ds_ghe_trong(?)
+      WHERE hang_ghe=? AND so_ghe=?  
+    `, [showtimeId, s.row, s.col]);
     }
+
     // Tổng hợp giá tiền
     if (foods) {
       for (const f of foods) {
@@ -65,8 +74,8 @@ class BookingService {
     const roomId = result[0].ma_phong;
     // add
     for (const s of seats) {
-      result = await executeQuery(
-        `
+      try {
+        result = await executeQuery(`
                 INSERT INTO Ve
                 VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)    
             `,
@@ -82,6 +91,10 @@ class BookingService {
           showtimeId,
         ]
       );
+      } catch (error) {
+        if (error.message.includes("chua du tuoi")) 
+          throw new Error("Khách hàng chưa đủ tuổi để xem phim này!");
+      }
     }
 
     // Bước 3: create food if any
