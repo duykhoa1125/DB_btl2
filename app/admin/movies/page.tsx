@@ -67,11 +67,7 @@ export default function MoviesPage() {
   const filteredMovies = movies
     .filter((movie) => {
       const matchesSearch =
-        movie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (movie.directors &&
-          movie.directors.some((d) =>
-            d.toLowerCase().includes(searchTerm.toLowerCase())
-          ));
+        movie.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus =
         statusFilter === "all" || movie.status === statusFilter;
       return matchesSearch && matchesStatus;
@@ -138,7 +134,7 @@ export default function MoviesPage() {
           <AdminSearch
             value={searchTerm}
             onChange={setSearchTerm}
-            placeholder="Tìm kiếm theo tên, đạo diễn..."
+            placeholder="Tìm kiếm theo tên phim..."
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -171,7 +167,6 @@ export default function MoviesPage() {
             <TableRow>
               <TableHead className="w-[80px]">Poster</TableHead>
               <TableHead>Tên phim</TableHead>
-              <TableHead>Đạo diễn</TableHead>
               <TableHead>Ngôn ngữ / Tuổi</TableHead>
               <TableHead>Thời lượng</TableHead>
               <TableHead>Đánh giá</TableHead>
@@ -183,7 +178,7 @@ export default function MoviesPage() {
             {filteredMovies.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={7}
                   className="h-24 text-center text-muted-foreground"
                 >
                   Không tìm thấy phim nào
@@ -210,11 +205,6 @@ export default function MoviesPage() {
                     <div className="text-xs text-muted-foreground">
                       {new Date(movie.release_date).getFullYear()}
                     </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {movie.directors && movie.directors.length > 0
-                      ? movie.directors.join(", ")
-                      : "N/A"}
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">

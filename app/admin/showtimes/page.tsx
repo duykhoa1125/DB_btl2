@@ -42,6 +42,7 @@ export default function ShowtimesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [movieFilter, setMovieFilter] = useState<string>("all");
   const [roomFilter, setRoomFilter] = useState<string>("all");
+  const [cinemaFilter, setCinemaFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [showtimeToDelete, setShowtimeToDelete] = useState<Showtime | null>(
     null
@@ -80,8 +81,9 @@ export default function ShowtimesPage() {
     const room = rooms.find(
       (r: any) => String(r.room_id) === String(showtime.room_id)
     );
+    // Backend returns cinema with 'id' field, not 'cinema_id'
     const cinema = room
-      ? cinemas.find((c: any) => String(c.cinema_id) === String(room.cinema_id))
+      ? cinemas.find((c: any) => String(c.cinema_id) === String(room.cinema_id) || String(c.id) === String(room.cinema_id))
       : null;
 
     const matchesSearch =
@@ -97,8 +99,11 @@ export default function ShowtimesPage() {
       roomFilter === "all" ||
       rooms.find((r: any) => String(r.room_id) === String(showtime.room_id))
         ?.name === roomFilter;
+    const matchesCinema =
+      cinemaFilter === "all" ||
+      (cinema && (String(cinema.cinema_id) === cinemaFilter || String(cinema.id) === cinemaFilter));
 
-    return matchesSearch && matchesMovie && matchesRoom;
+    return matchesSearch && matchesMovie && matchesRoom && matchesCinema;
   });
 
   const handleDeleteClick = (showtime: Showtime) => {
@@ -201,6 +206,19 @@ export default function ShowtimesPage() {
             ].map((room: any) => (
               <SelectItem key={room.name} value={room.name}>
                 {room.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={cinemaFilter} onValueChange={setCinemaFilter}>
+          <SelectTrigger className="bg-background/50 border-border/50">
+            <SelectValue placeholder="Lọc theo rạp" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả rạp</SelectItem>
+            {cinemas.map((cinema: any) => (
+              <SelectItem key={cinema.cinema_id || cinema.id} value={String(cinema.cinema_id || cinema.id)}>
+                {cinema.name}
               </SelectItem>
             ))}
           </SelectContent>

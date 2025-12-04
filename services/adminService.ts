@@ -11,8 +11,9 @@ interface DashboardStats {
 }
 
 export interface TopRevenueMovie {
+  ma_phim: string;
   ten_phim: string;
-  tong_doanh_thu: number;
+  doanh_thu: number;
 }
 
 const adminService = {

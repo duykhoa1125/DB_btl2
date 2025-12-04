@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-orange-600">
-                      {movie.tong_doanh_thu.toLocaleString("vi-VN")} đ
+                      {(movie.doanh_thu ?? 0).toLocaleString("vi-VN")} đ
                     </div>
                     <p className="text-xs text-muted-foreground">
                       Tổng doanh thu

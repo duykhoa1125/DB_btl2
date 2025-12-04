@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import adminService from "@/services/adminService";
-import { movieService } from "@/services";
-import type { Showtime, Room } from "@/services/types";
+import { movieService, cinemaService } from "@/services";
+import type { Showtime, Room, Cinema } from "@/services/types";
 import { roomService } from "@/services";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,7 @@ export default function NewShowtimePage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [cinemas, setCinemas] = useState<Cinema[]>([]);
   const [formData, setFormData] = useState({
     movie_id: "",
     room_id: "",
@@ -37,15 +38,17 @@ export default function NewShowtimePage() {
   const [movies, setMovies] = useState<any[]>([]);
 
   useEffect(() => {
-    Promise.all([roomService.getAll(), movieService.getAll()])
-      .then(([roomsData, moviesData]) => {
+    Promise.all([roomService.getAll(), movieService.getAll(), cinemaService.getAll()])
+      .then(([roomsData, moviesData, cinemasData]) => {
         setRooms(Array.isArray(roomsData) ? roomsData : []);
         setMovies(Array.isArray(moviesData) ? moviesData : []);
+        setCinemas(Array.isArray(cinemasData) ? cinemasData : []);
       })
       .catch((err) => {
         console.error(err);
         setRooms([]);
         setMovies([]);
+        setCinemas([]);
       });
   }, []);
 
@@ -125,6 +128,13 @@ export default function NewShowtimePage() {
   const selectedMovie = movies.find((m) => m.movie_id === formData.movie_id);
   const selectedRoom = rooms.find((r) => r.room_id === formData.room_id);
 
+  // Helper to get cinema name from cinema_id
+  const getCinemaName = (cinemaId: string) => {
+    // Backend returns cinema with 'id' field (from cinema_model.js), not 'cinema_id'
+    const cinema = cinemas.find((c: any) => c.cinema_id === cinemaId || c.id === cinemaId);
+    return cinema?.name || "";
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -194,9 +204,9 @@ export default function NewShowtimePage() {
                   <SelectValue placeholder="Select a room" />
                 </SelectTrigger>
                 <SelectContent>
-                  {rooms.map((room) => (
+                  {rooms.map((room: any) => (
                     <SelectItem key={room.room_id} value={room.room_id}>
-                      {room.name}
+                      {room.name} - {getCinemaName(room.cinema_id)}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -30,12 +30,25 @@ class MovieService {
     const ratings = await executeQuery(
       `SELECT COUNT(*) AS count, SUM(so_sao) AS total_stars FROM DanhGiaPhim WHERE ma_phim='${id}'`
     );
-    const reviews = await executeQuery(
-      `SELECT so_dien_thoai, so_sao, ngay_viet, noi_dung_danh_gia FROM DanhGiaPhim WHERE ma_phim='${id}'`
-    );
+
+    // Gọi procedure xem_danh_gia - xử lý trường hợp không có đánh giá
+    let reviews = [];
+    try {
+      const reviewsResult = await executeQuery(
+        // `SELECT so_dien_thoai, so_sao, ngay_viet, noi_dung_danh_gia FROM DanhGiaPhim WHERE ma_phim='${id}'`
+        `CALL xem_danh_gia(?, NULL)`,
+        [id]
+      );
+      // MySQL procedure trả về kết quả trong mảng lồng nhau
+      reviews = reviewsResult[0] || [];
+    } catch (error) {
+      // Nếu không tìm thấy đánh giá, procedure sẽ throw error - trả về mảng rỗng
+      console.log(`No reviews found for movie ${id}`);
+      reviews = [];
+    }
 
     let avgRating = 0;
-    if (ratings.length > 0) {
+    if (ratings.length > 0 && ratings[0].count > 0) {
       avgRating = ratings[0].total_stars / ratings[0].count;
     }
 
@@ -65,19 +78,25 @@ class MovieService {
   }
   async getTopRevenue() {
     console.log("get top revenue");
-    const result = await executeQuery(`SELECT 
-                                                ten_phim,
-                                                SUM(gia_ve) AS tong_doanh_thu
-                                            FROM Ve
-                                            GROUP BY ten_phim
-                                            HAVING SUM(gia_ve) = (
-                                                SELECT MAX(t.doanh_thu)
-                                                FROM (
-                                                    SELECT SUM(gia_ve) AS doanh_thu
-                                                    FROM Ve
-                                                    GROUP BY ten_phim
-                                                ) AS t
-                                            )`);
+    // const result = await executeQuery(`SELECT
+    //                                             ten_phim,
+    //                                             SUM(gia_ve) AS tong_doanh_thu
+    //                                         FROM Ve
+    //                                         GROUP BY ten_phim
+    //                                         HAVING SUM(gia_ve) = (
+    //                                             SELECT MAX(t.doanh_thu)
+    //                                             FROM (
+    //                                                 SELECT SUM(gia_ve) AS doanh_thu
+    //                                                 FROM Ve
+    //                                                 GROUP BY ten_phim
+    //                                             ) AS t
+    //                                         )`);
+
+    const result = await executeQuery(`
+      SELECT ma_phim, ten_phim, tinh_tong_doanh_thu_phim(ma_phim) as doanh_thu 
+      FROM Phim ORDER BY doanh_thu DESC
+    `);
+
     //if (result.length<=0){return null;}
     console.log(result);
     return result;

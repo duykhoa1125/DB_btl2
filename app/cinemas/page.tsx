@@ -49,9 +49,7 @@ export default function CinemasPage() {
         {/* Cinema List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {cinemas.map((cinema) => (
-            <Card
-              key={cinema.cinema_id}
-              className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 flex flex-col h-full"
+            <Card key={cinema.cinema_id} className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 flex flex-col h-full"
             >
               {/* Decorative Header */}
               <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/20 via-background to-accent/20 group-hover:from-primary/30 transition-all duration-500">
