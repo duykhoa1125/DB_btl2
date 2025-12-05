@@ -10,10 +10,9 @@ export interface FoodMenuItem {
   available?: boolean;
 }
 
-
 // Map từ cấu trúc database DoAn sang FoodMenuItem
 const mapToFoodMenuItem = (item: any): FoodMenuItem => ({
-  food_id: item.ma_do_an ,
+  food_id: item.ma_do_an,
   name: item.ten_do_an,
   description: item.mo_ta,
   price: item.gia_ban,
@@ -41,7 +40,7 @@ const foodService = {
       return Array.from(uniqueItems.values());
     } catch (error) {
       console.warn("Failed to fetch food menu, using defaults:", error);
-    //   return defaultFoodMenu;
+      return [];
     }
   },
 

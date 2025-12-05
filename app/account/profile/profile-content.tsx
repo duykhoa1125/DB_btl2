@@ -304,14 +304,17 @@ export function ProfileContent() {
                     key={tier.level}
                     className={`relative p-4 rounded-xl border transition-all ${
                       isCurrentTier
-                        ? "ring-2 shadow-lg bg-card"
+                        ? "shadow-lg bg-card"
                         : isLocked
                         ? "opacity-60 bg-muted/20"
                         : "bg-card/50"
                     }`}
                     style={
                       isCurrentTier
-                        ? { borderColor: tier.color, ringColor: tier.color }
+                        ? {
+                            borderColor: tier.color,
+                            boxShadow: `0 0 0 2px ${tier.color}`,
+                          }
                         : {}
                     }
                   >
