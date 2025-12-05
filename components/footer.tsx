@@ -15,7 +15,7 @@ export function Footer() {
   return (
     <footer className="mt-auto border-t border-border/40 bg-background relative overflow-hidden">
       {/* Ambient Background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-muted/20 to-background" />
+      <div className="absolute inset-0 -z-10 bg-muted/20" />
       <div className="absolute bottom-0 left-0 w-full h-[500px] bg-primary/5 blur-[100px] pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-6 py-16">
@@ -23,10 +23,10 @@ export function Footer() {
           {/* Brand Section */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20">
                 <Film className="h-6 w-6 text-primary-foreground" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold text-foreground">
                 CinemaHub
               </span>
             </div>

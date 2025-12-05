@@ -96,7 +96,7 @@ export default function EventDetailPage() {
             <span>Chi tiết sự kiện</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground">
             {event.name}
           </h1>
 
@@ -128,7 +128,7 @@ export default function EventDetailPage() {
           <div className="lg:col-span-2 space-y-8">
             <div className="aspect-video rounded-2xl overflow-hidden bg-muted relative group">
               {/* Placeholder for Event Image */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20" />
+              <div className="absolute inset-0 bg-muted/50" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <Sparkles className="w-24 h-24 text-primary/20" />
               </div>

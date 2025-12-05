@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import { ShowtimeSelector } from "@/components/showtime-selector";
 import { RatingSummary } from "@/components/rating-summary";
 import { Breadcrumb } from "@/components/breadcrumb";
@@ -70,7 +71,7 @@ export default async function MovieDetailPage({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
 
       {/* Grid Pattern Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-muted/5 pointer-events-none" />
 
       {/* Breadcrumb Navigation */}
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-md sticky top-0 z-40">
@@ -84,16 +85,17 @@ export default async function MovieDetailPage({
       {/* Hero Section - Compact Modern Layout */}
       <section className="mx-auto max-w-6xl px-6 py-8">
         {/* Main Info - Horizontal Layout */}
-        <div className="mb-8 flex flex-col gap-6 rounded-2xl border border-border bg-gradient-to-br from-card via-card to-muted/20 p-6 shadow-lg lg:flex-row">
+        <div className="mb-8 flex flex-col gap-6 rounded-2xl border border-border bg-card p-6 shadow-lg lg:flex-row">
           {/* Poster - Compact */}
           <div className="shrink-0">
             <div className="group relative h-[400px] w-[270px] overflow-hidden rounded-xl shadow-xl">
-              <img
+              <Image
                 src={movie.image || "/placeholder.svg"}
                 alt={movie.name}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity group-hover:opacity-100" />
               <a
                 href={movie.trailer || "#"}
                 target="_blank"
@@ -135,7 +137,7 @@ export default async function MovieDetailPage({
                 )}
               </div>
 
-              <h1 className="mb-3 text-4xl md:text-5xl font-bold leading-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h1 className="mb-3 text-4xl md:text-5xl font-bold leading-tight text-foreground">
                 {movie.name}
               </h1>
               <p className="text-base md:text-lg leading-relaxed text-muted-foreground line-clamp-3 font-light">
@@ -145,7 +147,7 @@ export default async function MovieDetailPage({
 
             {/* Quick Info Grid - Compact 4 columns */}
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              <div className="rounded-xl bg-gradient-to-br from-background/80 to-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+              <div className="rounded-xl bg-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
                 <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                   <Clock className="h-3.5 w-3.5 text-primary" />
                   <span>Thời lượng</span>
@@ -155,7 +157,7 @@ export default async function MovieDetailPage({
                 </p>
               </div>
 
-              <div className="rounded-xl bg-gradient-to-br from-background/80 to-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+              <div className="rounded-xl bg-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
                 <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                   <Calendar className="h-3.5 w-3.5 text-primary" />
                   <span>Năm</span>
@@ -165,7 +167,7 @@ export default async function MovieDetailPage({
                 </p>
               </div>
 
-              <div className="rounded-xl bg-gradient-to-br from-background/80 to-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+              <div className="rounded-xl bg-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
                 <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                   <User className="h-3.5 w-3.5 text-primary" />
                   <span>Đạo diễn</span>
@@ -178,7 +180,7 @@ export default async function MovieDetailPage({
               </div>
 
               {movie.language && (
-                <div className="rounded-xl bg-gradient-to-br from-background/80 to-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
+                <div className="rounded-xl bg-muted/20 border border-border/50 p-4 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 transition-all group">
                   <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                     <span>Ngôn ngữ</span>
                   </div>
@@ -190,7 +192,7 @@ export default async function MovieDetailPage({
             </div>
 
             {/* Cast - Compact horizontal scroll */}
-            <div className="rounded-xl bg-gradient-to-br from-background/80 to-muted/20 border border-border/50 p-4">
+            <div className="rounded-xl bg-muted/20 border border-border/50 p-4">
               <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                 <User className="h-3.5 w-3.5 text-primary" />
                 <span>Diễn viên</span>
@@ -261,7 +263,7 @@ export default async function MovieDetailPage({
       </section>
 
       {/* Showtimes Section */}
-      <section className="border-t border-border bg-gradient-to-b from-card/50 to-background py-12">
+      <section className="border-t border-border bg-muted/10 py-12">
         <div className="mx-auto max-w-7xl px-6">
           {showtimes.length > 0 ? (
             <ShowtimeSelector showtimes={showtimes} movie_id={movie.movie_id} />

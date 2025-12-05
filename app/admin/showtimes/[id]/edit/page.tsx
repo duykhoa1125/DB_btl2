@@ -173,14 +173,16 @@ export default function EditShowtimePage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
+        <Card className="border-border/50 bg-card/50 backdrop-blur-md shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Film className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <Film className="h-5 w-5" />
+              </div>
               Movie & Room
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {/* Movie Selection */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
@@ -192,7 +194,7 @@ export default function EditShowtimePage() {
                   setFormData({ ...formData, movie_id: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all">
                   <SelectValue placeholder="Select a movie" />
                 </SelectTrigger>
                 <SelectContent>
@@ -219,7 +221,7 @@ export default function EditShowtimePage() {
                   setFormData({ ...formData, room_id: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all">
                   <SelectValue placeholder="Select a room" />
                 </SelectTrigger>
                 <SelectContent>
@@ -237,11 +239,11 @@ export default function EditShowtimePage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-border/50 bg-card/50 backdrop-blur-md shadow-sm">
           <CardHeader>
-            <CardTitle>Schedule Details</CardTitle>
+            <CardTitle className="text-xl">Schedule Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {/* Start Date */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
@@ -253,13 +255,14 @@ export default function EditShowtimePage() {
                 onChange={(e) =>
                   setFormData({ ...formData, start_date: e.target.value })
                 }
+                className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all"
               />
               {errors.start_date && (
                 <p className="text-sm text-destructive">{errors.start_date}</p>
               )}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               {/* Start Time */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -271,6 +274,7 @@ export default function EditShowtimePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, start_time: e.target.value })
                   }
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all"
                 />
                 {errors.start_time && (
                   <p className="text-sm text-destructive">
@@ -290,6 +294,7 @@ export default function EditShowtimePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, end_time: e.target.value })
                   }
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all"
                 />
                 {errors.end_time && (
                   <p className="text-sm text-destructive">{errors.end_time}</p>
@@ -301,34 +306,39 @@ export default function EditShowtimePage() {
 
         {/* Summary */}
         {selectedMovie && selectedRoom && (
-          <Card className="border-primary/20 bg-primary/5">
+          <Card className="border-primary/20 bg-primary/5 backdrop-blur-sm overflow-hidden relative">
+            <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
             <CardHeader>
-              <CardTitle className="text-lg">Current Information</CardTitle>
+              <CardTitle className="text-lg text-primary">Current Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p>
-                <span className="font-medium">Movie:</span> {selectedMovie.name}
-              </p>
-              <p>
-                <span className="font-medium">Room:</span> {selectedRoom.name}
-              </p>
+            <CardContent className="space-y-3 text-sm">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-background/40 border border-border/50">
+                <span className="text-muted-foreground">Movie</span>
+                <span className="font-semibold text-foreground">{selectedMovie.name}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-background/40 border border-border/50">
+                <span className="text-muted-foreground">Room</span>
+                <span className="font-semibold text-foreground">{selectedRoom.name}</span>
+              </div>
               {formData.start_date && formData.start_time && (
-                <p>
-                  <span className="font-medium">Start:</span>{" "}
-                  {new Date(
-                    `${formData.start_date}T${formData.start_time}`
-                  ).toLocaleString("vi-VN")}
-                </p>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-background/40 border border-border/50">
+                  <span className="text-muted-foreground">Start Time</span>
+                  <span className="font-semibold text-foreground">
+                    {new Date(
+                      `${formData.start_date}T${formData.start_time}`
+                    ).toLocaleString("vi-VN")}
+                  </span>
+                </div>
               )}
             </CardContent>
           </Card>
         )}
 
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" asChild>
+        <div className="flex justify-end gap-4 pt-4">
+          <Button type="button" variant="outline" asChild className="h-11 px-8">
             <Link href="/admin/showtimes">Cancel</Link>
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="h-11 px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </div>

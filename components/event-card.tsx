@@ -28,7 +28,7 @@ export function EventCard({ event }: EventCardProps) {
     <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 h-full flex flex-col">
       {/* Image Section */}
       <div className="relative aspect-video overflow-hidden shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-accent/20 group-hover:scale-105 transition-transform duration-500" />
+        <div className="absolute inset-0 bg-primary/10 group-hover:scale-105 transition-transform duration-500" />
         <div className="absolute inset-0 flex items-center justify-center">
           <Sparkles className="w-12 h-12 text-primary/40 group-hover:text-primary/60 transition-colors duration-300" />
         </div>

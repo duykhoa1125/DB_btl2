@@ -67,7 +67,7 @@ export function ConfirmationContent() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
 
       {/* Grid Pattern Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-muted/5 pointer-events-none" />
 
       {/* Breadcrumb */}
       <div className="border-b border-border/40 bg-card/50 backdrop-blur-md sticky top-0 z-40">
@@ -82,11 +82,11 @@ export function ConfirmationContent() {
         {/* Success Header */}
         <div className="mb-12 text-center space-y-6">
           <div className="inline-flex justify-center animate-in zoom-in duration-500">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-2xl shadow-green-500/30">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-500 shadow-2xl shadow-green-500/30">
               <CheckCircle2 className="h-12 w-12 text-white" strokeWidth={3} />
             </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
             Đặt Vé Thành Công!
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl mx-auto">
@@ -101,7 +101,7 @@ export function ConfirmationContent() {
             {/* Booking Details Card */}
             <div className="overflow-hidden rounded-3xl border border-green-500/20 bg-card/50 backdrop-blur-sm shadow-xl">
               {/* Header */}
-              <div className="border-b border-green-500/10 bg-gradient-to-r from-green-500/10 to-transparent px-8 py-8 text-center">
+              <div className="border-b border-green-500/10 bg-green-500/5 px-8 py-8 text-center">
                 <p className="mb-2 text-sm font-medium text-muted-foreground uppercase tracking-widest">
                   Mã đặt vé
                 </p>

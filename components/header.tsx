@@ -33,10 +33,10 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-2 transition-all">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20 transition-all group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-primary/30">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 transition-all group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-primary/30">
             <Film className="h-6 w-6 text-primary-foreground" />
           </div>
-          <span className="bg-gradient-to-r from-primary via-foreground to-foreground/70 bg-clip-text text-2xl font-bold text-transparent">
+          <span className="text-2xl font-bold text-primary">
             CinemaHub
           </span>
         </Link>

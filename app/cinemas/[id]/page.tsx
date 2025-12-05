@@ -9,7 +9,8 @@ import {
   roomService,
   movieService,
 } from "@/services";
-import type { Showtime, Cinema, Room, MovieDetail } from "@/services/types";
+import type { Showtime, Cinema, Room, Movie } from "@/services/types";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Clock, Film } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,7 @@ export default function CinemaDetailPage() {
   const [cinema, setCinema] = useState<Cinema | null>(null);
   const [showtimes, setShowtimes] = useState<Showtime[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [movies, setMovies] = useState<MovieDetail[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -132,11 +133,11 @@ export default function CinemaDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative h-[300px] w-full overflow-hidden bg-gradient-to-br from-primary/20 via-background to-accent/20">
+      <div className="relative h-[300px] w-full overflow-hidden bg-muted/30">
         <div className="absolute inset-0 flex items-center justify-center opacity-10">
           <Film className="w-64 h-64" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div className="absolute inset-0 bg-background/60" />
 
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
           <div className="mx-auto max-w-7xl space-y-4">
@@ -193,7 +194,7 @@ export default function CinemaDetailPage() {
                   })}
                 </div>
                 {/* Fade effect for scroll */}
-                <div className="absolute right-0 top-0 bottom-2 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-2 w-12 bg-background pointer-events-none" />
               </div>
             </div>
 
@@ -217,10 +218,11 @@ export default function CinemaDetailPage() {
                             className="shrink-0 relative group/poster"
                           >
                             <div className="relative h-52 w-36 overflow-hidden rounded-2xl shadow-md">
-                              <img
+                              <Image
                                 src={movie.image}
                                 alt={movie.name}
-                                className="h-full w-full object-cover transition-transform duration-700 group-hover/poster:scale-110"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover/poster:scale-110"
                               />
                               <div className="absolute inset-0 bg-black/20 group-hover/poster:bg-transparent transition-colors" />
                             </div>

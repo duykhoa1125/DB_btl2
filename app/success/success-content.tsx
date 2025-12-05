@@ -60,17 +60,17 @@ export function SuccessContent() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
       
       {/* Grid Pattern Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-muted/5 pointer-events-none" />
 
       <div className="relative mx-auto max-w-3xl px-6 py-12">
         {/* Success Header */}
         <div className="mb-12 text-center space-y-6 animate-in slide-in-from-bottom-4 duration-700">
           <div className="inline-flex justify-center">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-2xl shadow-green-500/30 animate-bounce-slow">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-500 shadow-2xl shadow-green-500/30 animate-bounce-slow">
               <CheckCircle2 className="h-12 w-12 text-white" strokeWidth={3} />
             </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tight">
             Đặt Vé Thành Công!
           </h1>
           <p className="text-xl text-muted-foreground max-w-lg mx-auto font-light">
@@ -80,7 +80,7 @@ export function SuccessContent() {
 
         {/* Main Booking Information Card */}
         <div className="mb-8 overflow-hidden rounded-3xl border border-border/50 bg-card/50 backdrop-blur-md shadow-xl animate-in slide-in-from-bottom-8 duration-700 delay-150">
-          <div className="bg-gradient-to-r from-green-500/10 to-primary/5 border-b border-border/50 p-6 flex flex-col items-center justify-center gap-2">
+          <div className="bg-green-500/10 border-b border-border/50 p-6 flex flex-col items-center justify-center gap-2">
             <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Mã Đặt Vé</p>
             <p className="text-5xl font-black font-mono tracking-wider text-primary drop-shadow-sm">{bookingCode}</p>
           </div>
@@ -178,7 +178,7 @@ export function SuccessContent() {
               )}
 
               {/* Total */}
-              <div className="bg-gradient-to-br from-background to-muted/50 rounded-2xl p-6 border border-border/50 shadow-inner">
+              <div className="bg-muted/30 rounded-2xl p-6 border border-border/50 shadow-inner">
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Tạm tính</span>

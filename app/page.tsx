@@ -88,7 +88,7 @@ export default async function Home() {
               Premium Cinema Experience
             </span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-foreground">
             Đặt vé phim <span className="text-primary">online</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -120,7 +120,7 @@ export default async function Home() {
       {/* Movie Listings */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="mb-12 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Phim đang chiếu
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -202,9 +202,9 @@ export default async function Home() {
       )}
 
       {/* Promotional Section */}
-      <section className="border-y border-border/40 bg-gradient-to-b from-card/30 via-card/50 to-background py-20">
+      <section className="border-y border-border/40 bg-card/30 py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="group relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/90 via-primary to-primary/80 p-12 shadow-2xl hover:shadow-primary/30 transition-all duration-500">
+          <div className="group relative overflow-hidden rounded-3xl border border-primary/30 bg-primary p-12 shadow-2xl hover:shadow-primary/30 transition-all duration-500">
             {/* Animated Glow Effects */}
             <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-white/20 blur-3xl animate-pulse" />
             <div className="absolute -left-20 -bottom-20 h-80 w-80 rounded-full bg-accent/30 blur-3xl animate-pulse delay-500" />

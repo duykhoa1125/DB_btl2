@@ -129,49 +129,52 @@ export default function MoviesPage() {
       />
 
       {/* Filters */}
-      <div className="flex flex-col gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:flex-row backdrop-blur-sm">
+      <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card/50 p-1 md:flex-row backdrop-blur-xl shadow-sm">
         <div className="relative flex-1">
           <AdminSearch
             value={searchTerm}
             onChange={setSearchTerm}
             placeholder="Tìm kiếm theo tên phim..."
+            className="w-full"
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full md:w-[200px] bg-background/50 border-border/50">
-            <SelectValue placeholder="Trạng thái" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tất cả trạng thái</SelectItem>
-            <SelectItem value="showing">Đang chiếu</SelectItem>
-            <SelectItem value="upcoming">Sắp chiếu</SelectItem>
-            <SelectItem value="ended">Đã kết thúc</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-full md:w-[200px] bg-background/50 border-border/50">
-            <SelectValue placeholder="Sắp xếp" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="name">Tên (A-Z)</SelectItem>
-            <SelectItem value="year">Ngày phát hành</SelectItem>
-            <SelectItem value="rating">Đánh giá</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2 p-1">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full md:w-[180px] h-12 bg-background/80 backdrop-blur-xl border-border/60 focus:ring-primary/10 rounded-xl transition-all hover:border-primary/30">
+              <SelectValue placeholder="Trạng thái" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả trạng thái</SelectItem>
+              <SelectItem value="showing">Đang chiếu</SelectItem>
+              <SelectItem value="upcoming">Sắp chiếu</SelectItem>
+              <SelectItem value="ended">Đã kết thúc</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-full md:w-[180px] h-12 bg-background/80 backdrop-blur-xl border-border/60 focus:ring-primary/10 rounded-xl transition-all hover:border-primary/30">
+              <SelectValue placeholder="Sắp xếp" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name">Tên (A-Z)</SelectItem>
+              <SelectItem value="year">Ngày phát hành</SelectItem>
+              <SelectItem value="rating">Đánh giá</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Movies Table */}
-      <div className="rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden">
+      <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-md overflow-hidden shadow-xl">
         <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead className="w-[80px]">Poster</TableHead>
-              <TableHead>Tên phim</TableHead>
-              <TableHead>Ngôn ngữ / Tuổi</TableHead>
-              <TableHead>Thời lượng</TableHead>
-              <TableHead>Đánh giá</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="hover:bg-transparent border-border/50">
+              <TableHead className="w-[100px] py-5 pl-6">Poster</TableHead>
+              <TableHead className="py-5">Tên phim</TableHead>
+              <TableHead className="py-5">Ngôn ngữ / Tuổi</TableHead>
+              <TableHead className="py-5">Thời lượng</TableHead>
+              <TableHead className="py-5">Đánh giá</TableHead>
+              <TableHead className="py-5">Trạng thái</TableHead>
+              <TableHead className="text-right py-5 pr-6">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -179,65 +182,74 @@ export default function MoviesPage() {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-muted-foreground"
+                  className="h-48 text-center text-muted-foreground"
                 >
-                  Không tìm thấy phim nào
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Film className="h-8 w-8 opacity-20" />
+                    <p>Không tìm thấy phim nào</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               filteredMovies.map((movie) => (
-                <TableRow key={movie.movie_id} className="hover:bg-muted/50">
-                  <TableCell>
+                <TableRow key={movie.movie_id} className="hover:bg-muted/40 transition-colors border-border/50 group">
+                  <TableCell className="pl-6 py-4">
                     {movie.image ? (
-                      <img
-                        src={movie.image}
-                        alt={movie.name}
-                        className="h-16 w-12 rounded object-cover shadow-sm"
-                      />
+                      <div className="relative h-20 w-14 overflow-hidden rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300 ring-1 ring-border/50">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={movie.image}
+                          alt={movie.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
                     ) : (
-                      <div className="flex h-16 w-12 items-center justify-center rounded bg-muted text-muted-foreground">
-                        <Film className="h-6 w-6" />
+                      <div className="flex h-20 w-14 items-center justify-center rounded-lg bg-muted text-muted-foreground ring-1 ring-border/50">
+                        <Film className="h-8 w-8 opacity-50" />
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{movie.name}</div>
-                    <div className="text-xs text-muted-foreground">
+                  <TableCell className="py-4">
+                    <div className="font-bold text-base text-foreground group-hover:text-primary transition-colors">{movie.name}</div>
+                    <div className="text-xs text-muted-foreground mt-1 font-medium">
                       {new Date(movie.release_date).getFullYear()}
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      <Badge variant="secondary" className="text-xs uppercase">
+                  <TableCell className="py-4">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider bg-secondary/50 border border-border/50">
                         {movie.language}
                       </Badge>
                       {movie.age_rating > 0 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-[10px] font-bold border-primary/30 text-primary bg-primary/5">
                           {movie.age_rating}+
                         </Badge>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm font-medium py-4">
                     {movie.duration} phút
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <span className="font-medium">
-                        {movie.avg_rating ? movie.avg_rating.toFixed(1) : "N/A"}
-                      </span>
-                      {movie.avg_rating && (
-                        <span className="text-xs text-muted-foreground">
-                          /5
-                        </span>
-                      )}
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-1.5">
+                      <div className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold border ${
+                        (movie.avg_rating || 0) >= 4.5 ? "bg-green-500/10 text-green-600 border-green-500/20" :
+                        (movie.avg_rating || 0) >= 3.5 ? "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" :
+                        "bg-red-500/10 text-red-600 border-red-500/20"
+                      }`}>
+                        {movie.avg_rating ? movie.avg_rating.toFixed(1) : "-"}
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-4">
                     <Badge
-                      variant={
-                        movie.status === "showing" ? "default" : "secondary"
-                      }
+                      className={`font-medium border shadow-sm ${
+                        movie.status === "showing" 
+                          ? "bg-green-500/10 text-green-600 border-green-500/20 hover:bg-green-500/20" 
+                          : movie.status === "upcoming"
+                          ? "bg-blue-500/10 text-blue-600 border-blue-500/20 hover:bg-blue-500/20"
+                          : "bg-slate-500/10 text-slate-600 border-slate-500/20 hover:bg-slate-500/20"
+                      }`}
                     >
                       {movie.status === "showing"
                         ? "Đang chiếu"
@@ -246,13 +258,13 @@ export default function MoviesPage() {
                         : "Đã kết thúc"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                  <TableCell className="text-right pr-6 py-4">
+                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <Button
                         variant="ghost"
                         size="icon"
                         asChild
-                        className="h-8 w-8 hover:text-primary hover:bg-primary/10"
+                        className="h-8 w-8 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-colors"
                       >
                         <Link href={`/movie/${movie.movie_id}`}>
                           <Eye className="h-4 w-4" />
@@ -262,7 +274,7 @@ export default function MoviesPage() {
                         variant="ghost"
                         size="icon"
                         asChild
-                        className="h-8 w-8 hover:text-primary hover:bg-primary/10"
+                        className="h-8 w-8 hover:text-orange-500 hover:bg-orange-500/10 rounded-lg transition-colors"
                       >
                         <Link href={`/admin/movies/${movie.movie_id}/edit`}>
                           <Edit className="h-4 w-4" />
@@ -272,7 +284,7 @@ export default function MoviesPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteClick(movie)}
-                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -286,7 +298,7 @@ export default function MoviesPage() {
       </div>
 
       {/* Results count */}
-      <div className="text-center text-sm text-muted-foreground">
+      <div className="text-center text-sm text-muted-foreground font-medium">
         Hiển thị {filteredMovies.length} / {movies.length} phim
       </div>
 

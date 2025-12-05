@@ -31,14 +31,14 @@ export function MovieTabs({
         <TabsList className="grid w-full max-w-md grid-cols-2 p-1 bg-muted/50 backdrop-blur-sm rounded-full border border-border/50">
           <TabsTrigger
             value="now-showing"
-            className="rounded-full data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300"
+            className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             Đang chiếu ({nowShowingMovies.length})
           </TabsTrigger>
           <TabsTrigger
             value="coming-soon"
-            className="rounded-full data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300"
+            className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300"
           >
             <Clock className="w-4 h-4 mr-2" />
             Sắp chiếu ({comingSoonMovies.length})

@@ -262,8 +262,8 @@ export default function PromotionsPage() {
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-lg shadow-md ${
                   isGift
-                    ? "bg-gradient-to-br from-pink-500 to-rose-600 text-white"
-                    : "bg-gradient-to-br from-green-500 to-green-600 text-white"
+                    ? "bg-pink-500 text-white"
+                    : "bg-green-500 text-white"
                 }`}
               >
                 {isGift ? (
@@ -356,7 +356,7 @@ export default function PromotionsPage() {
             <Link href={`/book-ticket/st_001?voucher=${voucher.code}`}>
               <Button
                 size="sm"
-                className="h-10 px-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary hover:to-primary shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold rounded-lg text-sm"
+                className="h-10 px-4 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 font-bold rounded-lg text-sm"
               >
                 {isGift ? (
                   <>
@@ -383,7 +383,7 @@ export default function PromotionsPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/5 blur-[120px] pointer-events-none" />
 
       {/* Grid Pattern Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-muted/5 pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-16">
         {/* Hero Section */}
@@ -393,7 +393,7 @@ export default function PromotionsPage() {
             <span>Ưu Đãi Dành Riêng Cho Bạn</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-foreground animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 tracking-tight">
             Voucher & Quà Tặng
           </h1>
 
@@ -434,7 +434,7 @@ export default function PromotionsPage() {
             {/* Search and Filter */}
             <div className="mb-16 max-w-2xl mx-auto space-y-6">
               <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-accent/50 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+                <div className="absolute -inset-0.5 bg-primary/20 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
                 <div className="relative flex items-center bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50 shadow-sm">
                   <Search className="absolute left-4 text-muted-foreground w-5 h-5" />
                   <Input
@@ -480,7 +480,7 @@ export default function PromotionsPage() {
             {/* Active Vouchers */}
             <section className="mb-24">
               <div className="flex items-center gap-4 mb-10">
-                <div className="h-12 w-1.5 bg-gradient-to-b from-primary to-accent rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"></div>
+                <div className="h-12 w-1.5 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"></div>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
                   Voucher Khả Dụng
                 </h2>
@@ -540,7 +540,7 @@ export default function PromotionsPage() {
             {/* CTA Section */}
             <div className="relative overflow-hidden rounded-3xl bg-primary p-16 text-center text-primary-foreground shadow-2xl border border-white/10">
               {/* Animated Background Effects */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-accent mix-blend-multiply" />
+              <div className="absolute inset-0 bg-primary" />
               <div className="absolute -top-32 -right-32 h-96 w-96 bg-white/20 blur-3xl rounded-full animate-pulse" />
               <div className="absolute -bottom-32 -left-32 h-96 w-96 bg-white/20 blur-3xl rounded-full animate-pulse delay-1000" />
 

@@ -234,11 +234,11 @@ export default function EditMoviePage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
+        <Card className="rounded-2xl border-border/60 bg-card/50 backdrop-blur-md shadow-sm">
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-xl">Basic Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {/* Name */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
@@ -249,6 +249,7 @@ export default function EditMoviePage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
+                className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
               />
               {errors.name && (
                 <p className="text-sm text-destructive">{errors.name}</p>
@@ -266,6 +267,7 @@ export default function EditMoviePage() {
                   setFormData({ ...formData, synopsis: e.target.value })
                 }
                 rows={4}
+                className="bg-background/50 border-border/50 focus:ring-primary/20 transition-all resize-none rounded-xl"
               />
               {errors.synopsis && (
                 <p className="text-sm text-destructive">{errors.synopsis}</p>
@@ -283,6 +285,7 @@ export default function EditMoviePage() {
                   setFormData({ ...formData, image: e.target.value })
                 }
                 placeholder="https://example.com/movie-poster.jpg"
+                className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
               />
               {errors.image && (
                 <p className="text-sm text-destructive">{errors.image}</p>
@@ -292,7 +295,7 @@ export default function EditMoviePage() {
               </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               {/* Status */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -304,7 +307,7 @@ export default function EditMoviePage() {
                     setFormData({ ...formData, status: value })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -326,7 +329,7 @@ export default function EditMoviePage() {
                     setFormData({ ...formData, language: value })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -341,12 +344,12 @@ export default function EditMoviePage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-2xl border-border/60 bg-card/50 backdrop-blur-md shadow-sm">
           <CardHeader>
-            <CardTitle>Technical Details</CardTitle>
+            <CardTitle className="text-xl">Technical Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-3">
+          <CardContent className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-3">
               {/* Duration */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -359,6 +362,7 @@ export default function EditMoviePage() {
                     setFormData({ ...formData, duration: e.target.value })
                   }
                   min="1"
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
                 {errors.duration && (
                   <p className="text-sm text-destructive">{errors.duration}</p>
@@ -376,6 +380,7 @@ export default function EditMoviePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, release_date: e.target.value })
                   }
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
                 {errors.release_date && (
                   <p className="text-sm text-destructive">
@@ -395,6 +400,7 @@ export default function EditMoviePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, end_date: e.target.value })
                   }
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
                 {errors.end_date && (
                   <p className="text-sm text-destructive">{errors.end_date}</p>
@@ -402,7 +408,7 @@ export default function EditMoviePage() {
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               {/* Age Rating */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -416,6 +422,7 @@ export default function EditMoviePage() {
                   }
                   min="0"
                   max="18"
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
                 {errors.age_rating && (
                   <p className="text-sm text-destructive">
@@ -437,6 +444,7 @@ export default function EditMoviePage() {
                   onChange={(e) =>
                     setFormData({ ...formData, trailer: e.target.value })
                   }
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
               </div>
             </div>
@@ -444,11 +452,11 @@ export default function EditMoviePage() {
         </Card>
 
         {/* Cast & Crew */}
-        <Card>
+        <Card className="rounded-2xl border-border/60 bg-card/50 backdrop-blur-md shadow-sm">
           <CardHeader>
-            <CardTitle>Cast & Crew</CardTitle>
+            <CardTitle className="text-xl">Cast & Crew</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {/* Directors */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Directors</label>
@@ -463,22 +471,23 @@ export default function EditMoviePage() {
                       handleAddDirector();
                     }
                   }}
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
-                <Button type="button" onClick={handleAddDirector} size="icon">
-                  <Plus className="h-4 w-4" />
+                <Button type="button" onClick={handleAddDirector} size="icon" className="h-11 w-11 shrink-0 rounded-xl">
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
               {directors.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {directors.map((director, index) => (
-                    <Badge key={index} variant="secondary" className="gap-1">
+                    <Badge key={index} variant="secondary" className="gap-1 h-8 px-3 rounded-lg">
                       {director}
                       <button
                         type="button"
                         onClick={() => handleRemoveDirector(index)}
-                        className="ml-1 hover:text-destructive"
+                        className="ml-1 hover:text-destructive transition-colors"
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     </Badge>
                   ))}
@@ -500,22 +509,23 @@ export default function EditMoviePage() {
                       handleAddActor();
                     }
                   }}
+                  className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all rounded-xl"
                 />
-                <Button type="button" onClick={handleAddActor} size="icon">
-                  <Plus className="h-4 w-4" />
+                <Button type="button" onClick={handleAddActor} size="icon" className="h-11 w-11 shrink-0 rounded-xl">
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
               {actors.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {actors.map((actor, index) => (
-                    <Badge key={index} variant="secondary" className="gap-1">
+                    <Badge key={index} variant="secondary" className="gap-1 h-8 px-3 rounded-lg">
                       {actor}
                       <button
                         type="button"
                         onClick={() => handleRemoveActor(index)}
-                        className="ml-1 hover:text-destructive"
+                        className="ml-1 hover:text-destructive transition-colors"
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     </Badge>
                   ))}
@@ -526,11 +536,11 @@ export default function EditMoviePage() {
         </Card>
 
         {/* Actions */}
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" asChild>
+        <div className="flex justify-end gap-4 pt-4">
+          <Button type="button" variant="outline" asChild className="h-11 px-8 rounded-xl border-border/60 hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all">
             <Link href="/admin/movies">Cancel</Link>
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="h-11 px-8 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </div>

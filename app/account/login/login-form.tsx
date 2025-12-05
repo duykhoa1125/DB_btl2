@@ -51,10 +51,10 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted/20 p-4">
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold text-primary">
             Đăng nhập
           </CardTitle>
           <CardDescription>

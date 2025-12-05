@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, Trash2, Calendar } from "lucide-react";
+import { Edit, Trash2, Calendar, Clock } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/page-header";
 import { AdminSearch } from "@/components/admin/search";
 import {
@@ -174,69 +174,72 @@ export default function ShowtimesPage() {
       />
 
       {/* Filters */}
-      <div className="grid gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:grid-cols-2 lg:grid-cols-4 backdrop-blur-sm">
-        <div className="relative">
+      <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card/50 p-1 md:flex-row backdrop-blur-xl shadow-sm">
+        <div className="relative flex-1">
           <AdminSearch
             value={searchTerm}
             onChange={setSearchTerm}
             placeholder="Tìm kiếm suất chiếu..."
+            className="w-full"
           />
         </div>
-        <Select value={movieFilter} onValueChange={setMovieFilter}>
-          <SelectTrigger className="bg-background/50 border-border/50">
-            <SelectValue placeholder="Lọc theo phim" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tất cả phim</SelectItem>
-            {movies.slice(0, 10).map((movie) => (
-              <SelectItem key={movie.movie_id} value={String(movie.movie_id)}>
-                {movie.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={roomFilter} onValueChange={setRoomFilter}>
-          <SelectTrigger className="bg-background/50 border-border/50">
-            <SelectValue placeholder="Lọc theo phòng" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tất cả phòng</SelectItem>
-            {[
-              ...new Map(rooms.map((room: any) => [room.name, room])).values(),
-            ].map((room: any) => (
-              <SelectItem key={room.name} value={room.name}>
-                {room.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={cinemaFilter} onValueChange={setCinemaFilter}>
-          <SelectTrigger className="bg-background/50 border-border/50">
-            <SelectValue placeholder="Lọc theo rạp" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tất cả rạp</SelectItem>
-            {cinemas.map((cinema: any) => (
-              <SelectItem key={cinema.cinema_id || cinema.id} value={String(cinema.cinema_id || cinema.id)}>
-                {cinema.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2 p-1 overflow-x-auto">
+          <Select value={movieFilter} onValueChange={setMovieFilter}>
+            <SelectTrigger className="w-[180px] h-12 bg-background/80 backdrop-blur-xl border-border/60 focus:ring-primary/10 rounded-xl transition-all hover:border-primary/30">
+              <SelectValue placeholder="Lọc theo phim" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả phim</SelectItem>
+              {movies.slice(0, 10).map((movie) => (
+                <SelectItem key={movie.movie_id} value={String(movie.movie_id)}>
+                  {movie.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={cinemaFilter} onValueChange={setCinemaFilter}>
+            <SelectTrigger className="w-[180px] h-12 bg-background/80 backdrop-blur-xl border-border/60 focus:ring-primary/10 rounded-xl transition-all hover:border-primary/30">
+              <SelectValue placeholder="Lọc theo rạp" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả rạp</SelectItem>
+              {cinemas.map((cinema: any) => (
+                <SelectItem key={cinema.cinema_id || cinema.id} value={String(cinema.cinema_id || cinema.id)}>
+                  {cinema.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={roomFilter} onValueChange={setRoomFilter}>
+            <SelectTrigger className="w-[160px] h-12 bg-background/80 backdrop-blur-xl border-border/60 focus:ring-primary/10 rounded-xl transition-all hover:border-primary/30">
+              <SelectValue placeholder="Lọc theo phòng" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả phòng</SelectItem>
+              {[
+                ...new Map(rooms.map((room: any) => [room.name, room])).values(),
+              ].map((room: any) => (
+                <SelectItem key={room.name} value={room.name}>
+                  {room.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Showtimes Table */}
-      <div className="rounded-lg border border-border/50 bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border/60 bg-card/40 backdrop-blur-md overflow-hidden shadow-xl">
         <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead>Phim</TableHead>
-              <TableHead>Rạp</TableHead>
-              <TableHead>Ngày & Giờ</TableHead>
-              <TableHead>Phòng</TableHead>
-              <TableHead>Loại vé</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="hover:bg-transparent border-border/50">
+              <TableHead className="py-5 pl-6">Mã suất chiếu</TableHead>
+              <TableHead className="py-5">Mã phim</TableHead>
+              <TableHead className="py-5">Mã phòng</TableHead>
+              <TableHead className="py-5">Ngày chiếu</TableHead>
+              <TableHead className="py-5">Giờ bắt đầu</TableHead>
+              <TableHead className="py-5">Giờ kết thúc</TableHead>
+              <TableHead className="text-right py-5 pr-6">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -244,91 +247,107 @@ export default function ShowtimesPage() {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-muted-foreground"
+                  className="h-48 text-center text-muted-foreground"
                 >
-                  Không tìm thấy suất chiếu nào
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Calendar className="h-8 w-8 opacity-20" />
+                    <p>Không tìm thấy suất chiếu nào</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
-              filteredShowtimes.map((showtime: any) => (
-                <TableRow
-                  key={showtime.showtime_id}
-                  className="hover:bg-muted/50"
-                >
-                  <TableCell className="font-medium">
-                    {getMovieName(showtime.movie_id)}
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {getShowtimeCinemaName(showtime)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <div className="text-sm">
-                        <p className="font-medium">
-                          {new Date(showtime.start_date).toLocaleDateString(
-                            "vi-VN"
-                          )}
-                        </p>
-                        <p className="text-muted-foreground">
-                          {(() => {
-                            const [hours, minutes] =
-                              showtime.start_time.split(":");
-                            return `${hours}:${minutes}`;
-                          })()}
-                        </p>
+              filteredShowtimes.map((showtime: any) => {
+                const movie = movies.find(
+                  (m) => String(m.movie_id) === String(showtime.movie_id)
+                );
+                const duration = movie?.duration || 0;
+                
+                // Calculate end time
+                const calculateEndTime = (startTime: string, durationMinutes: number) => {
+                  if (!startTime) return "N/A";
+                  const [hours, minutes] = startTime.split(':').map(Number);
+                  const date = new Date();
+                  date.setHours(hours, minutes, 0, 0);
+                  date.setMinutes(date.getMinutes() + durationMinutes);
+                  return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+                };
+
+                const endTime = calculateEndTime(showtime.start_time, duration);
+                const startTimeFormatted = showtime.start_time.split(':').slice(0, 2).join(':');
+
+                return (
+                  <TableRow key={showtime.showtime_id} className="hover:bg-muted/40 transition-colors border-border/50 group">
+                    <TableCell className="font-medium pl-6 py-4 text-xs font-mono text-muted-foreground">
+                      {showtime.showtime_id}
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-mono font-medium">{showtime.movie_id}</span>
+                        <span className="text-sm font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                          {movie?.name || "Không xác định"}
+                        </span>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {getShowtimeRoomName(showtime)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="text-xs">
-                      Ghế ngồi
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="default"
-                      className="bg-green-500 hover:bg-green-600"
-                    >
-                      Đang bán
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-8 w-8 hover:text-primary hover:bg-primary/10"
-                      >
-                        <Link
-                          href={`/admin/showtimes/${showtime.showtime_id}/edit`}
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-mono font-medium">{showtime.room_id}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {getShowtimeRoomName(showtime)}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex items-center gap-2 text-sm font-medium">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        {new Date(showtime.start_date).toLocaleDateString("vi-VN")}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex items-center gap-2 text-sm font-medium text-green-600 bg-green-500/10 px-2.5 py-1 rounded-md w-fit border border-green-500/20">
+                        <Clock className="h-3.5 w-3.5" />
+                        {startTimeFormatted}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-4">
+                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-md w-fit border border-border/50">
+                        <Clock className="h-3.5 w-3.5" />
+                        {endTime}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right pr-6 py-4">
+                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          asChild
+                          className="h-8 w-8 hover:text-orange-500 hover:bg-orange-500/10 rounded-lg transition-colors"
                         >
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteClick(showtime)}
-                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+                          <Link
+                            href={`/admin/showtimes/${showtime.showtime_id}/edit`}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteClick(showtime)}
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
       </div>
 
       {/* Results count */}
-      <div className="text-center text-sm text-muted-foreground">
+      <div className="text-center text-sm text-muted-foreground font-medium">
         Hiển thị {filteredShowtimes.length} / {showtimes.length} suất chiếu
       </div>
 

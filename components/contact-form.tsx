@@ -64,7 +64,7 @@ export default function ContactFormClient() {
 
       <div className="relative">
         <div className="mb-8 text-center">
-          <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-bold text-transparent">
+          <h2 className="text-3xl font-bold text-foreground">
             Gửi thắc mắc cho chúng tôi
           </h2>
           <p className="mt-2 text-muted-foreground">
@@ -173,7 +173,7 @@ export default function ContactFormClient() {
             disabled={isSubmitting}
             className={cn(
               "w-full h-12 text-base font-semibold shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]",
-              "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70",
+              "bg-primary hover:bg-primary/90",
               "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
             )}
           >

@@ -12,7 +12,7 @@ export function CinemaCard({ cinema }: CinemaCardProps) {
   return (
     <Card className="group overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full">
       {/* Decorative Header */}
-      <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/20 via-background to-accent/20 group-hover:from-primary/30 transition-all duration-500">
+      <div className="relative h-32 overflow-hidden bg-primary/10 group-hover:bg-primary/20 transition-all duration-500">
         <div className="absolute inset-0 flex items-center justify-center">
           <Film className="w-12 h-12 text-primary/40 group-hover:scale-110 transition-transform duration-500" />
         </div>

@@ -132,11 +132,11 @@ export default function EditCinemaPage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
+        <Card className="border-border/50 bg-card/50 backdrop-blur-md shadow-sm">
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle className="text-xl">Basic Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {/* Name */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
@@ -147,6 +147,7 @@ export default function EditCinemaPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
+                className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all"
               />
               {errors.name && (
                 <p className="text-sm text-destructive">{errors.name}</p>
@@ -163,6 +164,7 @@ export default function EditCinemaPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
+                className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all"
               />
               {errors.address && (
                 <p className="text-sm text-destructive">{errors.address}</p>
@@ -180,7 +182,7 @@ export default function EditCinemaPage() {
                   setFormData({ ...formData, state: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-11 bg-background/50 border-border/50 focus:ring-primary/20 transition-all">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -193,11 +195,11 @@ export default function EditCinemaPage() {
         </Card>
 
         {/* Actions */}
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" asChild>
+        <div className="flex justify-end gap-4 pt-4">
+          <Button type="button" variant="outline" asChild className="h-11 px-8">
             <Link href="/admin/cinemas">Cancel</Link>
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="h-11 px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </div>

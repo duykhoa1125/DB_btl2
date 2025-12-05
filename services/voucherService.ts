@@ -34,6 +34,15 @@ const voucherService = {
       },
     };
   },
+  getByUser: async (phoneNumber: string): Promise<Voucher[]> => {
+    try {
+      // Mock implementation since endpoint is not confirmed
+      // In a real app, this would call an API endpoint
+      return [];
+    } catch (error) {
+      return [];
+    }
+  },
 };
 
 export default voucherService;

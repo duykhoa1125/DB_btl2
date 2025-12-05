@@ -95,12 +95,13 @@ export default function CinemasPage() {
       />
 
       {/* Filters */}
-      <div className="flex flex-col gap-4 rounded-lg border border-border/50 bg-card/50 p-4 md:flex-row backdrop-blur-sm">
+      <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card/50 p-1 md:flex-row backdrop-blur-xl shadow-sm">
         <div className="relative flex-1">
           <AdminSearch
             value={searchTerm}
             onChange={setSearchTerm}
             placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
+            className="w-full"
           />
         </div>
       </div>
@@ -108,43 +109,59 @@ export default function CinemasPage() {
       {/* Cinemas Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredCinemas.length === 0 ? (
-          <div className="col-span-full rounded-lg border border-border/50 bg-card/50 p-12 text-center text-muted-foreground">
-            Không tìm thấy rạp nào
+          <div className="col-span-full flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/30 p-16 text-center animate-in fade-in zoom-in-95 duration-300">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50 mb-6">
+              <Film className="h-10 w-10 text-muted-foreground/50" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">Không tìm thấy rạp nào</h3>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Thử thay đổi từ khóa tìm kiếm hoặc thêm rạp mới.
+            </p>
           </div>
         ) : (
           filteredCinemas.map((cinema) => (
             <div
               key={cinema.cinema_id}
-              className="group overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/50"
+              className="group relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-b from-card/80 to-card/40 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 hover:-translate-y-1"
             >
-              {/* Decorative Header */}
-              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 group-hover:from-primary/20 transition-colors duration-500">
+              {/* Decorative Header Image/Gradient */}
+              <div className="relative h-48 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background/50 to-accent/10 group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Film className="w-12 h-12 text-primary/20 group-hover:scale-110 transition-transform duration-500" />
+                  <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-background/20 backdrop-blur-md border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <Film className="w-8 h-8 text-primary/80" />
+                  </div>
                 </div>
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="font-bold text-foreground text-lg group-hover:text-primary transition-colors">
-                    {cinema.name}
-                  </h3>
-                </div>
+                
+                {/* Tech lines decoration */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
               </div>
 
               {/* Content */}
-              <div className="space-y-4 p-4">
-                <div className="text-sm flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                  <p className="text-muted-foreground line-clamp-2">
-                    {cinema.address}
-                  </p>
+              <div className="p-6 space-y-5">
+                <div>
+                  <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2">
+                    {cinema.name}
+                  </h3>
+                  <div className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary/60" />
+                    <p className="line-clamp-2 leading-relaxed">
+                      {cinema.address}
+                    </p>
+                  </div>
                 </div>
 
+                {/* Separator */}
+                <div className="h-px w-full bg-border/50" />
+
                 {/* Actions */}
-                <div className="flex gap-2 pt-2">
+                <div className="flex items-center gap-3">
                   <Button
                     variant="outline"
                     size="sm"
                     asChild
-                    className="flex-1 hover:bg-primary/10 hover:text-primary border-border/50"
+                    className="flex-1 h-10 rounded-lg border-border/60 hover:border-primary/50 hover:bg-primary/5 hover:text-primary transition-all duration-300 font-medium"
                   >
                     <Link href={`/admin/cinemas/${cinema.cinema_id}/edit`}>
                       <Edit className="mr-2 h-4 w-4" />
@@ -152,10 +169,10 @@ export default function CinemasPage() {
                     </Link>
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => handleDeleteClick(cinema)}
-                    className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border/50"
+                    className="h-10 w-10 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
