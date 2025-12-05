@@ -51,29 +51,29 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/20 p-4">
-      <Card className="w-full max-w-md shadow-2xl">
-        <CardHeader className="space-y-2 text-center">
+    <div className="animate-scale-in w-full max-w-md mx-auto">
+      <Card className="glass-card border-white/20 shadow-2xl">
+        <CardHeader className="space-y-2 text-center pb-8">
           <CardTitle className="text-3xl font-bold text-primary">
             Đăng nhập
           </CardTitle>
-          <CardDescription>
-            Nhập email hoặc số điện thoại để tiếp tục
+          <CardDescription className="text-base">
+            Chào mừng bạn quay trở lại với CinemaHub
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="animate-shake">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="identifier" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+              <Label htmlFor="identifier" className="flex items-center gap-2 font-medium">
+                <Mail className="h-4 w-4 text-primary" />
                 Email hoặc Số điện thoại
               </Label>
               <Input
@@ -83,19 +83,24 @@ export function LoginForm() {
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 disabled={isLoading}
-                className="transition-all focus:ring-2 focus:ring-primary/20"
+                className="h-11 bg-white/5"
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Bạn có thể dùng email hoặc số điện thoại để đăng nhập
-              </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
-                Mật khẩu
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="flex items-center gap-2 font-medium">
+                  <Lock className="h-4 w-4 text-primary" />
+                  Mật khẩu
+                </Label>
+                <Link
+                  href="/account/forgot-password"
+                  className="text-xs text-primary hover:underline font-medium"
+                >
+                  Quên mật khẩu?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -103,27 +108,17 @@ export function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="transition-all focus:ring-2 focus:ring-primary/20"
+                className="h-11 bg-white/5"
                 required
               />
             </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <Link
-                href="/account/forgot-password"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                Quên mật khẩu?
-              </Link>
-            </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 pt-4">
             <Button
               type="submit"
-              className="w-full shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+              className="w-full h-11 text-base font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
               disabled={isLoading}
-              size="lg"
             >
               {isLoading ? (
                 <>
@@ -139,7 +134,7 @@ export function LoginForm() {
               Chưa có tài khoản?{" "}
               <Link
                 href="/account/register"
-                className="font-medium text-primary hover:underline"
+                className="font-bold text-primary hover:underline transition-all"
               >
                 Đăng ký ngay
               </Link>

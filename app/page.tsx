@@ -7,6 +7,8 @@ import Link from "next/link";
 import { Sparkles, ArrowRight, Film, MapPin, Calendar } from "lucide-react";
 import type { Movie, Cinema, Event } from "@/services/types";
 import type { Metadata } from "next";
+import { BlurText } from "@/components/react-bits/blur-text";
+import { SplitText } from "@/components/react-bits/split-text";
 
 export const metadata: Metadata = {
   title: "Trang chủ - CinemaHub | Đặt vé phim online nhanh chóng",
@@ -41,9 +43,6 @@ export default async function Home() {
       cinemaService.getAll(),
       eventService.getAll(),
     ]);
-    // const moviesData = await movieService.getAll();
-    // const cinemasData = await cinemaService.getAll();
-    // const eventsData = await eventService.getAll();
 
     allMovies = Array.isArray(moviesData) ? moviesData : [];
     cinemas = Array.isArray(cinemasData) ? cinemasData : [];
@@ -69,9 +68,9 @@ export default async function Home() {
   const featuredCinemas = cinemas.slice(0, 3);
 
   return (
-    <div className="bg-background relative">
+    <div className="bg-background relative overflow-hidden">
       {/* Ambient Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
       </div>
@@ -80,35 +79,52 @@ export default async function Home() {
       <div className="fixed inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       {/* Hero Section */}
-      <section className="relative mx-auto max-w-7xl px-6 pt-8 pb-6">
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+      <section className="relative mx-auto max-w-7xl px-6 pt-12 pb-10">
+        <div className="mb-12 text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 animate-fade-in">
             <Film className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-primary">
               Premium Cinema Experience
             </span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-foreground">
-            Đặt vé phim <span className="text-primary">online</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Trải nghiệm điện ảnh đỉnh cao với hệ thống đặt vé thông minh
-          </p>
+          
+          <div className="mb-6 overflow-hidden">
+            <BlurText
+              text="Đặt vé phim online"
+              className="text-5xl md:text-7xl font-bold text-foreground justify-center"
+              delay={150}
+              animateBy="words"
+              direction="top"
+            />
+          </div>
+          
+          <div className="max-w-2xl mx-auto overflow-hidden">
+            <SplitText
+              text="Trải nghiệm điện ảnh đỉnh cao với hệ thống đặt vé thông minh"
+              className="text-xl text-muted-foreground"
+              delay={50}
+              animationFrom={{ opacity: 0, transform: 'translate3d(0,20px,0)' }}
+              animationTo={{ opacity: 1, transform: 'translate3d(0,0,0)' }}
+              textAlign="center"
+            />
+          </div>
         </div>
 
         {error ? (
-          <div className="h-[500px] w-full flex items-center justify-center rounded-3xl bg-card/50 border border-border/50">
+          <div className="h-[500px] w-full flex items-center justify-center rounded-3xl bg-card/50 border border-border/50 glass-card">
             <div className="flex flex-col items-center gap-4 text-center px-4">
               <Film className="h-12 w-12 text-muted-foreground" />
               <p className="text-muted-foreground">{error}</p>
             </div>
           </div>
         ) : allMovies.length > 0 ? (
-          <Carousel
-            items={nowShowingMovies.length > 0 ? nowShowingMovies : allMovies}
-          />
+          <div className="animate-slide-up" style={{ animationDelay: '0.5s' }}>
+            <Carousel
+              items={nowShowingMovies.length > 0 ? nowShowingMovies : allMovies}
+            />
+          </div>
         ) : (
-          <div className="h-[500px] w-full flex items-center justify-center rounded-3xl bg-card/50 border border-border/50">
+          <div className="h-[500px] w-full flex items-center justify-center rounded-3xl bg-card/50 border border-border/50 glass-card">
             <div className="flex flex-col items-center gap-4">
               <Film className="h-12 w-12 text-muted-foreground" />
               <p className="text-muted-foreground">Chưa có phim nào</p>
@@ -120,12 +136,15 @@ export default async function Home() {
       {/* Movie Listings */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="mb-12 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-            Phim đang chiếu
-          </h2>
+          <BlurText
+            text="Phim đang chiếu"
+            className="text-4xl md:text-5xl font-bold mb-4 text-foreground justify-center"
+            delay={100}
+            animateBy="words"
+            direction="bottom"
+          />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Khám phá những bộ phim blockbuster và các tác phẩm nghệ thuật đặc
-            sắc
+            Khám phá những bộ phim blockbuster và các tác phẩm nghệ thuật đặc sắc
           </p>
         </div>
 
@@ -137,8 +156,9 @@ export default async function Home() {
 
       {/* Featured Events Section */}
       {activeEvents.length > 0 && (
-        <section className="bg-muted/30 py-20 border-y border-border/40">
-          <div className="mx-auto max-w-7xl px-6">
+        <section className="bg-muted/30 py-20 border-y border-border/40 relative overflow-hidden">
+           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent opacity-50 pointer-events-none" />
+          <div className="mx-auto max-w-7xl px-6 relative">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
               <div>
                 <div className="inline-flex items-center gap-2 text-primary font-semibold mb-2">
@@ -202,7 +222,7 @@ export default async function Home() {
       )}
 
       {/* Promotional Section */}
-      <section className="border-y border-border/40 bg-card/30 py-20">
+      <section className="border-y border-border/40 bg-card/30 py-20 relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-6">
           <div className="group relative overflow-hidden rounded-3xl border border-primary/30 bg-primary p-12 shadow-2xl hover:shadow-primary/30 transition-all duration-500">
             {/* Animated Glow Effects */}
@@ -211,7 +231,7 @@ export default async function Home() {
 
             {/* Content */}
             <div className="relative flex flex-col md:flex-row items-center md:items-start gap-8">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm ring-4 ring-white/30">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/20 backdrop-blur-sm ring-4 ring-white/30 animate-float">
                 <Sparkles className="h-10 w-10 text-white" />
               </div>
 
