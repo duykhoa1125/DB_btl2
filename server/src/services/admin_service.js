@@ -1,8 +1,12 @@
 const { executeQuery } = require("../models/connect_sql");
-// const Event = require("../models/event");
 
 class AdminService {
   async getStats() {
+    // Lấy tháng và năm hiện tại
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    // Các truy vấn cơ bản
     const raw_movieCount = await executeQuery(
       "SELECT COUNT(ma_phim) AS count FROM Phim"
     );
@@ -15,22 +19,82 @@ class AdminService {
     const raw_totalCinemaCount = await executeQuery(
       "SELECT COUNT(ma_rap) AS count FROM RapChieu"
     );
+
+    // Doanh thu tháng hiện tại
+    const raw_monthlyRevenue = await executeQuery(
+      `SELECT SUM(tong_tien) AS revenue 
+         FROM HoaDon 
+         WHERE YEAR(ngay_tao) = ? AND MONTH(ngay_tao) = ?`,
+      [currentYear, currentMonth]
+    );
+
+    // Số lượt đặt vé tháng hiện tại
+    const raw_bookingsThisMonth = await executeQuery(
+      `SELECT COUNT(DISTINCT ma_hoa_don) AS bookings 
+         FROM HoaDon 
+         WHERE YEAR(ngay_tao) = ? AND MONTH(ngay_tao) = ?`,
+      [currentYear, currentMonth]
+    );
     const movieCount = this.getCountNumber(raw_movieCount);
     const showingCount = this.getCountNumber(raw_showingCount);
     const commingSoonCount = this.getCountNumber(raw_commingSoonCount);
     const totalCinemaCount = this.getCountNumber(raw_totalCinemaCount);
+    const monthlyRevenue = raw_monthlyRevenue[0]?.revenue || 0;
+    const bookingsThisMonth = raw_bookingsThisMonth[0]?.bookings || 0;
+
     return {
       total_movies: movieCount,
       now_showing: showingCount,
       coming_soon: commingSoonCount,
       total_cinemas: totalCinemaCount,
-      monthly_revenue: 50000000,
-      bookings_this_month: 120,
+      monthly_revenue: monthlyRevenue,
+      bookings_this_month: bookingsThisMonth,
     };
   }
+
   getCountNumber(countTable) {
     return countTable[0].count;
   }
+
+  // Helper function to convert date to YYYY-MM-DD format
+  formatDateToYYYYMMDD(date) {
+    if (date instanceof Date) {
+      return date.toISOString().split("T")[0];
+    }
+
+    // Nếu là string, kiểm tra định dạng
+    const str = String(date);
+    if (str.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return str;
+    }
+
+    // Thử parse nếu không đúng định dạng
+    const parsedDate = new Date(str);
+    if (!isNaN(parsedDate.getTime())) {
+      return parsedDate.toISOString().split("T")[0];
+    }
+
+    throw new Error(`Invalid date format: ${date}`);
+  }
+
+  // Helper function to validate date string
+  validateDateString(dateStr) {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(dateStr)) {
+      throw new Error(
+        "Định dạng ngày không hợp lệ. Vui lòng sử dụng YYYY-MM-DD"
+      );
+    }
+
+    // Kiểm tra ngày hợp lệ
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      throw new Error("Ngày không hợp lệ");
+    }
+
+    return dateStr;
+  }
+
   async createMovie(
     title,
     duration,
@@ -45,6 +109,15 @@ class AdminService {
     directors,
     actors
   ) {
+    // Validate dates
+    const validatedReleaseDate = this.validateDateString(releaseDate);
+    const validatedEndDate = this.validateDateString(endDate);
+
+    // Kiểm tra releaseDate <= endDate
+    if (validatedReleaseDate > validatedEndDate) {
+      throw new Error("Ngày khởi chiếu phải sớm hơn hoặc bằng ngày kết thúc");
+    }
+
     await executeQuery(
       `
             INSERT INTO Phim (ma_phim, ten_phim, thoi_luong, ngay_khoi_chieu, ngay_ket_thuc, do_tuoi, trailer, ngon_ngu, trang_thai, tom_tat, hinh_anh)
@@ -53,8 +126,8 @@ class AdminService {
       [
         title,
         duration,
-        releaseDate,
-        endDate,
+        validatedReleaseDate,
+        validatedEndDate,
         ageRating,
         trailer,
         language,
@@ -68,6 +141,7 @@ class AdminService {
       `SELECT ma_phim FROM Phim ORDER BY ma_phim DESC LIMIT 1`
     );
     let newId = lastMovie[0].ma_phim;
+
     // Insert directors
     if (directors && Array.isArray(directors) && directors.length > 0) {
       for (const director of directors) {
@@ -106,6 +180,23 @@ class AdminService {
     directors,
     actors
   ) {
+    // Validate dates nếu có cung cấp
+    let validatedReleaseDate = releaseDate;
+    let validatedEndDate = endDate;
+
+    if (releaseDate !== null && releaseDate !== undefined) {
+      validatedReleaseDate = this.validateDateString(releaseDate);
+    }
+
+    if (endDate !== null && endDate !== undefined) {
+      validatedEndDate = this.validateDateString(endDate);
+    }
+
+    // Kiểm tra releaseDate <= endDate nếu cả hai đều được cung cấp
+    if (releaseDate && endDate && validatedReleaseDate > validatedEndDate) {
+      throw new Error("Ngày khởi chiếu phải sớm hơn hoặc bằng ngày kết thúc");
+    }
+
     // Map tham số với tên cột trong database
     const fieldMap = {
       title: "ten_phim",
@@ -124,8 +215,8 @@ class AdminService {
     const updates = {
       title,
       duration,
-      releaseDate,
-      endDate,
+      releaseDate: validatedReleaseDate,
+      endDate: validatedEndDate,
       ageRating,
       trailer,
       language,
@@ -182,6 +273,7 @@ class AdminService {
       }
     }
   }
+
   async deleteMovie(id) {
     // Delete related directors first
     await executeQuery(`DELETE FROM DaoDien WHERE ma_phim=?`, [id]);
@@ -201,6 +293,7 @@ class AdminService {
       [name, status, address]
     );
   }
+
   async updateCinema(id, name, status, address) {
     const fieldMap = {
       name: "ten_rap",
@@ -241,6 +334,9 @@ class AdminService {
 
   // showtimes CRUD
   async createShowtime(roomId, movieId, date, startTime, endTime) {
+    // Validate date
+    const validatedDate = this.validateDateString(date);
+
     // Kiểm tra trạng thái phòng
     const status = await executeQuery(
       `SELECT trang_thai FROM PhongChieu WHERE ma_phong = ?`,
@@ -268,16 +364,20 @@ class AdminService {
     // Kiểm tra ngày chiếu có nằm trong khoảng công chiếu không
     const filmData = film[0];
 
-    // date, filmData.ngay_khoi_chieu, filmData.ngay_ket_thuc đều là DATE (YYYY-MM-DD)
-    if (date < filmData.ngay_khoi_chieu) {
+    // Chuyển đổi về string định dạng YYYY-MM-DD để so sánh
+    const startDateStr = this.formatDateToYYYYMMDD(filmData.ngay_khoi_chieu);
+    const endDateStr = this.formatDateToYYYYMMDD(filmData.ngay_ket_thuc);
+
+    // So sánh chuỗi YYYY-MM-DD
+    if (validatedDate < startDateStr) {
       throw new Error(
-        `Ngày chiếu ${date} sớm hơn ngày khởi chiếu ${filmData.ngay_khoi_chieu}`
+        `Ngày chiếu ${validatedDate} sớm hơn ngày khởi chiếu ${startDateStr}`
       );
     }
 
-    if (date > filmData.ngay_ket_thuc) {
+    if (validatedDate > endDateStr) {
       throw new Error(
-        `Ngày chiếu ${date} muộn hơn ngày kết thúc ${filmData.ngay_ket_thuc}`
+        `Ngày chiếu ${validatedDate} muộn hơn ngày kết thúc ${endDateStr}`
       );
     }
 
@@ -286,7 +386,7 @@ class AdminService {
       throw new Error("Thời gian bắt đầu phải sớm hơn thời gian kết thúc");
     }
 
-    // 5. Kiểm tra trùng lịch chiếu trong phòng
+    // Kiểm tra trùng lịch chiếu trong phòng
     const checkConflictQuery = `
         SELECT COUNT(*) as count 
         FROM SuatChieu 
@@ -301,27 +401,39 @@ class AdminService {
 
     const conflict = await executeQuery(checkConflictQuery, [
       roomId,
-      date,
+      validatedDate,
       endTime,
-      startTime, // Điều kiện 1
       startTime,
-      endTime, // Điều kiện 2
       startTime,
-      endTime, // Điều kiện 3
+      endTime,
+      startTime,
+      endTime,
     ]);
 
     if (conflict[0].count > 0) {
       throw new Error("Phòng đã có suất chiếu trong khung giờ này!");
     }
 
-    // Tạo suất chiếu - Trigger sẽ tự tạo ma_suat_chieu
+    // Tạo suất chiếu
     await executeQuery(
       `INSERT INTO SuatChieu (ma_suat_chieu, ma_phong, ma_phim, ngay_chieu, gio_bat_dau, gio_ket_thuc)
          VALUES (NULL, ?, ?, ?, ?, ?)`,
-      [roomId, movieId, date, startTime, endTime]
+      [roomId, movieId, validatedDate, startTime, endTime]
     );
   }
+
   async updateShowtime(id, roomId, movieId, date, startTime, endTime) {
+    // Validate date nếu có cung cấp
+    let validatedDate = date;
+    if (date !== null && date !== undefined) {
+      validatedDate = this.validateDateString(date);
+    }
+
+    // Validate times nếu có cung cấp
+    if (startTime && endTime && startTime >= endTime) {
+      throw new Error("Thời gian bắt đầu phải sớm hơn thời gian kết thúc");
+    }
+
     const fieldMap = {
       roomId: "ma_phong",
       movieId: "ma_phim",
@@ -330,7 +442,13 @@ class AdminService {
       endTime: "gio_ket_thuc",
     };
 
-    const updates = { roomId, movieId, date, startTime, endTime };
+    const updates = {
+      roomId,
+      movieId,
+      date: validatedDate,
+      startTime,
+      endTime,
+    };
 
     const fieldsToUpdate = [];
     const values = [];
@@ -353,7 +471,7 @@ class AdminService {
             SET ${fieldsToUpdate.join(", ")}
             WHERE ma_suat_chieu = ?
         `;
-    console.log(query, values);
+
     await executeQuery(query, values);
   }
 
@@ -371,11 +489,15 @@ class AdminService {
       throw new Error("Showtime not found");
     }
     const row = result[0];
+
+    // Format ngày chiếu về YYYY-MM-DD
+    const showDate = this.formatDateToYYYYMMDD(row.ngay_chieu);
+
     return {
       showtime_id: row.ma_suat_chieu,
       room_id: row.ma_phong,
       movie_id: row.ma_phim,
-      start_date: row.ngay_chieu,
+      start_date: showDate,
       start_time: row.gio_bat_dau,
       end_time: row.gio_ket_thuc,
     };
