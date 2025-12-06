@@ -6,6 +6,7 @@ const bookingRouter = require("./booking_route");
 const otherRouter = require("./other_route");
 const promotionRouter = require("./promotion_route");
 const adminRouter = require("./admin_route");
+const reviewRouter = require("./review_route");
 function router(app) {
   app.use("/auth", login);
   app.use("/cinemas", cinemaRouter);
@@ -15,6 +16,7 @@ function router(app) {
   app.use("/other", otherRouter);
   app.use("/promotions", promotionRouter);
   app.use("/admin", adminRouter);
+  app.use("/reviews", reviewRouter);
 }
 
 module.exports = router;

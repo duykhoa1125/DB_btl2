@@ -2,7 +2,6 @@ const CinemaService = require("../services/cinema_service")
 class CinemaController {
     async getAll(req, res){
         try {
-            console.log("ctrl get all");
             const cinemas = await CinemaService.getAll();
             res.json({ success: true, data: cinemas });
         } catch (error) {
@@ -10,7 +9,6 @@ class CinemaController {
         }
     }
     async getById(req, res){
-        console.log("ctrl get by id");
         try {
             const id = req.params.id;
             

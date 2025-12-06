@@ -4,51 +4,59 @@ const MovieDetail = require("../models/movie_detail");
 
 class MovieService {
   async getAll(status = null) {
-    let optionalClause = "";
+    let query = "SELECT * FROM Phim";
+    let params = [];
+
     if (status) {
-      optionalClause = ` WHERE trang_thai='${status}'`;
+      query += " WHERE trang_thai = ?";
+      params.push(status);
     }
-    const result = await executeQuery(`SELECT * FROM Phim ${optionalClause}`);
-    // Chuyển đổi mỗi row thành Movie object. Lưu ý: result là một array các kết quả
-    //return result;
+
+    const result = await executeQuery(query, params);
     return result.map((row) => new Movie(row));
   }
+
   async getById(id) {
-    console.log("get by id:" + id);
-    const movies = await executeQuery(
-      `SELECT * FROM Phim WHERE ma_phim='${id}'`
-    );
+    const movies = await executeQuery("SELECT * FROM Phim WHERE ma_phim = ?", [
+      id,
+    ]);
+
     if (movies.length <= 0) {
       return null;
     }
+
     const directors = await executeQuery(
-      `SELECT ten_dao_dien FROM DaoDien WHERE ma_phim='${id}'`
-    );
-    const actors = await executeQuery(
-      `SELECT ten_dien_vien FROM DienVien WHERE ma_phim='${id}'`
-    );
-    const ratings = await executeQuery(
-      `SELECT COUNT(*) AS count, SUM(so_sao) AS total_stars FROM DanhGiaPhim WHERE ma_phim='${id}'`
+      "SELECT ten_dao_dien FROM DaoDien WHERE ma_phim = ?",
+      [id]
     );
 
-    // Gọi procedure xem_danh_gia - xử lý trường hợp không có đánh giá
+    const actors = await executeQuery(
+      "SELECT ten_dien_vien FROM DienVien WHERE ma_phim = ?",
+      [id]
+    );
+
+    const ratings = await executeQuery(
+      "SELECT COUNT(*) AS count, SUM(so_sao) AS total_stars FROM DanhGiaPhim WHERE ma_phim = ?",
+      [id]
+    );
+
     let reviews = [];
     try {
-      const reviewsResult = await executeQuery(
-        // `SELECT so_dien_thoai, so_sao, ngay_viet, noi_dung_danh_gia FROM DanhGiaPhim WHERE ma_phim='${id}'`
-        `CALL xem_danh_gia(?, NULL)`,
-        [id]
-      );
-      // MySQL procedure trả về kết quả trong mảng lồng nhau
+      const reviewsResult = await executeQuery("CALL xem_danh_gia(?, NULL)", [
+        id,
+      ]);
       reviews = reviewsResult[0] || [];
     } catch (error) {
-      // Nếu không tìm thấy đánh giá, procedure sẽ throw error - trả về mảng rỗng
-      console.log(`No reviews found for movie ${id}`);
+      console.log(`No reviews found for movie ${id}:`, error.message);
       reviews = [];
     }
 
     let avgRating = 0;
-    if (ratings.length > 0 && ratings[0].count > 0) {
+    if (
+      ratings.length > 0 &&
+      ratings[0].count > 0 &&
+      ratings[0].total_stars !== null
+    ) {
       avgRating = ratings[0].total_stars / ratings[0].count;
     }
 
@@ -60,13 +68,7 @@ class MovieService {
       date_written: row.ngay_viet,
       review_content: row.noi_dung_danh_gia,
     }));
-    // const result = {
-    //     movies: movies[0],
-    //     director: director_list,
-    //     actor: actor_list,
-    //     avgRating: avgRating,
-    //     review: review_list
-    // };
+
     const result = new MovieDetail(
       movies[0],
       director_list,
@@ -77,28 +79,15 @@ class MovieService {
     return result;
   }
   async getTopRevenue() {
-    console.log("get top revenue");
-    // const result = await executeQuery(`SELECT
-    //                                             ten_phim,
-    //                                             SUM(gia_ve) AS tong_doanh_thu
-    //                                         FROM Ve
-    //                                         GROUP BY ten_phim
-    //                                         HAVING SUM(gia_ve) = (
-    //                                             SELECT MAX(t.doanh_thu)
-    //                                             FROM (
-    //                                                 SELECT SUM(gia_ve) AS doanh_thu
-    //                                                 FROM Ve
-    //                                                 GROUP BY ten_phim
-    //                                             ) AS t
-    //                                         )`);
-
     const result = await executeQuery(`
       SELECT ma_phim, ten_phim, tinh_tong_doanh_thu_phim(ma_phim) as doanh_thu 
-      FROM Phim ORDER BY doanh_thu DESC
+      FROM Phim 
+      ORDER BY doanh_thu DESC
     `);
 
-    //if (result.length<=0){return null;}
-    console.log(result);
+    if (result.length <= 0) {
+      return null;
+    }
     return result;
   }
 }

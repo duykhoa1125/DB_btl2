@@ -3,9 +3,8 @@ const MovieService = require("../services/movie_service");
 class MovieController {
     async getAll(req, res){
         try {
-            console.log("controller get all");
             const status = req.query.status || null;
-            const movies = await MovieService.getAll(status); // movies là array
+            const movies = await MovieService.getAll(status);
             
             res.json({ success: true, data: movies });
         } catch (error) {
@@ -14,8 +13,7 @@ class MovieController {
     }
     async getById(req, res){
         try {
-            const id = req.params.id;
-            console.log("controller get by id");            
+            const id = req.params.id;           
             const movies = await MovieService.getById(id);
             res.json({ success: true, data: movies });
         } catch (error) {

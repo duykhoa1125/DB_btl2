@@ -45,6 +45,7 @@ class ShowtimeService {
     const result = await executeQuery(query, params);
     return result.map((row) => new Showtime(row));
   }
+
   async getById(showtime_id) {
     const room_result = await executeQuery(
       `
@@ -54,42 +55,12 @@ class ShowtimeService {
         `,
       [showtime_id]
     );
-    /*
-        +----------+-----------+
-        | ma_phong | ten_phong |
-        +----------+-----------+
-        */
     const seat_result = await executeQuery(
-      `SELECT R.ma_phong, hang_ghe, so_ghe, loai_ghe, 
-                                                S.trang_thai FROM SuatChieu NATURAL JOIN PhongChieu R 
-                                                INNER JOIN GheNgoi S ON R.ma_phong=S.ma_phong WHERE 
-                                                ma_suat_chieu=?`,
+      `SELECT R.ma_phong, hang_ghe, so_ghe, loai_ghe, S.trang_thai 
+      FROM SuatChieu NATURAL JOIN PhongChieu R                                   
+      INNER JOIN GheNgoi S ON R.ma_phong=S.ma_phong WHERE ma_suat_chieu=?`,
       [showtime_id]
     );
-    /*
-        +----------+----------+--------+----------+------------+
-        | ma_phong | hang_ghe | so_ghe | loai_ghe | trang_thai |
-        +----------+----------+--------+----------+------------+
-        */
-    /*
-        Expected:
-        {
-        "showtime_id": "SCH00001",
-        "room": { "room_id": "...", "name": "..." },
-        "seats": [
-            {
-            "room_id": "...",
-            "seat_row": "A",
-            "seat_column": 1,
-            "seat_type": "normal",
-            "state": "occupied", // Calculated: if ticket exists for this showtime+seat, then 'occupied', else 'available' (or 'broken' from SEAT table)
-            "price": 85000 // Calculated based on seat_type and showtime rules
-            },
-            ...
-        ]
-        }
-        */
-
     return {
       showtime_id: showtime_id,
       room: {
@@ -99,7 +70,7 @@ class ShowtimeService {
       seats: seat_result.map((row) => this.createSeatInfo(row)),
     };
   }
-  // UTILS
+
   createSeatInfo(row) {
     const priceMap = {
       normal: 75000,

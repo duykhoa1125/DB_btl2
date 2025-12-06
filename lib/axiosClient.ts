@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Helper to get base URL for both client and server
 function getBaseURL() {
   // Client-side: use relative URL (unless NEXT_PUBLIC_API_URL is explicitly set)
-  if (typeof window !== 'undefined') {
-    return process.env.NEXT_PUBLIC_API_URL || '/api';
+  if (typeof window !== "undefined") {
+    return process.env.NEXT_PUBLIC_API_URL || "/api";
   }
 
   // Server-side: use absolute URL with priority order
@@ -37,7 +37,11 @@ function getBaseURL() {
 const axiosClient = axios.create({
   baseURL: getBaseURL(),
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
+    // THÊM: Headers để disable cache
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
   },
 });
 
@@ -45,8 +49,8 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     // Only attach token on client-side
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -69,12 +73,12 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     // Handle 401 Unauthorized - clear tokens and redirect to login (client-side only)
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('currentUser');
+    if (error.response?.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("currentUser");
       // Only redirect if not already on login page
-      if (!window.location.pathname.includes('/account/login')) {
-        window.location.href = '/account/login';
+      if (!window.location.pathname.includes("/account/login")) {
+        window.location.href = "/account/login";
       }
     }
 

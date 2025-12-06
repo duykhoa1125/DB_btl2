@@ -30,6 +30,9 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   // Fetch data in parallel
   let allMovies: Movie[] = [];
@@ -87,7 +90,7 @@ export default async function Home() {
               Premium Cinema Experience
             </span>
           </div>
-          
+
           <div className="mb-6 overflow-hidden">
             <BlurText
               text="Đặt vé phim online"
@@ -97,14 +100,14 @@ export default async function Home() {
               direction="top"
             />
           </div>
-          
+
           <div className="max-w-2xl mx-auto overflow-hidden">
             <SplitText
               text="Trải nghiệm điện ảnh đỉnh cao với hệ thống đặt vé thông minh"
               className="text-xl text-muted-foreground"
               delay={50}
-              animationFrom={{ opacity: 0, transform: 'translate3d(0,20px,0)' }}
-              animationTo={{ opacity: 1, transform: 'translate3d(0,0,0)' }}
+              animationFrom={{ opacity: 0, transform: "translate3d(0,20px,0)" }}
+              animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
               textAlign="center"
             />
           </div>
@@ -118,7 +121,7 @@ export default async function Home() {
             </div>
           </div>
         ) : allMovies.length > 0 ? (
-          <div className="animate-slide-up" style={{ animationDelay: '0.5s' }}>
+          <div className="animate-slide-up" style={{ animationDelay: "0.5s" }}>
             <Carousel
               items={nowShowingMovies.length > 0 ? nowShowingMovies : allMovies}
             />
@@ -144,7 +147,8 @@ export default async function Home() {
             direction="bottom"
           />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Khám phá những bộ phim blockbuster và các tác phẩm nghệ thuật đặc sắc
+            Khám phá những bộ phim blockbuster và các tác phẩm nghệ thuật đặc
+            sắc
           </p>
         </div>
 
@@ -157,7 +161,7 @@ export default async function Home() {
       {/* Featured Events Section */}
       {activeEvents.length > 0 && (
         <section className="bg-muted/30 py-20 border-y border-border/40 relative overflow-hidden">
-           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent opacity-50 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent opacity-50 pointer-events-none" />
           <div className="mx-auto max-w-7xl px-6 relative">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
               <div>

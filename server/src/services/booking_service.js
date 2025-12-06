@@ -1,12 +1,8 @@
-//const { user } = require("../config/sql_server");
 const { executeQuery } = require("../models/connect_sql");
-// const Booking = require("../models/booking_model");
 const Bill = require("../models/bill_model");
 
 class BookingService {
   async createBooking(userPhone, showtimeId, seats, foods, voucherId) {
-    const PRICE = 75000;
-    // Bước 0: kiểm tra tính hợp lệ của các thành phần
     let total = 0;
 
     // Lấy danh sách ghế trống bằng procedure
@@ -14,7 +10,6 @@ class BookingService {
       `CALL lay_ds_ghe_trong(?)`,
       [showtimeId]
     );
-    // MySQL procedure trả về kết quả trong mảng lồng nhau
     const availableSeats = availableSeatsResult[0] || [];
 
     for (const s of seats) {
@@ -37,8 +32,8 @@ class BookingService {
     // Bước 1: create bill
     let result = await executeQuery(
       `
-            INSERT INTO HoaDon (so_dien_thoai, ngay_tao, tong_tien)
-            VALUES (?, ?, ?)
+            INSERT INTO HoaDon (ma_hoa_don,so_dien_thoai, ngay_tao, tong_tien)
+            VALUES (NULL ,?, ?, ?)
         `,
       [userPhone, this.getCurrentDateTimeStr(), total]
     );
@@ -109,35 +104,61 @@ class BookingService {
     // Bước 4-5: update voucher & tính tổng cuối cùng
     if (voucherId) {
       // implement voucher logic into price.
-      // Default: 10% off
-      total *= 0.9;
-      result = await executeQuery(
-        `
+      const voucherInfo = await executeQuery(
+        `SELECT v.ma_voucher, v.trang_thai, km.ma_khuyen_mai,
+                  gg.phan_tram_giam, gg.gia_toi_da_giam
+           FROM Voucher v
+           JOIN KhuyenMai km ON v.ma_khuyen_mai = km.ma_khuyen_mai
+           LEFT JOIN GiamGia gg ON km.ma_khuyen_mai = gg.ma_khuyen_mai
+           WHERE v.ma_voucher = ? AND v.so_dien_thoai = ?`,
+        [voucherId, userPhone]
+      );
+      let discountApplied = 0;
+      if (voucherInfo.length > 0 && voucherInfo[0].trang_thai === "active") {
+        const voucher = voucherInfo[0];
+
+        // Tính giảm giá dựa trên database
+        if (voucher.phan_tram_giam) {
+          discountApplied = total * (voucher.phan_tram_giam / 100);
+
+          // Giới hạn số tiền giảm tối đa
+          if (
+            voucher.gia_toi_da_giam &&
+            discountApplied > voucher.gia_toi_da_giam
+          ) {
+            discountApplied = voucher.gia_toi_da_giam;
+          }
+
+          total -= discountApplied;
+        }
+        result = await executeQuery(
+          `
                 UPDATE HoaDon
                 SET tong_tien=?
                 WHERE ma_hoa_don=?
                 `,
-        [total, billId]
-      );
-      result = await executeQuery(
-        `
+          [total, billId]
+        );
+        result = await executeQuery(
+          `
                 UPDATE Voucher
                 SET trang_thai='used'
                 WHERE ma_voucher=?    
             `,
-        [voucherId]
-      );
-    }
+          [voucherId]
+        );
+      }
 
-    const totalTable = await executeQuery(
-      `
+      const totalTable = await executeQuery(
+        `
             SELECT tinh_tong_hoa_don(?) AS total
         `,
-      [billId]
-    );
-    const totalNumber = totalTable[0].total;
-    // Tạo Bill object để return
-    return new Bill(billId, userPhone, creationDatetime, totalNumber);
+        [billId]
+      );
+      const totalNumber = totalTable[0].total;
+      // Tạo Bill object để return
+      return new Bill(billId, userPhone, creationDatetime, totalNumber);
+    }
   }
   async getHistory(phone) {
     const result = await executeQuery(

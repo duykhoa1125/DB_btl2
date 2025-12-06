@@ -3,9 +3,6 @@ const { executeQuery } = require("../models/connect_sql");
 
 class AdminService {
   async getStats() {
-    // const result = await executeQuery(`
-    //     -- ghi gì vào đây để gọi procedure, ví dụ sp_GetMonthlyRevenue ?
-    // `);
     const raw_movieCount = await executeQuery(
       "SELECT COUNT(ma_phim) AS count FROM Phim"
     );
@@ -18,9 +15,6 @@ class AdminService {
     const raw_totalCinemaCount = await executeQuery(
       "SELECT COUNT(ma_rap) AS count FROM RapChieu"
     );
-    // tính 2 con số dưới đây thế nào?
-    // const monthlyRevenue = await executeQuery("")
-    // const bookingThisMonth =
     const movieCount = this.getCountNumber(raw_movieCount);
     const showingCount = this.getCountNumber(raw_showingCount);
     const commingSoonCount = this.getCountNumber(raw_commingSoonCount);
@@ -51,25 +45,12 @@ class AdminService {
     directors,
     actors
   ) {
-    // Generate new movie ID (PHM + 5 digits, total 8 chars like PHM00001)
-    const lastMovie = await executeQuery(
-      `SELECT ma_phim FROM Phim ORDER BY ma_phim DESC LIMIT 1`
-    );
-    let newId = "PHM00001";
-    if (lastMovie && lastMovie.length > 0) {
-      const lastId = lastMovie[0].ma_phim;
-      // Extract numeric part after "PHM" prefix (3 chars)
-      const numPart = parseInt(lastId.substring(3)) + 1;
-      newId = "PHM" + numPart.toString().padStart(5, "0");
-    }
-
     await executeQuery(
       `
             INSERT INTO Phim (ma_phim, ten_phim, thoi_luong, ngay_khoi_chieu, ngay_ket_thuc, do_tuoi, trailer, ngon_ngu, trang_thai, tom_tat, hinh_anh)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (NULL , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
       [
-        newId,
         title,
         duration,
         releaseDate,
@@ -83,6 +64,10 @@ class AdminService {
       ]
     );
 
+    const lastMovie = await executeQuery(
+      `SELECT ma_phim FROM Phim ORDER BY ma_phim DESC LIMIT 1`
+    );
+    let newId = lastMovie[0].ma_phim;
     // Insert directors
     if (directors && Array.isArray(directors) && directors.length > 0) {
       for (const director of directors) {
@@ -105,6 +90,7 @@ class AdminService {
 
     return newId;
   }
+
   async updateMovie(
     id,
     title,
@@ -207,24 +193,12 @@ class AdminService {
 
   // cinemas CRUD
   async createCinema(name, status, address) {
-    // Generate new cinema ID (RAP + 5 digits, total 8 chars like RAP00001)
-    const lastCinema = await executeQuery(
-      `SELECT ma_rap FROM RapChieu ORDER BY ma_rap DESC LIMIT 1`
-    );
-    let newId = "RAP00001";
-    if (lastCinema && lastCinema.length > 0) {
-      const lastId = lastCinema[0].ma_rap;
-      // Extract numeric part after "RAP" prefix (3 chars)
-      const numPart = parseInt(lastId.substring(3)) + 1;
-      newId = "RAP" + numPart.toString().padStart(5, "0");
-    }
-
     await executeQuery(
       `
             INSERT INTO RapChieu (ma_rap, ten_rap, trang_thai, dia_chi)
-            VALUES (?, ?, ?, ?)
+            VALUES (NULL, ?, ?, ?)
         `,
-      [newId, name, status, address]
+      [name, status, address]
     );
   }
   async updateCinema(id, name, status, address) {
@@ -260,44 +234,92 @@ class AdminService {
 
     await executeQuery(query, values);
   }
+
   async deleteCinema(id) {
     await executeQuery(`DELETE FROM RapChieu WHERE ma_rap=?`, [id]);
   }
 
   // showtimes CRUD
   async createShowtime(roomId, movieId, date, startTime, endTime) {
+    // Kiểm tra trạng thái phòng
     const status = await executeQuery(
-      `
-            SELECT trang_thai FROM PhongChieu WHERE ma_phong=?
-        `,
+      `SELECT trang_thai FROM PhongChieu WHERE ma_phong = ?`,
       [roomId]
     );
 
-    console.log("___ ctrl");
-    if (status[0].trang_thai != "active") {
-      throw new Error("The indicated room is full!"); // báo lỗi nếu phòng ko trống
+    if (status.length === 0) {
+      throw new Error("Không tìm thấy phòng chiếu!");
     }
 
-    // Generate new showtime ID (SCH + 5 digits, total 8 chars like SCH00001)
-    const lastShowtime = await executeQuery(
-      `SELECT ma_suat_chieu FROM SuatChieu ORDER BY ma_suat_chieu DESC LIMIT 1`
+    if (status[0].trang_thai !== "active") {
+      throw new Error("Phòng chiếu không khả dụng!");
+    }
+
+    // Lấy thông tin phim
+    const film = await executeQuery(
+      "SELECT ngay_khoi_chieu, ngay_ket_thuc FROM Phim WHERE ma_phim = ?",
+      [movieId]
     );
-    let newId = "SCH00001";
-    if (lastShowtime && lastShowtime.length > 0) {
-      const lastId = lastShowtime[0].ma_suat_chieu;
-      // Extract numeric part after "SCH" prefix (3 chars)
-      const numPart = parseInt(lastId.substring(3)) + 1;
-      newId = "SCH" + numPart.toString().padStart(5, "0");
+
+    if (film.length === 0) {
+      throw new Error("Không tìm thấy phim!");
     }
 
+    // Kiểm tra ngày chiếu có nằm trong khoảng công chiếu không
+    const filmData = film[0];
+
+    // date, filmData.ngay_khoi_chieu, filmData.ngay_ket_thuc đều là DATE (YYYY-MM-DD)
+    if (date < filmData.ngay_khoi_chieu) {
+      throw new Error(
+        `Ngày chiếu ${date} sớm hơn ngày khởi chiếu ${filmData.ngay_khoi_chieu}`
+      );
+    }
+
+    if (date > filmData.ngay_ket_thuc) {
+      throw new Error(
+        `Ngày chiếu ${date} muộn hơn ngày kết thúc ${filmData.ngay_ket_thuc}`
+      );
+    }
+
+    // Kiểm tra thời gian hợp lệ (startTime < endTime)
+    if (startTime >= endTime) {
+      throw new Error("Thời gian bắt đầu phải sớm hơn thời gian kết thúc");
+    }
+
+    // 5. Kiểm tra trùng lịch chiếu trong phòng
+    const checkConflictQuery = `
+        SELECT COUNT(*) as count 
+        FROM SuatChieu 
+        WHERE ma_phong = ? 
+          AND ngay_chieu = ?
+          AND (
+            (gio_bat_dau < ? AND gio_ket_thuc > ?) OR
+            (gio_bat_dau < ? AND gio_ket_thuc > ?) OR
+            (gio_bat_dau >= ? AND gio_ket_thuc <= ?)
+          )
+    `;
+
+    const conflict = await executeQuery(checkConflictQuery, [
+      roomId,
+      date,
+      endTime,
+      startTime, // Điều kiện 1
+      startTime,
+      endTime, // Điều kiện 2
+      startTime,
+      endTime, // Điều kiện 3
+    ]);
+
+    if (conflict[0].count > 0) {
+      throw new Error("Phòng đã có suất chiếu trong khung giờ này!");
+    }
+
+    // Tạo suất chiếu - Trigger sẽ tự tạo ma_suat_chieu
     await executeQuery(
-      `
-            INSERT INTO SuatChieu (ma_suat_chieu, ma_phong, ma_phim, ngay_chieu, gio_bat_dau, gio_ket_thuc)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `,
-      [newId, roomId, movieId, date, startTime, endTime]
+      `INSERT INTO SuatChieu (ma_suat_chieu, ma_phong, ma_phim, ngay_chieu, gio_bat_dau, gio_ket_thuc)
+         VALUES (NULL, ?, ?, ?, ?, ?)`,
+      [roomId, movieId, date, startTime, endTime]
     );
-    return newId;
   }
   async updateShowtime(id, roomId, movieId, date, startTime, endTime) {
     const fieldMap = {
@@ -334,6 +356,7 @@ class AdminService {
     console.log(query, values);
     await executeQuery(query, values);
   }
+
   async deleteShowtime(id) {
     await executeQuery(`DELETE FROM SuatChieu WHERE ma_suat_chieu=?`, [id]);
   }

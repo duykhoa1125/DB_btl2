@@ -111,7 +111,6 @@ class AdminController {
   async createShowtime(req, res) {
     try {
       const { roomId, movieId, date, startTime, endTime } = req.body;
-      console.log("___ ctrl");
       await AdminService.createShowtime(
         roomId,
         movieId,
@@ -121,6 +120,7 @@ class AdminController {
       );
       res.json({ success: true });
     } catch (error) {
+      console.log(error.message);
       res.status(500).json({ success: false, error: error.message });
     }
   }

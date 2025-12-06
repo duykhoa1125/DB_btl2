@@ -13,7 +13,6 @@ class ShowtimeController {
         }
     }
     async getById(req, res){
-        console.log("ctrl get by id");
         try {
             const id = req.params.id;
             const showtimes = await ShowtimeService.getById(id);
