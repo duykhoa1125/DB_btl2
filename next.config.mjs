@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: true, // Tắt Image Optimization để tránh lỗi 403 từ external sources
     remotePatterns: [
       // --- Config cũ của bạn ---
       {
