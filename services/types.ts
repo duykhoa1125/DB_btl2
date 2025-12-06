@@ -247,8 +247,11 @@ export interface MovieReview {
   phone_number: string;
   movie_id: string;
   date_written: string;
-  star_rating: number; // 1-5
+  star_rating: number; // 1-10
   review_content: string;
+  // Extended fields for UI display (from join with Account)
+  reviewer_name?: string;
+  reviewer_avatar?: string;
 }
 
 /**

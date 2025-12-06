@@ -218,10 +218,11 @@ export default function CinemaDetailPage() {
                             className="shrink-0 relative group/poster"
                           >
                             <div className="relative h-52 w-36 overflow-hidden rounded-2xl shadow-md">
-                              <Image
-                                src={movie.image}
+                                <Image
+                                src={movie.image || "/placeholder.svg"}
                                 alt={movie.name}
                                 fill
+                                unoptimized={movie.image?.includes("tvtropes.org")}
                                 className="object-cover transition-transform duration-700 group-hover/poster:scale-110"
                               />
                               <div className="absolute inset-0 bg-black/20 group-hover/poster:bg-transparent transition-colors" />

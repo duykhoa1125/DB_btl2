@@ -24,8 +24,21 @@ export function Reviews({
   const [reviews, setReviews] = useState<MovieReview[]>(initialReviews);
 
   const handleReviewSubmit = (newReview: MovieReview) => {
-    // Optimistic update - add new review to the top
-    setReviews([newReview, ...reviews]);
+    // Check if user already has a review for this movie
+    const existingReviewIndex = reviews.findIndex(
+      (r) => r.phone_number === newReview.phone_number
+    );
+
+    if (existingReviewIndex !== -1) {
+      // Update existing review - replace it and move to top
+      const updatedReviews = reviews.filter(
+        (r) => r.phone_number !== newReview.phone_number
+      );
+      setReviews([newReview, ...updatedReviews]);
+    } else {
+      // Add new review to the top
+      setReviews([newReview, ...reviews]);
+    }
   };
 
   return (

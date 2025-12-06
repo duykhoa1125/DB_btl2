@@ -93,6 +93,7 @@ export default async function MovieDetailPage({
                 src={movie.image || "/placeholder.svg"}
                 alt={movie.name}
                 fill
+                unoptimized={movie.image?.includes("tvtropes.org")}
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity group-hover:opacity-100" />

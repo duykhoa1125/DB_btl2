@@ -3,10 +3,8 @@
 import { useState } from "react";
 import type { MovieReview } from "@/services/types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, MessageCircle, Send, Filter, SortAsc } from "lucide-react";
+import { MessageCircle, Filter, SortAsc } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -23,20 +21,6 @@ interface ReviewListProps {
 export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
   const [sortBy, setSortBy] = useState<"newest" | "highest">("newest");
   const [filterRating, setFilterRating] = useState<number | null>(null);
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState("");
-  const [replies, setReplies] = useState<Record<string, string[]>>({});
-
-  const handleReply = (reviewKey: string) => {
-    if (replyText.trim()) {
-      setReplies({
-        ...replies,
-        [reviewKey]: [...(replies[reviewKey] || []), replyText],
-      });
-      setReplyText("");
-      setReplyingTo(null);
-    }
-  };
 
   const filteredReviews = reviews
     .filter((r) => (filterRating ? r.star_rating >= filterRating : true))
@@ -100,7 +84,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
           <SortAsc className="w-4 h-4 text-muted-foreground" />
           <Select
             value={sortBy}
-            onValueChange={(value: any) => setSortBy(value)}
+            onValueChange={(value: "newest" | "highest") => setSortBy(value)}
           >
             <SelectTrigger className="h-9 border-border/50 bg-background/50 focus:ring-primary/20">
               <SelectValue placeholder="Sắp xếp" />
@@ -118,7 +102,6 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => {
             const reviewKey = `${review.phone_number}-${review.date_written}`;
-            const isReplying = replyingTo === reviewKey;
 
             return (
               <div
@@ -153,7 +136,7 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                       )}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {review.phone_number.replace(
+                      {review.reviewer_name || review.phone_number.replace(
                         /(\d{3})\d{4}(\d{3})/,
                         "$1****$2"
                       )}
@@ -161,82 +144,9 @@ export function ReviewList({ reviews, onAddReview }: ReviewListProps) {
                   </div>
                 </div>
 
-                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   {review.review_content}
                 </p>
-
-                {/* Action Buttons */}
-                <div className="flex items-center gap-4 border-t border-border/50 pt-4">
-                  <button
-                    onClick={() => setReplyingTo(isReplying ? null : reviewKey)}
-                    className={cn(
-                      "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300",
-                      isReplying
-                        ? "bg-muted text-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    <span>Trả lời</span>
-                  </button>
-                </div>
-
-                {/* Reply Input */}
-                {isReplying && (
-                  <div className="mt-4 space-y-3 rounded-xl bg-muted/30 p-4 border border-border/50 animate-in fade-in slide-in-from-top-2">
-                    <Textarea
-                      placeholder="Viết phản hồi của bạn..."
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      className="min-h-[80px] resize-none bg-background/50 border-border/50 focus:ring-primary/20"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setReplyingTo(null);
-                          setReplyText("");
-                        }}
-                        className="hover:bg-muted"
-                      >
-                        Hủy
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => handleReply(reviewKey)}
-                        disabled={!replyText.trim()}
-                        className="gap-2 bg-primary hover:bg-primary/90"
-                      >
-                        <Send className="h-3.5 w-3.5" />
-                        Gửi
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Replies Display */}
-                {replies[reviewKey]?.length > 0 && (
-                  <div className="mt-4 space-y-3 border-t border-border/50 pt-4 pl-4 border-l-2 border-l-primary/20">
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      Phản hồi ({replies[reviewKey].length})
-                    </p>
-                    {replies[reviewKey].map((reply, idx) => (
-                      <div
-                        key={idx}
-                        className="rounded-xl bg-muted/30 p-3 text-sm border border-border/30"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="h-5 w-5 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-[10px] text-white font-bold">
-                            B
-                          </div>
-                          <p className="font-bold text-foreground">Bạn</p>
-                        </div>
-                        <p className="text-muted-foreground pl-7">{reply}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             );
           })
