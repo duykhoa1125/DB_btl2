@@ -49,16 +49,39 @@ class ShowtimeService {
   async getById(showtime_id) {
     const room_result = await executeQuery(
       `
-            SELECT ma_phong, ten_phong 
-            FROM SuatChieu NATURAL JOIN PhongChieu 
-            WHERE ma_suat_chieu=?
+        SELECT ma_phong, ten_phong 
+        FROM SuatChieu NATURAL JOIN PhongChieu 
+        WHERE ma_suat_chieu=?
         `,
       [showtime_id]
     );
+
+    if (room_result.length === 0) {
+      throw new Error("Không tìm thấy suất chiếu!");
+    }
+
+    // Truy vấn các ghế CHƯA có trong bảng Ve cho suất chiếu này
     const seat_result = await executeQuery(
-      `SELECT R.ma_phong, hang_ghe, so_ghe, loai_ghe, S.trang_thai 
-      FROM SuatChieu NATURAL JOIN PhongChieu R                                   
-      INNER JOIN GheNgoi S ON R.ma_phong=S.ma_phong WHERE ma_suat_chieu=?`,
+      `
+    SELECT 
+        gn.ma_phong, 
+        gn.hang_ghe, 
+        gn.so_ghe, 
+        gn.loai_ghe, 
+        gn.trang_thai,
+        'available' AS seat_status
+    FROM SuatChieu sc
+    INNER JOIN PhongChieu pc ON sc.ma_phong = pc.ma_phong
+    INNER JOIN GheNgoi gn ON pc.ma_phong = gn.ma_phong
+    LEFT JOIN Ve v ON v.ma_suat_chieu = sc.ma_suat_chieu
+        AND v.ma_phong = gn.ma_phong
+        AND v.hang_ghe = gn.hang_ghe
+        AND v.so_ghe = gn.so_ghe
+    WHERE sc.ma_suat_chieu = ?
+        AND v.ma_ve IS NULL  -- Chỉ lấy ghế CHƯA có trong bảng Ve
+        AND gn.trang_thai = 'available'  -- Và ghế có trạng thái available
+    ORDER BY gn.hang_ghe, gn.so_ghe
+    `,
       [showtime_id]
     );
     return {
