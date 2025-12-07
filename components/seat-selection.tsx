@@ -149,7 +149,8 @@ export function SeatSelection({
     return acc;
   }, {} as Record<string, SeatLayoutItem[]>);
 
-  const getSeatId = (seat: SeatLayoutItem) => `${seat.seat_row}${seat.seat_column}`;
+  const getSeatId = (seat: SeatLayoutItem) =>
+    `${seat.seat_row}${seat.seat_column}`;
 
   const handleSeatClick = (seat: SeatLayoutItem) => {
     const seatId = getSeatId(seat);
