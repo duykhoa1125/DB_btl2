@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect, useMemo } from "react";
 import { seatService } from "@/services";
-import type { Seat } from "@/services/types";
+import type { SeatLayoutItem, SeatType } from "@/services/types";
 import { cn } from "@/lib/utils";
-import { Armchair, Sofa } from "lucide-react";
 
 interface SeatSelectionProps {
-  onSeatsChange: (seats: Seat[]) => void;
+  onSeatsChange: (seats: SeatLayoutItem[]) => void;
   showtimeId: string;
   bookedSeatIds?: string[];
 }
@@ -17,8 +15,8 @@ interface SeatSelectionProps {
 const ROWS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 const COLS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-function generateFixedSeats(): Seat[] {
-  const seats: Seat[] = [];
+function generateFixedSeats(): SeatLayoutItem[] {
+  const seats: SeatLayoutItem[] = [];
   ROWS.forEach((row) => {
     COLS.forEach((col) => {
       // Hàng I, J là VIP
@@ -33,6 +31,8 @@ function generateFixedSeats(): Seat[] {
         seat_column: col,
         seat_type: seatType,
         state: "occupied", // Mặc định là đã đặt
+        price: 0,
+        is_booked: true,
       });
     });
   });
@@ -88,7 +88,9 @@ export function SeatSelection({
   bookedSeatIds = [],
 }: SeatSelectionProps) {
   const [selectedSeats, setSelectedSeats] = useState<Set<string>>(new Set());
-  const [allSeats, setAllSeats] = useState<Seat[]>(generateFixedSeats()); // 100 ghế cố định
+  const [allSeats, setAllSeats] = useState<SeatLayoutItem[]>(
+    generateFixedSeats()
+  ); // 100 ghế cố định
   const [availableSeatIds, setAvailableSeatIds] = useState<Set<string>>(
     new Set()
   ); // Ghế trống từ server
@@ -121,10 +123,12 @@ export function SeatSelection({
               room_id: serverSeat.room_id,
               seat_type: serverSeat.seat_type || seat.seat_type,
               state: "available" as const,
+              price: serverSeat.price ?? seat.price,
+              is_booked: false,
             };
           }
           // Ghế không có trong response = đã đặt
-          return { ...seat, state: "occupied" as const };
+          return { ...seat, state: "occupied" as const, is_booked: true };
         });
 
         setAllSeats(updatedSeats);
@@ -143,11 +147,11 @@ export function SeatSelection({
     }
     acc[seat.seat_row].push(seat);
     return acc;
-  }, {} as Record<string, Seat[]>);
+  }, {} as Record<string, SeatLayoutItem[]>);
 
-  const getSeatId = (seat: Seat) => `${seat.seat_row}${seat.seat_column}`;
+  const getSeatId = (seat: SeatLayoutItem) => `${seat.seat_row}${seat.seat_column}`;
 
-  const handleSeatClick = (seat: Seat) => {
+  const handleSeatClick = (seat: SeatLayoutItem) => {
     const seatId = getSeatId(seat);
     // Chỉ cho phép chọn ghế còn trống (có trong availableSeatIds)
     if (!availableSeatIds.has(seatId)) return;
@@ -165,7 +169,7 @@ export function SeatSelection({
     onSeatsChange(selectedSeatObjects);
   };
 
-  const getSeatColor = (seat: Seat) => {
+  const getSeatColor = (seat: SeatLayoutItem) => {
     const seatId = getSeatId(seat);
 
     // Ghế đã đặt (không có trong availableSeatIds)
@@ -182,7 +186,7 @@ export function SeatSelection({
     return "text-muted-foreground/30 hover:text-primary/80 hover:scale-105 transition-all duration-200"; // Available: Muted
   };
 
-  const renderSeat = (seat: Seat) => {
+  const renderSeat = (seat: SeatLayoutItem) => {
     const seatId = getSeatId(seat);
     const isSelected = selectedSeats.has(seatId);
     const isBooked = !availableSeatIds.has(seatId); // Đã đặt = không có trong danh sách trống
@@ -229,6 +233,19 @@ export function SeatSelection({
   };
 
   const rows = Object.keys(seatsByRow).sort();
+
+  const priceByType = useMemo(() => {
+    const map: Partial<Record<SeatType, number>> = {};
+    allSeats.forEach((seat) => {
+      if (seat.price && seat.price > 0 && !map[seat.seat_type]) {
+        map[seat.seat_type] = seat.price;
+      }
+    });
+    return map;
+  }, [allSeats]);
+
+  const formatPrice = (price?: number) =>
+    price ? `${price.toLocaleString("vi-VN")}₫` : "--";
 
   return (
     <div className="space-y-10 w-full max-w-full mx-auto">
@@ -333,15 +350,23 @@ export function SeatSelection({
         {/* Legend */}
         <div className="mt-4 flex flex-wrap justify-center gap-8 p-6 rounded-2xl bg-muted/20 border border-border/30 backdrop-blur-sm">
           {[
-            { label: "Ghế thường", icon: StandardSeatIcon, price: "45k" },
-            { label: "Ghế VIP", icon: VIPSeatIcon, price: "65k" },
-            { label: "Ghế Couple", icon: CoupleSeatIcon, price: "110k" },
+            {
+              label: "Ghế thường",
+              type: "normal" as const,
+              icon: StandardSeatIcon,
+            },
+            { label: "Ghế VIP", type: "vip" as const, icon: VIPSeatIcon },
+            {
+              label: "Ghế Couple",
+              type: "couple" as const,
+              icon: CoupleSeatIcon,
+            },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-3">
               <item.icon
                 className={cn(
                   "h-6 text-muted-foreground/70",
-                  item.label === "Ghế Couple" ? "w-10" : "w-6"
+                  item.type === "couple" ? "w-10" : "w-6"
                 )}
               />
               <div className="flex flex-col">
@@ -349,7 +374,7 @@ export function SeatSelection({
                   {item.label}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {item.price}
+                  {formatPrice(priceByType[item.type])}
                 </span>
               </div>
             </div>

@@ -1,12 +1,12 @@
 import axiosClient from "@/lib/axiosClient";
-import { Seat, SeatLayoutItem } from "./types";
+import { SeatLayoutItem } from "./types";
 
 const seatService = {
   /**
    * Get seats for a specific showtime
    * Server endpoint: GET /showtimes/:showtimeId/seats
    */
-  getByShowtime: async (showtimeId: string): Promise<Seat[]> => {
+  getByShowtime: async (showtimeId: string): Promise<SeatLayoutItem[]> => {
     const response = (await axiosClient.get(
       `/showtimes/${showtimeId}/seats`
     )) as any;

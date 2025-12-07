@@ -30,24 +30,33 @@ export function ReviewForm({ movie_id, onReviewSubmit }: ReviewFormProps) {
   // Fetch existing review when component mounts or user changes
   useEffect(() => {
     const fetchExistingReview = async () => {
-      if (!currentUser || currentUser.role !== 'user') return;
+      if (!currentUser || currentUser.role !== "user") return;
 
       setIsLoadingExisting(true);
       try {
         const response = await reviewService.getMyReview(movie_id);
-        if (response) {
-          // Pre-fill form with existing review
+
+        // `axiosClient` unwraps successful responses to the `data` object directly
+        const reviewData = response as Partial<MovieReview> | undefined;
+        const hasReviewData = Boolean(
+          reviewData &&
+            (reviewData.star_rating !== undefined || reviewData.review_content)
+        );
+
+        if (hasReviewData && reviewData) {
           // API returns star_rating as 1-5, convert to 1-10 for UI
-          const existingRating = (response as unknown as { rating?: number })?.rating;
-          const existingContent = (response as unknown as { content?: string })?.content;
-          
-          if (existingRating) {
-            setRating(existingRating * 2);
+          if (typeof reviewData.star_rating === "number") {
+            setRating(reviewData.star_rating * 2);
           }
-          if (existingContent) {
-            setContent(existingContent);
+          if (reviewData.review_content) {
+            setContent(reviewData.review_content);
           }
           setHasExistingReview(true);
+        } else {
+          // Ensure UI shows "new review" state when no review exists
+          setRating(10);
+          setContent("");
+          setHasExistingReview(false);
         }
       } catch {
         // No existing review or error - that's fine, user can create new
@@ -92,14 +101,14 @@ export function ReviewForm({ movie_id, onReviewSubmit }: ReviewFormProps) {
       // Create review object for optimistic update
       // Handle different user types (AccountWithRole vs StaffWithRole)
       const getUserName = () => {
-        if (currentUser.role === 'user') {
+        if (currentUser.role === "user") {
           return currentUser.fullname;
         }
         return currentUser.name;
       };
-      
+
       const getUserAvatar = () => {
-        if (currentUser.role === 'user') {
+        if (currentUser.role === "user") {
           return currentUser.avatar || undefined;
         }
         return undefined;
@@ -124,12 +133,17 @@ export function ReviewForm({ movie_id, onReviewSubmit }: ReviewFormProps) {
       setHasExistingReview(true);
 
       toast({
-        title: hasExistingReview ? "Cập nhật đánh giá thành công" : "Đánh giá thành công",
+        title: hasExistingReview
+          ? "Cập nhật đánh giá thành công"
+          : "Đánh giá thành công",
         description: "Cảm ơn bạn đã chia sẻ đánh giá!",
       });
     } catch (error: unknown) {
       console.error("Submit review error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra khi gửi đánh giá";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Có lỗi xảy ra khi gửi đánh giá";
       toast({
         title: "Lỗi",
         description: errorMessage,
@@ -171,7 +185,9 @@ export function ReviewForm({ movie_id, onReviewSubmit }: ReviewFormProps) {
       {hasExistingReview && (
         <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 text-sm text-primary flex items-center gap-2">
           <Check className="w-4 h-4" />
-          <span>Bạn đã đánh giá phim này. Bạn có thể chỉnh sửa đánh giá bên dưới.</span>
+          <span>
+            Bạn đã đánh giá phim này. Bạn có thể chỉnh sửa đánh giá bên dưới.
+          </span>
         </div>
       )}
 
@@ -235,13 +251,16 @@ export function ReviewForm({ movie_id, onReviewSubmit }: ReviewFormProps) {
             </>
           ) : (
             <>
-              {hasExistingReview ? <Edit3 className="h-4 w-4" /> : <Send className="h-4 w-4" />}
-              {!currentUser 
-                ? "Đăng nhập để đánh giá" 
-                : hasExistingReview 
-                  ? "Cập nhật đánh giá" 
-                  : "Gửi đánh giá"
-              }
+              {hasExistingReview ? (
+                <Edit3 className="h-4 w-4" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+              {!currentUser
+                ? "Đăng nhập để đánh giá"
+                : hasExistingReview
+                ? "Cập nhật đánh giá"
+                : "Gửi đánh giá"}
             </>
           )}
         </Button>

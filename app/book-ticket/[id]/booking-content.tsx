@@ -5,11 +5,10 @@ import { Button } from "@/components/ui/button";
 import { SeatSelection } from "@/components/seat-selection";
 import { FoodSelection } from "@/components/food-selection";
 import { VoucherInput } from "@/components/voucher-input";
-import type { Seat } from "@/services/types";
-import type { Showtime, MovieDetail } from "@/services/types";
+import type { SeatLayoutItem, Showtime, MovieDetail } from "@/services/types";
 import { type FoodMenuItem } from "@/services";
 import bookingService from "@/services/bookingService";
-import { calculateSeatsTotal } from "@/lib/pricing";
+import { getTicketPrice } from "@/lib/pricing";
 import { useSearchParams } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { Calendar, Clock, MapPin, CheckCircle2, Ticket, X } from "lucide-react";
@@ -42,7 +41,7 @@ interface BookingContentProps {
 
 export function BookingContent({ showtime, movie }: BookingContentProps) {
   const searchParams = useSearchParams();
-  const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<SeatLayoutItem[]>([]);
   const [selectedFoods, setSelectedFoods] = useState<
     (FoodMenuItem & { quantity: number })[]
   >([]);
@@ -64,7 +63,7 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
         seats: selectedSeats.map((s) => ({
           row: s.seat_row,
           col: s.seat_column,
-          price: calculateSeatsTotal([s]), // Calculate individual seat price
+          price: s.price ?? getTicketPrice(s.seat_type), // Use server price, fallback to local pricing
         })),
         foods: selectedFoods.map((f) => ({
           name: f.name,
@@ -143,8 +142,11 @@ export function BookingContent({ showtime, movie }: BookingContentProps) {
   // Get room name from showtime (đã có sẵn từ API)
   const roomName = showtime.room_name || showtime.room_id;
 
-  // Calculate ticket price based on seat types (from lib/pricing.ts)
-  const ticketTotal = calculateSeatsTotal(selectedSeats);
+  // Calculate ticket price using server-provided price (fallback to pricing util)
+  const ticketTotal = selectedSeats.reduce(
+    (sum, seat) => sum + (seat.price ?? getTicketPrice(seat.seat_type)),
+    0
+  );
   const foodTotal = selectedFoods.reduce(
     (sum, food) => sum + food.price * food.quantity,
     0
