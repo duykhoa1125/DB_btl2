@@ -6,50 +6,65 @@ class AdminService {
     const now = new Date();
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1;
-    // Các truy vấn cơ bản
-    const raw_movieCount = await executeQuery(
-      "SELECT COUNT(ma_phim) AS count FROM Phim"
-    );
-    const raw_showingCount = await executeQuery(
-      "SELECT COUNT(ma_phim) AS count FROM Phim WHERE trang_thai='showing'"
-    );
-    const raw_commingSoonCount = await executeQuery(
-      "SELECT COUNT(ma_phim) AS count FROM Phim WHERE trang_thai='upcoming'"
-    );
-    const raw_totalCinemaCount = await executeQuery(
-      "SELECT COUNT(ma_rap) AS count FROM RapChieu"
-    );
 
-    // Doanh thu tháng hiện tại
-    const raw_monthlyRevenue = await executeQuery(
-      `SELECT SUM(tong_tien) AS revenue 
-         FROM HoaDon 
-         WHERE YEAR(ngay_tao) = ? AND MONTH(ngay_tao) = ?`,
-      [currentYear, currentMonth]
-    );
+    try {
+      // Chạy tất cả truy vấn song song
+      const [
+        raw_movieCount,
+        raw_showingCount,
+        raw_commingSoonCount,
+        raw_totalCinemaCount,
+        raw_monthlyRevenue,
+        raw_bookingsThisMonth,
+      ] = await Promise.all([
+        executeQuery("SELECT COUNT(ma_phim) AS count FROM Phim"),
+        executeQuery(
+          "SELECT COUNT(ma_phim) AS count FROM Phim WHERE trang_thai='showing'"
+        ),
+        executeQuery(
+          "SELECT COUNT(ma_phim) AS count FROM Phim WHERE trang_thai='upcoming'"
+        ),
+        executeQuery("SELECT COUNT(ma_rap) AS count FROM RapChieu"),
+        // Sử dụng function để tính doanh thu tháng
+        executeQuery(`SELECT tinh_tong_doanh_thu_thang(?, ?) AS revenue`, [
+          currentYear,
+          currentMonth,
+        ]),
+        executeQuery(
+          `SELECT COUNT(DISTINCT ma_hoa_don) AS bookings 
+                 FROM HoaDon 
+                 WHERE YEAR(ngay_tao) = ? AND MONTH(ngay_tao) = ?`,
+          [currentYear, currentMonth]
+        ),
+      ]);
 
-    // Số lượt đặt vé tháng hiện tại
-    const raw_bookingsThisMonth = await executeQuery(
-      `SELECT COUNT(DISTINCT ma_hoa_don) AS bookings 
-         FROM HoaDon 
-         WHERE YEAR(ngay_tao) = ? AND MONTH(ngay_tao) = ?`,
-      [currentYear, currentMonth]
-    );
-    const movieCount = this.getCountNumber(raw_movieCount);
-    const showingCount = this.getCountNumber(raw_showingCount);
-    const commingSoonCount = this.getCountNumber(raw_commingSoonCount);
-    const totalCinemaCount = this.getCountNumber(raw_totalCinemaCount);
-    const monthlyRevenue = raw_monthlyRevenue[0]?.revenue || 0;
-    const bookingsThisMonth = raw_bookingsThisMonth[0]?.bookings || 0;
+      const movieCount = this.getCountNumber(raw_movieCount);
+      const showingCount = this.getCountNumber(raw_showingCount);
+      const commingSoonCount = this.getCountNumber(raw_commingSoonCount);
+      const totalCinemaCount = this.getCountNumber(raw_totalCinemaCount);
+      const monthlyRevenue = raw_monthlyRevenue[0]?.revenue || 0;
+      const bookingsThisMonth = raw_bookingsThisMonth[0]?.bookings || 0;
 
-    return {
-      total_movies: movieCount,
-      now_showing: showingCount,
-      coming_soon: commingSoonCount,
-      total_cinemas: totalCinemaCount,
-      monthly_revenue: monthlyRevenue,
-      bookings_this_month: bookingsThisMonth,
-    };
+      return {
+        total_movies: movieCount,
+        now_showing: showingCount,
+        coming_soon: commingSoonCount,
+        total_cinemas: totalCinemaCount,
+        monthly_revenue: monthlyRevenue,
+        bookings_this_month: bookingsThisMonth,
+      };
+    } catch (error) {
+      console.error("Error getting stats:", error);
+      // Nếu có lỗi, trả về giá trị mặc định
+      return {
+        total_movies: 0,
+        now_showing: 0,
+        coming_soon: 0,
+        total_cinemas: 0,
+        monthly_revenue: 0,
+        bookings_this_month: 0,
+      };
+    }
   }
 
   getCountNumber(countTable) {

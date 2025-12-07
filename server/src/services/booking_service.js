@@ -1,81 +1,94 @@
-const { executeQuery } = require("../models/connect_sql");
+const { executeQuery, pool } = require("../models/connect_sql");
 const Bill = require("../models/bill_model");
 
 class BookingService {
   async createBooking(userPhone, showtimeId, seats, foods, voucherId) {
     let total = 0;
+    let connection;
 
-    // Lấy danh sách ghế trống bằng procedure
-    const availableSeatsResult = await executeQuery(
-      `CALL lay_ds_ghe_trong(?)`,
-      [showtimeId]
-    );
-    const availableSeats = availableSeatsResult[0] || [];
+    try {
+      // Lấy connection từ pool
+      connection = await pool.getConnection();
 
-    for (const s of seats) {
-      // Kiểm tra ghế có trong danh sách ghế trống không
-      const seatExists = availableSeats.find(
-        (seat) => seat.hang_ghe === s.row && seat.so_ghe === s.col
+      // Kiểm tra ghế trống
+      const availableSeats = await executeQuery(`CALL lay_ds_ghe_trong(?)`, [
+        showtimeId,
+      ]);
+      const seatsList = availableSeats[0] || [];
+
+      for (const s of seats) {
+        const seatExists = seatsList.find(
+          (seat) => seat.hang_ghe === s.row && seat.so_ghe === s.col
+        );
+        if (!seatExists) {
+          throw new Error(
+            `Ghế ${s.row}${s.col} đã được đặt hoặc không khả dụng!`
+          );
+        }
+        total += s.price;
+      }
+
+      // Tính tổng đồ ăn
+      if (foods && foods.length > 0) {
+        for (const f of foods) {
+          total += f.price * f.quantity;
+        }
+      }
+
+      // Bắt đầu transaction
+      await connection.beginTransaction();
+
+      // Tạo hóa đơn
+      const creationDatetime = this.getCurrentDateTimeStr();
+
+      await connection.execute(
+        `INSERT INTO HoaDon (ma_hoa_don, so_dien_thoai, ngay_tao, tong_tien)
+         VALUES (NULL, ?, ?, ?)`,
+        [userPhone, creationDatetime, total]
       );
-      if (!seatExists) {
-        throw new Error("Illegal seat!");
-      }
-      total += s.price;
-    }
 
-    // Tổng hợp giá tiền
-    if (foods) {
-      for (const f of foods) {
-        total += f.price;
-      }
-    }
-    // Bước 1: create bill
-    let result = await executeQuery(
-      `
-            INSERT INTO HoaDon (ma_hoa_don,so_dien_thoai, ngay_tao, tong_tien)
-            VALUES (NULL ,?, ?, ?)
-        `,
-      [userPhone, this.getCurrentDateTimeStr(), total]
-    );
-    // get bill id
-    result = await executeQuery(
-      "SELECT ma_hoa_don FROM HoaDon ORDER BY ma_hoa_don DESC LIMIT 1"
-    );
-    const billId = result[0].ma_hoa_don;
+      // Lấy bill id
+      const [billResult] = await connection.execute(
+        `SELECT ma_hoa_don FROM HoaDon WHERE so_dien_thoai = ? ORDER BY ma_hoa_don DESC LIMIT 1`,
+        [userPhone]
+      );
+      const billId = billResult[0].ma_hoa_don;
 
-    // bước 2: create ticket
-    // get info to create ticket
-    result = await executeQuery(
-      `
-            SELECT ma_phim, ten_phim, ma_suat_chieu, ngay_chieu, gio_ket_thuc, ma_phong
-            FROM SuatChieu NATURAL JOIN Phim
-            WHERE ma_suat_chieu=?
-        `,
-      [showtimeId]
-    );
-    const movieName = result[0].ten_phim; // Dùng tên phim thay vì mã phim
-    const creationDatetime = this.getCurrentDateTimeStr();
-    // Xử lý ngày chiếu - có thể là Date object hoặc string
-    const rawExpireDate = result[0].ngay_chieu;
-    const expireDate =
-      rawExpireDate instanceof Date
-        ? rawExpireDate.toISOString().split("T")[0]
-        : String(rawExpireDate).split("T")[0];
-    const expireTime = result[0].gio_ket_thuc;
-    const roomId = result[0].ma_phong;
-    // add
-    for (const s of seats) {
-      try {
-        result = await executeQuery(
-          `
-                INSERT INTO Ve
-                VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)    
-            `,
+      // Lấy thông tin suất chiếu
+      const [showtimeInfo] = await connection.execute(
+        `SELECT sc.ma_phim, p.ten_phim, sc.ngay_chieu, sc.gio_ket_thuc, sc.ma_phong
+         FROM SuatChieu sc
+         JOIN Phim p ON sc.ma_phim = p.ma_phim
+         WHERE sc.ma_suat_chieu = ?`,
+        [showtimeId]
+      );
+
+      if (showtimeInfo.length === 0) {
+        throw new Error("Không tìm thấy thông tin suất chiếu!");
+      }
+
+      const info = showtimeInfo[0];
+      const movieName = info.ten_phim;
+
+      // Format ngày hết hạn
+      const rawExpireDate = info.ngay_chieu;
+      const expireDate =
+        rawExpireDate instanceof Date
+          ? rawExpireDate.toISOString().split("T")[0]
+          : String(rawExpireDate).split("T")[0];
+      const expireDateTime = `${expireDate} ${info.gio_ket_thuc}`;
+      const roomId = info.ma_phong;
+
+      // Tạo vé (trigger sẽ kiểm tra độ tuổi)
+      for (const s of seats) {
+        await connection.execute(
+          `INSERT INTO Ve (ma_ve, ten_phim, gia_ve, ngay_mua, ngay_het_han, ma_hoa_don, ma_phong, hang_ghe, so_ghe, ma_suat_chieu)
+           VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             movieName,
             s.price,
             creationDatetime,
-            expireDate + " " + expireTime,
+            expireDateTime,
             billId,
             roomId,
             s.row,
@@ -83,131 +96,221 @@ class BookingService {
             showtimeId,
           ]
         );
-      } catch (error) {
-        if (error.message.includes("chua du tuoi"))
-          throw new Error("Khách hàng chưa đủ tuổi để xem phim này!");
       }
-    }
 
-    // Bước 3: create food if any
-    const today = this.getCurrentDateStr();
-    const futureDate = this.getFutureDateStr(30); // 30 ngày sau
-    for (const f of foods) {
-      result = await executeQuery(
-        `
-                INSERT INTO DoAn (ma_do_an, ma_hoa_don, ten_do_an, gia_ban, ngay_san_xuat, ngay_het_han)
-                VALUES (NULL, ?, ?, ?, ?, ?)    
-            `,
-        [billId, f.name, f.price * f.quantity, today, futureDate]
-      );
-    }
-    // Bước 4-5: update voucher & tính tổng cuối cùng
-    if (voucherId) {
-      // implement voucher logic into price.
-      const voucherInfo = await executeQuery(
-        `SELECT v.ma_voucher, v.trang_thai, km.ma_khuyen_mai,
-                  gg.phan_tram_giam, gg.gia_toi_da_giam
-           FROM Voucher v
-           JOIN KhuyenMai km ON v.ma_khuyen_mai = km.ma_khuyen_mai
-           LEFT JOIN GiamGia gg ON km.ma_khuyen_mai = gg.ma_khuyen_mai
-           WHERE v.ma_voucher = ? AND v.so_dien_thoai = ?`,
-        [voucherId, userPhone]
-      );
-      let discountApplied = 0;
-      if (voucherInfo.length > 0 && voucherInfo[0].trang_thai === "active") {
-        const voucher = voucherInfo[0];
+      // Tạo đồ ăn nếu có
+      if (foods && foods.length > 0) {
+        const today = this.getCurrentDateStr();
+        const futureDate = this.getFutureDateStr(30);
 
-        // Tính giảm giá dựa trên database
-        if (voucher.phan_tram_giam) {
-          discountApplied = total * (voucher.phan_tram_giam / 100);
-
-          // Giới hạn số tiền giảm tối đa
-          if (
-            voucher.gia_toi_da_giam &&
-            discountApplied > voucher.gia_toi_da_giam
-          ) {
-            discountApplied = voucher.gia_toi_da_giam;
+        for (const f of foods) {
+          for (let i = 0; i < f.quantity; i++) {
+            await connection.execute(
+              `INSERT INTO DoAn (ma_do_an, ma_hoa_don, ten_do_an, gia_ban, ngay_san_xuat, ngay_het_han)
+               VALUES (NULL, ?, ?, ?, ?, ?)`,
+              [billId, f.name, f.price, today, futureDate]
+            );
           }
-
-          total -= discountApplied;
         }
-        result = await executeQuery(
-          `
-                UPDATE HoaDon
-                SET tong_tien=?
-                WHERE ma_hoa_don=?
-                `,
-          [total, billId]
-        );
-        result = await executeQuery(
-          `
-                UPDATE Voucher
-                SET trang_thai='used'
-                WHERE ma_voucher=?    
-            `,
-          [voucherId]
+      }
+
+      // Xử lý voucher nếu có
+      if (voucherId) {
+        await this.processVoucher(
+          connection,
+          billId,
+          voucherId,
+          userPhone,
+          total
         );
       }
 
-      const totalTable = await executeQuery(
-        `
-            SELECT tinh_tong_hoa_don(?) AS total
-        `,
+      // Cập nhật trạng thái ghế
+      for (const s of seats) {
+        await connection.execute(
+          `UPDATE GheNgoi 
+           SET trang_thai = 'occupied' 
+           WHERE ma_phong = ? AND hang_ghe = ? AND so_ghe = ?`,
+          [roomId, s.row, s.col]
+        );
+      }
+
+      // Tính tổng cuối cùng
+      const [finalTotalResult] = await connection.execute(
+        `SELECT tinh_tong_hoa_don(?) AS total`,
         [billId]
       );
-      const totalNumber = totalTable[0].total;
-      // Tạo Bill object để return
-      return new Bill(billId, userPhone, creationDatetime, totalNumber);
+      const finalTotal = finalTotalResult[0].total;
+
+      // Cập nhật tổng tiền
+      await connection.execute(
+        `UPDATE HoaDon SET tong_tien = ? WHERE ma_hoa_don = ?`,
+        [finalTotal, billId]
+      );
+
+      // Commit transaction
+      await connection.commit();
+
+      return new Bill(billId, userPhone, creationDatetime, finalTotal);
+    } catch (error) {
+      // Rollback nếu có lỗi
+      if (connection) {
+        await connection.rollback();
+      }
+
+      console.error("Booking error:", error.message);
+
+      // Xử lý lỗi từ trigger
+      if (
+        error.message.includes("chua du tuoi") ||
+        error.message.includes("du tuoi")
+      ) {
+        throw new Error("Khách hàng chưa đủ tuổi để xem phim này!");
+      }
+
+      if (error.message.includes("Ghế")) {
+        throw error;
+      }
+
+      throw new Error(`Lỗi đặt vé: ${error.message}`);
+    } finally {
+      // Release connection
+      if (connection) {
+        connection.release();
+      }
     }
   }
-  async getHistory(phone) {
-    const result = await executeQuery(
-      `
-            SELECT * FROM HoaDon WHERE so_dien_thoai=? ORDER BY ma_hoa_don DESC
-        `,
-      [phone]
+
+  async processVoucher(connection, billId, voucherId, userPhone, total) {
+    const [voucherInfo] = await connection.execute(
+      `SELECT v.ma_voucher, v.trang_thai, km.ma_khuyen_mai,
+              gg.phan_tram_giam, gg.gia_toi_da_giam
+       FROM Voucher v
+       JOIN KhuyenMai km ON v.ma_khuyen_mai = km.ma_khuyen_mai
+       LEFT JOIN GiamGia gg ON km.ma_khuyen_mai = gg.ma_khuyen_mai
+       WHERE v.ma_voucher = ? AND v.so_dien_thoai = ?`,
+      [voucherId, userPhone]
     );
-    return result.map(
-      (row) =>
-        new Bill(row.ma_hoa_don, row.so_dien_thoai, row.ngay_tao, row.tong_tien)
+
+    if (voucherInfo.length === 0) {
+      throw new Error(
+        "Voucher không tồn tại hoặc không thuộc về người dùng này!"
+      );
+    }
+
+    const voucher = voucherInfo[0];
+
+    if (voucher.trang_thai !== "active") {
+      throw new Error(
+        `Voucher đã ${
+          voucher.trang_thai === "used" ? "được sử dụng" : "hết hạn"
+        }!`
+      );
+    }
+
+    let discountApplied = 0;
+
+    if (voucher.phan_tram_giam) {
+      discountApplied = total * (voucher.phan_tram_giam / 100);
+
+      if (
+        voucher.gia_toi_da_giam &&
+        discountApplied > voucher.gia_toi_da_giam
+      ) {
+        discountApplied = voucher.gia_toi_da_giam;
+      }
+    }
+
+    // Tạo hóa đơn khuyến mãi
+    await connection.execute(
+      `INSERT INTO HoaDonKhuyenMai (ma_hoa_don_km, ma_hoa_don)
+       VALUES (NULL, ?)`,
+      [billId]
     );
+
+    // Cập nhật trạng thái voucher
+    await connection.execute(
+      `UPDATE Voucher SET trang_thai = 'used' WHERE ma_voucher = ?`,
+      [voucherId]
+    );
+
+    return discountApplied;
   }
+
+  async getHistory(phone) {
+    try {
+      const result = await executeQuery(
+        `SELECT * FROM HoaDon WHERE so_dien_thoai = ? ORDER BY ngay_tao DESC`,
+        [phone]
+      );
+
+      return result.map(
+        (row) =>
+          new Bill(
+            row.ma_hoa_don,
+            row.so_dien_thoai,
+            row.ngay_tao,
+            row.tong_tien
+          )
+      );
+    } catch (error) {
+      console.error("Error getting booking history:", error);
+      throw new Error("Không thể lấy lịch sử đặt vé");
+    }
+  }
+
+  async getBookingDetails(billId) {
+    try {
+      const billInfo = await executeQuery(
+        `SELECT * FROM HoaDon WHERE ma_hoa_don = ?`,
+        [billId]
+      );
+
+      if (billInfo.length === 0) {
+        throw new Error("Không tìm thấy hóa đơn!");
+      }
+
+      const tickets = await executeQuery(
+        `SELECT * FROM Ve WHERE ma_hoa_don = ?`,
+        [billId]
+      );
+
+      const foods = await executeQuery(
+        `SELECT * FROM DoAn WHERE ma_hoa_don = ?`,
+        [billId]
+      );
+
+      return {
+        bill: new Bill(
+          billInfo[0].ma_hoa_don,
+          billInfo[0].so_dien_thoai,
+          billInfo[0].ngay_tao,
+          billInfo[0].tong_tien
+        ),
+        tickets: tickets,
+        foods: foods,
+      };
+    } catch (error) {
+      console.error("Error getting booking details:", error);
+      throw error;
+    }
+  }
+
+  // Helper functions
   getCurrentDateTimeStr() {
     const now = new Date();
-    return (
-      now.getFullYear() +
-      "-" +
-      String(now.getMonth() + 1).padStart(2, "0") +
-      "-" +
-      String(now.getDate()).padStart(2, "0") +
-      " " +
-      String(now.getHours()).padStart(2, "0") +
-      ":" +
-      String(now.getMinutes()).padStart(2, "0") +
-      ":" +
-      String(now.getSeconds()).padStart(2, "0")
-    );
+    return now.toISOString().slice(0, 19).replace("T", " ");
   }
+
   getCurrentDateStr() {
     const now = new Date();
-    return (
-      now.getFullYear() +
-      "-" +
-      String(now.getMonth() + 1).padStart(2, "0") +
-      "-" +
-      String(now.getDate()).padStart(2, "0")
-    );
+    return now.toISOString().split("T")[0];
   }
+
   getFutureDateStr(days) {
     const future = new Date();
     future.setDate(future.getDate() + days);
-    return (
-      future.getFullYear() +
-      "-" +
-      String(future.getMonth() + 1).padStart(2, "0") +
-      "-" +
-      String(future.getDate()).padStart(2, "0")
-    );
+    return future.toISOString().split("T")[0];
   }
 }
 
