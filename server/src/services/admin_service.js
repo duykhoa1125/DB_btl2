@@ -44,7 +44,7 @@ class AdminService {
       const totalCinemaCount = this.getCountNumber(raw_totalCinemaCount);
       const monthlyRevenue = raw_monthlyRevenue[0]?.revenue || 0;
       const bookingsThisMonth = raw_bookingsThisMonth[0]?.bookings || 0;
-
+      console.log( monthlyRevenue);
       return {
         total_movies: movieCount,
         now_showing: showingCount,

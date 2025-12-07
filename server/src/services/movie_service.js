@@ -79,16 +79,12 @@ class MovieService {
     return result;
   }
   async getTopRevenue() {
-    const result = await executeQuery(`
-      SELECT ma_phim, ten_phim, tinh_tong_doanh_thu_phim(ma_phim) as doanh_thu 
-      FROM Phim 
-      ORDER BY doanh_thu DESC
-    `);
+    const result = await executeQuery("CALL loc_top_phim_doanh_thu(?)", [5]);
 
-    if (result.length <= 0) {
+    if (result.length === 0) {
       return null;
     }
-    return result;
+    return result[0];
   }
 }
 
